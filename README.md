@@ -1,68 +1,65 @@
 # cleanYourHarmony
 
-中文：[README_zh.md](README_zh.md)
+English: [README_en.md](README_en.md)
 
-It's the AI era, my friend—why are you still reading a README? Copy this repository's URL and hand it to an agent. All you may need to do yourself is tap the build number repeatedly to enable developer mode, turn on USB debugging, then connect your phone to your computer and authorize the connection.
+已经是 AI 时代了我的朋友，为什么你还在看 README，请你直接复制本仓库的地址然后交给 Agent 执行吧。也许唯一需要你操作的就是连续点击版本号，打开 usb 调试，然后链接电脑后信任设备。
 
-An evidence-backed catalog for reducing ads, feeds, marketing messages, and unsolicited recommendations on HarmonyOS phones while preserving normal information display and useful services.
+面向鸿蒙手机的清爽化操作清单：减少广告、信息流、营销消息和主动内容推荐，保留正常信息展示与实用服务；每项结论附实机证据。
 
-## Current deliverables
+## 当前交付
 
-- `operations.json`: 20 retained operations, UI Tree locator rules, target states, screenshot groups, optional app notifications, and exclusions.
-- `dev/reachability/`: current path-verification report and persistent evidence.
-- `dev/clean-settings/` and `dev/candidate-audit/`: dated historical findings. Their states are not current-device guarantees.
-- `report-template/`: the required JSON schema, validator, renderer, and HTML template.
+- `operations.json`：20 项保留操作、UI Tree 定位规则、目标状态、截图分组、可选的应用通知及排除项。
+- `dev/`：本地生成的报告与证据，不纳入版本管理。
+- `report-template/`：必须复用的 JSON 契约、校验器、生成器和 HTML 模板。
 
-The current delivery covers the operation catalog and agent execution/acceptance guidance. Compatibility is limited to the device and versions stated in each report. HarmonyOS 5/6 compatibility requires separate device verification.
+当前交付层级为操作清单及 Agent 执行、验收规范。兼容性以每份报告中的实际设备和版本为限；HarmonyOS 5/6 需要另行实机验证。
 
-## Recommended: run with an agent
+## 推荐使用 Agent 执行
 
-Give this repository to an agent with access to a local terminal and the connected HarmonyOS phone. The computer needs the HarmonyOS SDK's `hdc`, working UI Tree inspection and GUI control tools, and Node.js 18+ for reports. Enable developer mode and USB debugging on the phone and authorize the computer. An agent limited to chat cannot execute the operations directly.
+推荐将本仓库交给能够操作本地终端和已连接鸿蒙手机的 Agent，按清单逐项执行。电脑需要安装 HarmonyOS SDK 的 `hdc`、配置可用的 UI Tree 读取及 GUI 操作工具，并安装 Node.js 18+ 用于生成报告；手机需开启开发者模式、USB 调试并授权当前电脑。仅能对话、无法访问设备的 Agent 不能直接执行。
 
-Start the agent in this repository and send:
+在仓库目录中启动 Agent，发送以下指令即可开始：
 
 ```text
-Read AGENTS.md, README.md, operations.json, and report-template/README_zh.md first.
-Execute operations with default_selected set to true on the currently connected HarmonyOS phone.
-List optional operations without executing them until I select them. If multiple devices are connected, ask me to select one.
-If no phone is detected or authorization is missing, walk me through the README connection steps for developer mode,
-USB debugging, and computer authorization, then check again.
-Prefer UI Tree locators and state inspection. Use vision only when necessary and distinguish that fallback in the report.
-Mark already-satisfied operations as requiring no change. Mark missing targets, disabled controls,
-or changes that fail verification as execution failures.
-Keep the user experience improvement program in scope; report failure if it cannot be disabled.
-Verify each state after the action and after reopening the page. Capture the pages and groups specified by screenshot.
-Share one screenshot across operations visible on the same page and identify the covered operations.
-Generate actual JSON and HTML reports under the repository's report contract, including per-operation results,
-evidence, and uncovered scope. Historical records are references, not a substitute for verifying this device.
+请先阅读 AGENTS.md、README.md、operations.json 和 report-template/README_zh.md，
+对当前连接的鸿蒙手机执行 operations.json 中 default_selected 为 true 的项目；
+可选项目先列出，未经我选择不要执行。若连接多台设备，先让我选择目标。
+若检测不到手机或设备未授权，先按 README 的连接指引逐步指导我开启开发者模式、USB 调试及信任电脑，再重新检测。
+优先通过 UI Tree 定位和读取状态，仅在必要时使用视觉能力，并在报告中区分。
+已满足目标的项目标记为无需修改；无法定位、控件禁用或修改后验证不通过的项目标记为执行失败。
+用户体验改进计划保留在清单中，无法关闭时按执行失败处理。
+逐项核对操作后及重新进入页面后的状态，按 screenshot 指定的页面和分组截图，
+同一页能展示多个项目时共用截图，并明确对应关系。
+按项目报告契约生成真实 JSON 和 HTML 报告，列出每项结果、证据及未覆盖项。
+历史验证记录只用于参考，不能代替本次设备验证。
 ```
 
-The repository supplies the catalog and acceptance rules; the agent performs the actions using device tools. Existing device records cover page and control reachability, not modification and reopening verification for every operation. Each operation still requires acceptance during execution.
+仓库提供执行清单和验收规范，由 Agent 使用设备工具完成操作。现有实机记录覆盖入口及控件可达性，尚未覆盖全部项目的修改与重进验证；首次执行仍需逐项验收。
 
-### Execution rules
+### 执行规则
 
-1. Discover the connected device and check its actual system/application versions. Use one device serially.
-2. Read a fresh UI Tree after navigation. Scope locators to the current panel and the exact app. Prefer text, `originalText`, control type, and same-row relationships; derive coordinates from current bounds.
-3. Read `checked` and `enabled`. Skip already-satisfied controls; report disabled or ambiguous controls instead of guessing or replaying toggles.
-4. Modify only user-selected settings. Verify the state after the action and after reopening the page, then capture the designated evidence group.
-5. Report each result separately. A reachable page does not prove that a setting was changed or that future promotions have stopped.
+1. 枚举当前连接设备，核对实际系统及应用版本；单设备串行操作。
+2. 导航后读取新鲜 UI Tree，将定位范围限定到当前面板及准确的应用。优先使用文本、`originalText`、控件类型与同一行关系，坐标从当次 bounds 计算。
+3. 读取 `checked`、`enabled`。已经满足则跳过；禁用或有歧义则明确报告，避免猜测或重放开关点击。
+4. 只修改用户选定项目。操作后及重新进入页面后分别核对状态，再按指定分组截图。
+5. 逐项交付结果。入口可达不等于开关修改成功，也不证明未来的推广已经停止。
 
-Screenshots are evidence; saving them does not require a vision model. Use visual reasoning only when the tree cannot expose the required target/state, and explicitly record that fallback.
+截图用于留证，保存图片本身不要求视觉模型。只有树无法提供必要的目标或状态时，才使用视觉推理，并明确记录该回退。
 
-### When no phone is detected
+### 检测不到手机时
 
-The agent should first confirm that `hdc` is available, then inspect the connection result. Resolve missing or broken host tools first. If the device list is empty or authorization is missing, guide the user through these steps, wait for completion, and check again instead of skipping all operations:
+Agent 应先确认 `hdc` 可用，再检查连接结果；工具未安装或无法运行时，应先处理电脑端环境。设备列表为空或设备未授权时，向用户逐步提供以下指引，等待用户完成后重新检测，不能直接跳过所有操作：
 
-1. Unlock the phone, connect it with a USB cable that supports data transfer, and keep the screen on.
-2. Open Settings and search for “Software version”. Alternatively, open “About phone” or the entry named after the device and find “Software version” or “Software version number”. Tap it seven times quickly and follow the prompt to enable developer options. The user must enter any requested lock-screen credential themselves. If a restart is requested, confirm it, wait, and unlock the phone afterward.
-3. Open Settings → System → Developer options (also called “Developer settings”; search Settings if necessary). Enable “USB debugging” and confirm the prompt on the phone.
-4. Keep the phone unlocked. When a computer authorization prompt such as “Allow USB debugging” appears, verify the computer and tap Allow. Let the user decide whether to select “Always allow this computer”, if offered. If no prompt appears, reconnect the cable and check the phone again.
-5. Enumerate devices again. Confirm that the device is online and a fresh UI Tree can be read before executing operations. If connection still fails, try another data cable, connect directly to a computer USB port, and inspect host tools or drivers. Distinguish an undetected device, missing authorization, and a tool failure.
+1. 解锁手机，使用支持数据传输的 USB 线连接电脑，并保持亮屏。
+2. 打开手机“设置”，搜索“软件版本”；也可进入“关于手机”或以设备名称显示的入口，找到“软件版本”或“软件版本号”。连续快速点击 7 次，按提示开启开发者选项。若要求锁屏密码，由用户自行输入；若提示重启，确认并等待重启后解锁。
+3. 进入“设置 → 系统 → 开发者选项”（名称可能为“开发人员选项”，也可在设置中搜索），开启“USB 调试”，确认手机上的开启提示。
+4. 保持手机解锁；在“允许 USB 调试”等电脑授权弹窗中，核对当前电脑后点击“允许”。如有“始终允许此电脑”选项，由用户自行决定是否勾选。若未弹出，拔插数据线后再次观察手机。
+5. Agent 重新枚举设备，确认设备在线且可读取新的 UI Tree，再开始执行。仍无法连接时，依次尝试更换数据线、直连电脑 USB 接口，并检查电脑端工具或驱动；清楚区分未检测到、未授权和工具故障。
 
-Menu locations and restart behavior follow Huawei's official [developer options guidance](https://consumer.huawei.com/cn/support/content/zh-cn02842747/) and [USB debugging connection guidance](https://consumer.huawei.com/cn/support/content/zh-cn00698619/). Labels may vary by device. These are connection troubleshooting instructions, not a claim that this project has verified initial authorization on every device.
+入口和重启流程参考华为官方的[开发者选项说明](https://consumer.huawei.com/cn/support/content/zh-cn02842747/)及[USB 调试连接说明](https://consumer.huawei.com/cn/support/content/zh-cn00698619/)，具体名称以手机实际界面为准。此处是连接故障引导，不代表本项目已经验证过所有设备的首次授权流程。
 
-## Reports
+## 报告
 
-Read `report-template/README_zh.md`. Write actual records to the prescribed strict JSON, validate it, then render to a new output path. Keep raw temporary dumps/logs in `/tmp`; retain sanitized evidence needed to support the report.
+先阅读 `report-template/README_zh.md`。将真实记录写入约定的严格 JSON，通过校验后生成到新的输出路径。临时原始树和日志放在 `/tmp`，报告所需的脱敏持久证据单独保留。
 
-Dependencies installed under `node_modules/` are ignored. The main report renderer uses Node.js 18+ without additional dependencies. Optional historical experiments retain their own installation instructions.
+`node_modules/` 安装依赖不纳入版本管理。主报告生成器使用 Node.js 18+，不需要额外依赖。历史可选实验保留各自的安装说明。
