@@ -1,4 +1,4 @@
-# cleanYourHarmonyOS
+# cleanYourHarmony
 
 中文：[README_zh.md](README_zh.md)
 

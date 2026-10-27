@@ -1,4 +1,4 @@
-# cleanYourHarmonyOS
+# cleanYourHarmony
 
 已经是 AI 时代了我的朋友，为什么你还在看 README，请你直接复制本仓库的地址然后交给 Agent 执行吧。也许唯一需要你操作的就是连续点击版本号，打开 usb 调试，然后链接电脑后信任设备。
 
