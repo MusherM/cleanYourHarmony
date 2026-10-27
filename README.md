@@ -25,6 +25,8 @@ Start the agent in this repository and send:
 Read AGENTS.md, README.md, operations.json, and dev/report-template/README_zh.md first.
 Execute operations with default_selected set to true on the currently connected HarmonyOS phone.
 List optional operations without executing them until I select them. If multiple devices are connected, ask me to select one.
+If no phone is detected or authorization is missing, walk me through the README connection steps for developer mode,
+USB debugging, and computer authorization, then check again.
 Prefer UI Tree locators and state inspection. Use vision only when necessary and distinguish that fallback in the report.
 Mark already-satisfied operations as requiring no change. Mark missing targets, disabled controls,
 or changes that fail verification as execution failures.
@@ -46,6 +48,18 @@ The repository supplies the catalog and acceptance rules; the agent performs the
 5. Report each result separately. A reachable page does not prove that a setting was changed or that future promotions have stopped.
 
 Screenshots are evidence; saving them does not require a vision model. Use visual reasoning only when the tree cannot expose the required target/state, and explicitly record that fallback.
+
+### When no phone is detected
+
+The agent should first confirm that `hdc` is available, then inspect the connection result. Resolve missing or broken host tools first. If the device list is empty or authorization is missing, guide the user through these steps, wait for completion, and check again instead of skipping all operations:
+
+1. Unlock the phone, connect it with a USB cable that supports data transfer, and keep the screen on.
+2. Open Settings and search for “Software version”. Alternatively, open “About phone” or the entry named after the device and find “Software version” or “Software version number”. Tap it seven times quickly and follow the prompt to enable developer options. The user must enter any requested lock-screen credential themselves. If a restart is requested, confirm it, wait, and unlock the phone afterward.
+3. Open Settings → System → Developer options (also called “Developer settings”; search Settings if necessary). Enable “USB debugging” and confirm the prompt on the phone.
+4. Keep the phone unlocked. When a computer authorization prompt such as “Allow USB debugging” appears, verify the computer and tap Allow. Let the user decide whether to select “Always allow this computer”, if offered. If no prompt appears, reconnect the cable and check the phone again.
+5. Enumerate devices again. Confirm that the device is online and a fresh UI Tree can be read before executing operations. If connection still fails, try another data cable, connect directly to a computer USB port, and inspect host tools or drivers. Distinguish an undetected device, missing authorization, and a tool failure.
+
+Menu locations and restart behavior follow Huawei's official [developer options guidance](https://consumer.huawei.com/cn/support/content/zh-cn02842747/) and [USB debugging connection guidance](https://consumer.huawei.com/cn/support/content/zh-cn00698619/). Labels may vary by device. These are connection troubleshooting instructions, not a claim that this project has verified initial authorization on every device.
 
 ## Reports
 
