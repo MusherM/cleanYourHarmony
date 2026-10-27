@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync,mkdtempSync,writeFileSync,existsSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {validate} from './validate.mjs';
+import {render} from './render.mjs';
+const source=JSON.parse(readFileSync(new URL('./example.json',import.meta.url)));
+const clone=()=>structuredClone(source);
+test('valid demo',()=>assert.deepEqual(validate(clone()),[]));
+for(const [name,change] of Object.entries({missing:d=>delete d.title,unknown:d=>d.extra=1,type:d=>d.scope='bad',date:d=>d.generatedAt='2026-02-30T12:00:00+08:00',duplicate:d=>d.checks[1].id=d.checks[0].id,evidence:d=>d.checks[0].status='passed',overall:d=>d.status='passed',blank:d=>d.summary='  ',version:d=>d.schemaVersion=2}))test(`reject ${name}`,()=>{const d=clone();change(d);assert.ok(validate(d).length);});
+test('pass with evidence; partial and blocked states',()=>{const d=clone();d.checks.forEach(c=>{c.status='passed';c.evidence=['dev/evidence.png; manually verified'];});d.status='passed';assert.deepEqual(validate(d),[]);d.checks[0].status='failed';d.status='partial';assert.deepEqual(validate(d),[]);d.checks.forEach(c=>c.status='blocked');d.status='blocked';assert.deepEqual(validate(d),[]);});
+test('escape HTML and replacement tokens',()=>{const d=clone();d.title='<script>alert(1)</script> $&';const html=render(d);assert.ok(html.includes('&lt;script&gt;alert(1)&lt;/script&gt; $&'));assert.ok(!html.includes('<script>alert(1)'));assert.ok(!html.includes('@@REPORT@@'));});
+test('render emits presentation hooks and fixed labels',()=>{const html=render(clone());assert.ok(html.includes('data-status="not_tested"'));assert.ok(html.includes('3 项 / Items'));assert.ok(html.includes('结论只在证据覆盖的范围内成立。'));assert.ok(html.includes('class="check" open'));});
+test('CLI rejects malformed/invalid JSON and protects output',()=>{const dir=mkdtempSync(join(tmpdir(),'harmony-report-'));try{const input=join(dir,'input.json'),output=join(dir,'out.html');const run=()=>spawnSync(process.execPath,[new URL('./render.mjs',import.meta.url).pathname,input,output],{encoding:'utf8'});writeFileSync(input,'{');assert.equal(run().status,1);assert.equal(existsSync(output),false);writeFileSync(input,JSON.stringify({...source,status:'passed'}));assert.equal(run().status,1);assert.equal(existsSync(output),false);writeFileSync(input,JSON.stringify(source));assert.equal(run().status,0);const before=readFileSync(output,'utf8');assert.equal(run().status,1);assert.equal(readFileSync(output,'utf8'),before);}finally{rmSync(dir,{recursive:true,force:true});}});

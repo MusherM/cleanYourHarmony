@@ -11,7 +11,7 @@ An evidence-backed catalog for reducing ads, feeds, marketing messages, and unso
 - `operations.json`: 20 retained operations, UI Tree locator rules, target states, screenshot groups, optional app notifications, and exclusions.
 - `dev/reachability/`: current path-verification report and persistent evidence.
 - `dev/clean-settings/` and `dev/candidate-audit/`: dated historical findings. Their states are not current-device guarantees.
-- `dev/report-template/`: the required JSON schema, validator, renderer, and HTML template.
+- `report-template/`: the required JSON schema, validator, renderer, and HTML template.
 
 The current delivery covers the operation catalog and agent execution/acceptance guidance. Compatibility is limited to the device and versions stated in each report. HarmonyOS 5/6 compatibility requires separate device verification.
 
@@ -22,7 +22,7 @@ Give this repository to an agent with access to a local terminal and the connect
 Start the agent in this repository and send:
 
 ```text
-Read AGENTS.md, README.md, operations.json, and dev/report-template/README_zh.md first.
+Read AGENTS.md, README.md, operations.json, and report-template/README_zh.md first.
 Execute operations with default_selected set to true on the currently connected HarmonyOS phone.
 List optional operations without executing them until I select them. If multiple devices are connected, ask me to select one.
 If no phone is detected or authorization is missing, walk me through the README connection steps for developer mode,
@@ -63,6 +63,6 @@ Menu locations and restart behavior follow Huawei's official [developer options 
 
 ## Reports
 
-Read `dev/report-template/README_zh.md`. Write actual records to the prescribed strict JSON, validate it, then render to a new output path. Keep raw temporary dumps/logs in `/tmp`; retain sanitized evidence needed to support the report.
+Read `report-template/README_zh.md`. Write actual records to the prescribed strict JSON, validate it, then render to a new output path. Keep raw temporary dumps/logs in `/tmp`; retain sanitized evidence needed to support the report.
 
 Dependencies installed under `node_modules/` are ignored. The main report renderer uses Node.js 18+ without additional dependencies. Optional historical experiments retain their own installation instructions.

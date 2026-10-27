@@ -9,7 +9,7 @@
 - `operations.json`：20 项保留操作、UI Tree 定位规则、目标状态、截图分组、可选的应用通知及排除项。
 - `dev/reachability/`：当前路径验证报告与持久证据。
 - `dev/clean-settings/`、`dev/candidate-audit/`：注明日期的历史记录，不能当作设备当前状态保证。
-- `dev/report-template/`：必须复用的 JSON 契约、校验器、生成器和 HTML 模板。
+- `report-template/`：必须复用的 JSON 契约、校验器、生成器和 HTML 模板。
 
 当前交付层级为操作清单及 Agent 执行、验收规范。兼容性以每份报告中的实际设备和版本为限；HarmonyOS 5/6 需要另行实机验证。
 
@@ -20,7 +20,7 @@
 在仓库目录中启动 Agent，发送以下指令即可开始：
 
 ```text
-请先阅读 AGENTS.md、README_zh.md、operations.json 和 dev/report-template/README_zh.md，
+请先阅读 AGENTS.md、README_zh.md、operations.json 和 report-template/README_zh.md，
 对当前连接的鸿蒙手机执行 operations.json 中 default_selected 为 true 的项目；
 可选项目先列出，未经我选择不要执行。若连接多台设备，先让我选择目标。
 若检测不到手机或设备未授权，先按 README 的连接指引逐步指导我开启开发者模式、USB 调试及信任电脑，再重新检测。
@@ -59,6 +59,6 @@ Agent 应先确认 `hdc` 可用，再检查连接结果；工具未安装或无�
 
 ## 报告
 
-先阅读 `dev/report-template/README_zh.md`。将真实记录写入约定的严格 JSON，通过校验后生成到新的输出路径。临时原始树和日志放在 `/tmp`，报告所需的脱敏持久证据单独保留。
+先阅读 `report-template/README_zh.md`。将真实记录写入约定的严格 JSON，通过校验后生成到新的输出路径。临时原始树和日志放在 `/tmp`，报告所需的脱敏持久证据单独保留。
 
 `node_modules/` 安装依赖不纳入版本管理。主报告生成器使用 Node.js 18+，不需要额外依赖。历史可选实验保留各自的安装说明。
