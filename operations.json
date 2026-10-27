@@ -1,0 +1,872 @@
+{
+  "schema_version": 1,
+  "purpose": "关闭广告、信息流、营销推广和非必要内容推荐，保留正常信息展示及实用服务。",
+  "verification_scope": "本轮只验证设置入口及 UI Tree 控件可达性，不执行开关修改。系统/应用版本需逐机核对。",
+  "operations": [
+    {
+      "id": "B01",
+      "name": "浏览器使用简洁主页",
+      "path": "浏览器 → 我的 → 设置 → 主页设置",
+      "default_selected": true,
+      "target": {
+        "checked": true
+      },
+      "locator": {
+        "type": "Radio",
+        "originalText": "simple"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G01",
+        "at": "浏览器 → 我的 → 设置 → 主页设置",
+        "shows": "simple与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:53:21.626Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": true,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "B02",
+      "name": "浏览器关闭搜索榜单",
+      "path": "浏览器 → 我的 → 设置 → 搜索设置 → 高级设置",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "榜单",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G02",
+        "at": "浏览器 → 我的 → 设置 → 搜索设置 → 高级设置",
+        "shows": "榜单与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:53:43.704Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "B03",
+      "name": "浏览器关闭搜索热词",
+      "path": "浏览器 → 我的 → 设置 → 搜索设置 → 高级设置",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "热词",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G02",
+        "at": "浏览器 → 我的 → 设置 → 搜索设置 → 高级设置",
+        "shows": "热词与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:53:43.782Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F01",
+      "name": "负一屏关闭实用工具",
+      "path": "负一屏 → 头像 → 更多 → 设置 → 实用工具",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "实用工具",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G03",
+        "at": "返回负一屏父设置页，与实用工具/服务未开启及卡片/资讯关闭状态合拍",
+        "shows": "实用工具与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:51:54.433Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F02",
+      "name": "负一屏关闭精选服务模块",
+      "path": "负一屏 → 头像 → 更多 → 设置 → 服务",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "服务",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G03",
+        "at": "返回负一屏父设置页，与实用工具/服务未开启及卡片/资讯关闭状态合拍",
+        "shows": "服务与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:52:04.226Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F03",
+      "name": "负一屏关闭卡片模块",
+      "path": "负一屏 → 头像 → 更多 → 设置",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "卡片",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G03",
+        "at": "负一屏 → 头像 → 更多 → 设置",
+        "shows": "卡片与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:51:41.902Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F04",
+      "name": "负一屏关闭资讯模块",
+      "path": "负一屏 → 头像 → 更多 → 设置",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "资讯",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G03",
+        "at": "负一屏 → 头像 → 更多 → 设置",
+        "shows": "资讯与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:51:41.974Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F05",
+      "name": "负一屏关闭搜索热词",
+      "path": "负一屏 → 头像 → 更多 → 设置 → 搜索",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "搜索热词",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G04",
+        "at": "负一屏 → 头像 → 更多 → 设置 → 搜索",
+        "shows": "搜索热词与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:52:10.871Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F06",
+      "name": "负一屏关闭 AI 搜索建议",
+      "path": "负一屏 → 头像 → 更多 → 设置 → 搜索",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "AI 搜索",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G04",
+        "at": "负一屏 → 头像 → 更多 → 设置 → 搜索",
+        "shows": "AI 搜索与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:52:10.943Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "N01",
+      "name": "关闭浏览器系统通知",
+      "path": "设置 → 通知和状态栏 → 浏览器",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "允许通知",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G05",
+        "at": "设置 → 通知和状态栏 → 浏览器",
+        "shows": "应用名称、允许通知开关"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:54:56.216Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "N02",
+      "name": "关闭主题系统通知",
+      "path": "设置 → 通知和状态栏 → 主题",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "允许通知",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G06",
+        "at": "设置 → 通知和状态栏 → 主题",
+        "shows": "应用名称、允许通知开关"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:56:38.605Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "N03",
+      "name": "关闭应用市场系统通知",
+      "path": "设置 → 通知和状态栏 → 应用市场",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "允许通知",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G07",
+        "at": "设置 → 通知和状态栏 → 应用市场",
+        "shows": "应用名称、允许通知开关"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:55:48.861Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "N04",
+      "name": "关闭视频系统通知",
+      "path": "设置 → 通知和状态栏 → 视频",
+      "default_selected": false,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "允许通知",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G08",
+        "at": "设置 → 通知和状态栏 → 视频",
+        "shows": "应用名称、允许通知开关"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:55:21.206Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "N05",
+      "name": "关闭音乐系统通知",
+      "path": "设置 → 通知和状态栏 → 音乐",
+      "default_selected": false,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "允许通知",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G09",
+        "at": "设置 → 通知和状态栏 → 音乐",
+        "shows": "应用名称、允许通知开关"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:55:41.563Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "N06",
+      "name": "关闭游戏中心系统通知",
+      "path": "设置 → 通知和状态栏 → 游戏中心",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "允许通知",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G10",
+        "at": "设置 → 通知和状态栏 → 游戏中心",
+        "shows": "应用名称、允许通知开关"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:56:10.610Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "N07",
+      "name": "关闭阅读系统通知",
+      "path": "设置 → 通知和状态栏 → 阅读",
+      "default_selected": false,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "允许通知",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G11",
+        "at": "设置 → 通知和状态栏 → 阅读",
+        "shows": "应用名称、允许通知开关"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:56:17.837Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": false,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F07",
+      "name": "关闭负一屏功能介绍通知",
+      "path": "负一屏 → 头像 → 更多 → 设置 → 消息通知",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "功能介绍",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G12",
+        "at": "负一屏 → 头像 → 更多 → 设置 → 消息通知",
+        "shows": "功能介绍与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:52:37.123Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": true,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F08",
+      "name": "关闭负一屏活动提醒通知",
+      "path": "负一屏 → 头像 → 更多 → 设置 → 消息通知",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "活动提醒",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G12",
+        "at": "负一屏 → 头像 → 更多 → 设置 → 消息通知",
+        "shows": "活动提醒与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:52:37.196Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": true,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "F09",
+      "name": "关闭小红书内容精选订阅",
+      "path": "负一屏 → 头像 → 更多 → 动态管理 → 内容精选",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "内容精选",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G13",
+        "at": "负一屏 → 头像 → 更多 → 动态管理 → 内容精选",
+        "shows": "内容精选开关、功能说明及小红书服务提供方状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:51:12.515Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": true,
+        "checked": true,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    },
+    {
+      "id": "P01",
+      "name": "退出用户体验改进计划",
+      "path": "设置 → 系统 → 用户体验改进计划",
+      "default_selected": true,
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "加入用户体验改进计划",
+        "relationship": "在目标文本最近且只包含一个 Toggle 的容器内定位"
+      },
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "screenshot": {
+        "group": "G14",
+        "at": "设置 → 系统 → 用户体验改进计划",
+        "shows": "加入用户体验改进计划与当前控件状态"
+      },
+      "last_verification": {
+        "at": "2026-10-27T02:57:25.897Z",
+        "scope": "read_only_reachability",
+        "reachable": true,
+        "enabled": false,
+        "checked": true,
+        "method": "ui_tree",
+        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "name": "浏览器显示未读消息数量、状态栏、实况窗、锁屏正文、普通角标与通知样式",
+      "reason": "仅减少正常信息展示，不属于默认清爽化目标。历史实测保留，不继续列为默认操作。"
+    },
+    {
+      "name": "应用市场自动播放、浏览器网页视频清爽模式、小说阅读模式",
+      "reason": "用户已明确排除：改变使用习惯。"
+    },
+    {
+      "name": "设备方向权限批量关闭",
+      "reason": "目前没有经确认的广告跳转 App 名单；不按应用类别推断关闭。"
+    },
+    {
+      "name": "探索、搜索/浏览历史、注销服务",
+      "reason": "涉及删除记录或服务数据，未纳入默认操作。"
+    },
+    {
+      "name": "简报、音乐播放动态、停车、日程、出行、快递等实用服务",
+      "reason": "保留正常实用功能，不因界面占用而关闭。"
+    },
+    {
+      "name": "仅降低广告相关性的个性化开关",
+      "reason": "未证明能减少推荐或广告数量。"
+    }
+  ]
+}
