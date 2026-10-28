@@ -1,0 +1,161 @@
+{
+  "attributes": {
+    "bounds": "[0,0][2584,1828]"
+  },
+  "children": [
+    {
+      "attributes": {
+        "type": "root",
+        "visible": "true",
+        "bounds": "[0,107][2584,1828]",
+        "bundleName": "com.huawei.hmos.settings"
+      },
+      "children": [
+        {
+          "attributes": {
+            "type": "Navigation",
+            "bounds": "[0,107][2584,1828]"
+          },
+          "children": [
+            {
+              "attributes": {
+                "type": "NavBar",
+                "bounds": "[0,107][1034,1828]"
+              },
+              "children": [
+                {
+                  "attributes": {
+                    "type": "HdsTitleBar",
+                    "bounds": "[0,107][1034,261]"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "type": "Text",
+                        "text": "设置",
+                        "bounds": "[44,142][188,226]"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "attributes": {
+                "type": "NavDestination",
+                "bounds": "[1035,107][2584,1828]"
+              },
+              "children": [
+                {
+                  "attributes": {
+                    "type": "HdsTitleBar",
+                    "bounds": "[1035,107][2584,261]"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "type": "Text",
+                        "text": "用户体验改进计划",
+                        "bounds": "[1211,142][1700,226]"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "type": "WindowScene",
+        "visible": "true",
+        "bounds": "[0,0][2584,107]",
+        "bundleName": "com.ohos.sceneboard",
+        "id": "session23"
+      },
+      "children": [
+        {
+          "attributes": {
+            "type": "__Common__",
+            "visible": "true",
+            "bounds": "[0,0][2584,107]",
+            "id": "StatusBarBox"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "type": "WindowScene",
+        "visible": "true",
+        "bounds": "[1160,0][1424,88]",
+        "bundleName": "com.ohos.sceneboard"
+      },
+      "children": [
+        {
+          "attributes": {
+            "type": "Stack",
+            "visible": "true",
+            "bounds": "[1160,0][1424,88]"
+          },
+          "children": [
+            {
+              "attributes": {
+                "type": "Stack",
+                "visible": "true",
+                "bounds": "[1160,0][1424,88]"
+              },
+              "children": [
+                {
+                  "attributes": {
+                    "type": "Button",
+                    "visible": "true",
+                    "bounds": "[1226,19][1358,69]"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "type": "Row",
+                        "visible": "true",
+                        "bounds": "[1243,36][1342,53]"
+                      },
+                      "children": [
+                        {
+                          "attributes": {
+                            "type": "Text",
+                            "visible": "true",
+                            "bounds": "[1243,36][1260,53]"
+                          },
+                          "children": []
+                        },
+                        {
+                          "attributes": {
+                            "type": "Text",
+                            "visible": "true",
+                            "bounds": "[1271,36][1315,53]"
+                          },
+                          "children": []
+                        },
+                        {
+                          "attributes": {
+                            "type": "Text",
+                            "visible": "true",
+                            "bounds": "[1326,36][1343,53]"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

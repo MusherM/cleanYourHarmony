@@ -28,6 +28,10 @@ An evidence-backed catalog for reducing ads, feeds, marketing messages, and unso
 
 The current delivery covers the operation catalog and agent execution/acceptance guidance. Compatibility is limited to the device and versions stated in each report. HarmonyOS 5/6 compatibility requires separate device verification.
 
+Device verification recorded on 2026-10-28: HOP-AL10, HarmonyOS 7.0.0.113, expanded display at 2584×1828. All 20 operations passed: 10 changed and verified after re-entry, and 10 confirmed already at target. Do Not Disturb was restored to its original off state. This record covers only that expanded state and version; the folded outer display and folding during execution were not tested.
+
+A second device run on the same day at 14:15 re-checked the same device and version: all 20 targets were already at their goal state, so every item was recorded as confirmed without modification (0 switch changes), and Do Not Disturb was restored to its original off state. That run's evidence is in dev/device-run/evidence_2026-10-28T14-15-43.259-08-00_77176/.
+
 ## Recommended: run with an agent
 
 Give this repository to an agent that can operate your computer and connected phone. The agent checks the computer's tools and installs anything missing. You only need to connect the phone and follow prompts to enable developer options, USB debugging, and trust for the computer. Enter lock-screen credentials and handle device authorization or system permission prompts yourself. A chat-only agent without computer and device access cannot perform the work.
@@ -68,6 +72,8 @@ node scripts/run.mjs --execute
 All 20 operations run without notification selection prompts. With multiple devices, use --device <current-device-id>; --hdc <executable-path> reuses an installed SDK. The script groups operations into 16 pages, navigates from the nearest parent, captures evidence immediately after changes, and re-enters changed pages once.
 
 Consecutive reads on the same page reuse the current snapshot for up to 500 ms. Clicks, scrolling, app launches, screenshots, or expiry require a fresh tree. Adjacent notification settings reuse the search page while still checking each app name, foreground page, and control state. The normal route runs entirely in the script without per-step model decisions.
+
+When expanded-screen Settings uses two panes, top-level entries are located and scrolled in the left navigation bar. Switching top-level pages reuses that visible sidebar to avoid exiting Settings with system Back. Detail pages are checked against the last title bar, which also supplies notification search. System multitasking handles outside app content are accepted; other windows overlapping content still block actions. Browser startup waits for recognizable content, target controls receive up to 20 seconds to load, and transient overlays receive a bounded wait to disappear. An exact match for the notice about merging pinned notifications into priority notifications is dismissed with one normal Back action. Other persistent permission or onboarding dialogs are handled by the agent.
 
 Results go to dev/device-run/evidence_<current-time>/, including progress.json, screenshots, and command timing. Completion requires evidence for all business items; Do Not Disturb preparation/restoration is recorded separately. A device lease prevents concurrent instances; other agents must not operate that device during the run.
 

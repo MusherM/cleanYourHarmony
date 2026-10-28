@@ -52,12 +52,19 @@ export function appScope(tree, bundle) {
     throw new Error('检测到横幅/对话框/浮层，请 Agent 处理后续跑');
   }
   const roots = (tree.children ?? []).filter(visible);
+  const appRoots = roots.filter(n => attr(n).bundleName === bundle);
   for (const n of roots) {
     const a = attr(n);
     if (a.bundleName && a.bundleName !== bundle) {
       const statusOnly = a.bundleName === 'com.ohos.sceneboard' && find(n, { id: 'StatusBarBox' }).length &&
         bounds(n)[3] <= bounds(tree)[3] * 0.1;
-      if (!statusOnly) throw new Error('前台存在其他应用窗口或遮挡');
+      // Expanded foldables expose a separate system window for the top
+      // multitasking handle. Only accept system chrome outside app content.
+      const outsideApp = a.bundleName === 'com.ohos.sceneboard' && appRoots.length === 1 && (() => {
+        const b = bounds(n), r = bounds(appRoots[0]);
+        return b[2] <= r[0] || b[0] >= r[2] || b[3] <= r[1] || b[1] >= r[3];
+      })();
+      if (!statusOnly && !outsideApp) throw new Error('前台存在其他应用窗口或遮挡');
     }
   }
   let scope = unique(roots.filter(n => attr(n).bundleName === bundle), '应用身份不匹配');
@@ -71,7 +78,8 @@ export function appScope(tree, bundle) {
   return scope;
 }
 export function titleIs(scope, title) {
-  return find(scope, { type: 'HdsTitleBar' }).some(h => find(h, { text: title }).length > 0);
+  const bars = find(scope, { type: 'HdsTitleBar' });
+  return bars.length > 0 && find(bars.at(-1), { text: title }).length > 0;
 }
 export function control(root, locator) {
   if (locator.originalText) {

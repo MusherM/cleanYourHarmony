@@ -108,6 +108,48 @@ test('persistent keyboard causes bounded failure without repeated Back',async()=
   await assert.rejects(nav.wait('N',()=>true,250),/键盘遮挡/);assert.equal(backs,1);
 });
 import { find } from './ui-tree.mjs';
+const foldFixture = () => JSON.parse(fs.readFileSync(new URL('./fixtures/fold-settings.json', import.meta.url)));
+test('expanded foldable system handle outside content is accepted and detail title wins',()=>{
+  const tree=foldFixture(), scope=appScope(tree,'com.huawei.hmos.settings');
+  assert.equal(titleIs(scope,'用户体验改进计划'),true);
+  assert.equal(titleIs(scope,'设置'),false);
+  assert.equal(new Navigator({}).isPage(scope,'N',[]),true);
+  tree.children.at(-1).attributes.bounds='[1160,150][1424,238]';
+  assert.throws(()=>appScope(tree,'com.huawei.hmos.settings'),/遮挡/);
+});
+test('foldable top-level navigation scrolls sidebar instead of larger detail',async()=>{
+  const tree=foldFixture(), sidebar=find(tree,{type:'NavBar'})[0];
+  sidebar.children.push(n('List',{bounds:'[44,261][990,1828]'}));
+  const detail=find(tree,{type:'NavDestination'})[0];
+  detail.children.push(n('Scroll',{bounds:'[1035,261][2584,1828]'}));
+  let swipes=0,clicks=0;const device={revision:0,tree:()=>tree,ui:(_,x)=>{assert.ok(x<1034);swipes++;device.revision++;sidebar.children[1].children=[n('Text',{text:'情景模式',bounds:'[198,500][374,552]'})];},click:()=>clicks++};
+  await new Navigator(device).entry('N','情景模式',true);
+  assert.equal(swipes,1);assert.equal(clicks,1);
+});
+test('foldable top-level siblings reuse the visible sidebar without Back exiting Settings',async()=>{
+  let backs=0;const nav=new Navigator({tree:foldFixture,back:()=>backs++});
+  nav.family='N';nav.route=['情景模式'];
+  await nav.parent();assert.equal(backs,0);assert.deepEqual(nav.route,[]);
+});
+test('browser startup waits for content instead of clicking an empty loading window',async()=>{
+  let reads=0,clicks=0;
+  const tree=()=>n('',{bounds:'[0,0][500,1000]'},[n('root',{bundleName:'com.huawei.hmos.browser'},reads===1?[]:[n('HdsTitleBar',{},[n('Text',{text:'我的'})])])]);
+  const nav=new Navigator({launch:()=>{},tree:()=>{reads++;return tree();},click:()=>clicks++});
+  await nav.root('B');assert.equal(reads,2);assert.equal(clicks,0);
+});
+test('transient overlay must disappear before a page can be used',async()=>{
+  let reads=0;
+  const nav=new Navigator({tree:()=>n('',{},[n('root',{bundleName:'com.huawei.hmos.browser'},reads++===0?[n('Popup')]:[])])});
+  await nav.wait('B',()=>true);assert.equal(reads,2);
+});
+for(const persistent of [false,true])test(`known priority-notification tip is dismissed once, persistent=${persistent}`,async()=>{
+  let backs=0;
+  const text='原“置顶显示通知”功能合并到“优先通知”，可设置本应用所有消息优先显示或者通过智能识别优先显示';
+  const nav=new Navigator({back:()=>backs++,tree:()=>n('',{},[n('root',{bundleName:'com.huawei.hmos.settings'},persistent||!backs?[n('Popup',{},[n('Text',{text})])]:[])])});
+  if(persistent)await assert.rejects(nav.wait('N',()=>true,250),/功能提示仍未消失/);
+  else await nav.wait('N',()=>true);
+  assert.equal(backs,1);
+});
 test('notification search with no IME never backs out and waits for the requested result',async()=>{
   let typed=false,clicked=false,reads=0;
   const tree=()=>n('',{},[n('root',{bundleName:'com.huawei.hmos.settings'},[

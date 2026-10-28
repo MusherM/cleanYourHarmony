@@ -15,11 +15,18 @@ export class Navigator {
       try { if (predicate(this.view.scope)) return this.view; } catch { /* Refresh a snapshot whose target is not ready. */ }
     }
     const until = Date.now() + timeout;
-    let last, dismissedKeyboard = false;
+    let last, dismissedKeyboard = false, dismissedNotificationTip = false;
     do {
       if (this.cancelled()) throw new Error('执行被中断');
       try {
         const tree = this.device.tree();
+        const settings = (tree.children ?? []).find(n => attr(n).bundleName === APPS.N.bundle);
+        const notificationTip = family === 'N' && settings && find(settings, { type: 'Popup' }).some(n =>
+          find(n, { text: '原“置顶显示通知”功能合并到“优先通知”，可设置本应用所有消息优先显示或者通过智能识别优先显示' }).length);
+        if (notificationTip) {
+          if (dismissedNotificationTip) throw new Error('优先通知功能提示仍未消失');
+          this.device.back(); dismissedNotificationTip = true; await delay(200); continue;
+        }
         if (keyboardVisible(tree)) {
           if (dismissedKeyboard) throw new Error('键盘遮挡仍未消失');
           this.device.back(); dismissedKeyboard = true; await delay(200); continue;
@@ -32,14 +39,15 @@ export class Navigator {
         last = new Error('页面未达到预期');
       } catch (e) {
         last = e;
-        if (/横幅|弹层不唯一/.test(e.message)) throw e;
+        if (/弹层不唯一/.test(e.message)) throw e;
       }
       await delay(200);
     } while (Date.now() < until);
     throw last;
   }
   isPage(scope, family, route) {
-    if (!route.length) return titleIs(scope, APPS[family].root) && attr(scope).type !== 'SheetWrapper';
+    if (!route.length) return attr(scope).type !== 'SheetWrapper' && (titleIs(scope, APPS[family].root) ||
+      (family === 'N' && find(scope, { type: 'NavBar' }).some(n => titleIs(n, APPS[family].root))));
     if (family === 'F' && route.at(-1) === '更多') return attr(scope).type === 'MenuWrapper';
     if (family === 'N' && route[0] === '通知和状态栏' && route.length === 2) {
       return titleIs(scope, '通知管理') && find(scope, { text: route[1] }).length > 0;
@@ -47,7 +55,7 @@ export class Navigator {
     return titleIs(scope, route.at(-1));
   }
   async current(page, locator) {
-    return this.wait(page.family, scope => this.isPage(scope, page.family, page.route) && (!locator || Boolean(state(scope, locator))));
+    return this.wait(page.family, scope => this.isPage(scope, page.family, page.route) && (!locator || Boolean(state(scope, locator))), locator ? 20000 : 8000);
   }
   async root(family) {
     if (family === 'F') {
@@ -69,20 +77,26 @@ export class Navigator {
     }
     this.device.launch(APPS[family]);
     for (let i = 0; i < 7; i++) {
-      const { scope } = await this.wait(family, () => true);
+      const { scope } = await this.wait(family, s => family !== 'B' ||
+        attr(s).type === 'SheetWrapper' || find(s, { text: '我的' }).length > 0 ||
+        find(s, { type: 'HdsTitleBar' }).length > 0);
       if (this.isPage(scope, family, [])) { this.family = family; this.route = []; return; }
-      if (family === 'B' && attr(scope).type !== 'SheetWrapper') {
+      if (family === 'B' && attr(scope).type !== 'SheetWrapper' && find(scope, { text: '我的' }).length) {
         this.device.click(textNode(scope, '我的'));
       } else { this.device.back(); }
     }
     throw new Error('无法归一化到应用起点；需 Agent 定位，禁止猜测坐标');
   }
-  async entry(family, text) {
+  async entry(family, text, fromRoot = false) {
     // Search only this page. Scroll boundedly in both directions, never click an off-screen node.
     for (const direction of ['up', 'down']) {
       let previousSignature;
       for (let i = 0; i < 7; i++) {
-        const { scope, tree } = await this.wait(family, () => true);
+        const view = await this.wait(family, () => true);
+        // A settings split view keeps its sidebar alive beside the detail.
+        // Top-level routes scroll the sidebar, never the larger detail pane.
+        const sidebar = family === 'N' && fromRoot ? find(view.scope, { type: 'NavBar' }).find(n => titleIs(n, '设置')) : null;
+        const scope = sidebar ?? view.scope;
         let n;
         try { n = textNode(scope, text); } catch (e) { if (!/\(0\)/.test(e.message)) throw e; }
         const [sx, sy, ex, ey] = bounds(scope);
@@ -94,7 +108,7 @@ export class Navigator {
         const signature = JSON.stringify(walk(scope).map(({n}) => [attr(n).type, attr(n).id, attr(n).text, attr(n).bounds]));
         if (signature === previousSignature) break;
         previousSignature = signature;
-        const candidates = walk(scope).map(x => x.n).filter(n => attr(n).scrollable === 'true' || attr(n).scrollable === true || ['Scroll','List'].includes(attr(n).type));
+        const candidates = walk(scope).map(x => x.n).filter(n => (attr(n).scrollable === 'true' || attr(n).scrollable === true || ['Scroll','List'].includes(attr(n).type)) && (() => { try { bounds(n); return true; } catch { return false; } })());
         const scroll = candidates.sort((a, b) => { const x = bounds(a), y = bounds(b); return (y[2]-y[0])*(y[3]-y[1]) - (x[2]-x[0])*(x[3]-x[1]); })[0];
         if (!scroll) throw new Error(`当前页面没有可滚动区域：${text}`);
         const [x1,y1,x2,y2] = bounds(scroll), x = Math.round((x1+x2)/2);
@@ -109,7 +123,8 @@ export class Navigator {
     let scope;
     if (!searchOpen) {
       ({ scope } = await this.wait('N', s => titleIs(s, '通知和状态栏')));
-      const header = unique(find(scope, { type: 'HdsTitleBar' }));
+      const header = find(scope, { type: 'HdsTitleBar' }).at(-1);
+      if (!header) throw new Error('通知页面缺少标题栏');
       const [x1,,x2] = bounds(header);
       const buttons = find(header, { type: 'Button' }).filter(n => !attr(n).id && bounds(n)[0] > (x1+x2)/2);
       this.device.click(unique(buttons, '通知搜索按钮不唯一'));
@@ -151,11 +166,22 @@ export class Navigator {
       this.device.click(unique(find(scope, { id: 'hdsMoreMenuId' })));
     } else if (family === 'N' && route[0] === '通知和状态栏' && route.length === 2) {
       await this.notification(name);
-    } else { await this.entry(family, name); }
+    } else { await this.entry(family, name, route.length === 1); }
     await this.wait(family, s => this.isPage(s, family, route));
   }
   async parent() {
     const previous = this.route.slice(0, -1);
+    if (this.family === 'N' && previous.length === 0) {
+      const view = await this.wait('N', () => true);
+      const sidebar = find(view.scope, { type: 'NavBar' }).find(n => titleIs(n, '设置'));
+      if (sidebar) {
+        // Top-level detail destinations share the persistent sidebar. System
+        // Back can exit Settings rather than return to that already visible root.
+        this.route = previous;
+        if (this.onReturn) this.onReturn({ family: this.family, route: previous, ...view });
+        return;
+      }
+    }
     this.device.back();
     if (this.family === 'F' && previous.length === 1 && previous[0] === '更多') {
       // The menu is transient: leaving a selected destination returns to 我的.
