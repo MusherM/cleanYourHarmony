@@ -24,8 +24,7 @@ An evidence-backed catalog for reducing ads, feeds, marketing messages, and unso
 
 - `scripts/run.mjs`: a fixed semantic-route executor for page batches, screenshots, progress, and Do Not Disturb restoration; the normal path makes no model calls.
 - `operations.json`: 20 retained operations, UI Tree locator rules, target states, screenshot groups, app notifications, and exclusions.
-- `dev/`: locally generated reports and evidence, excluded from version control.
-- `report-template/`: the required JSON schema, validator, renderer, and HTML template.
+- `dev/device-run/`: local execution progress and evidence, excluded from version control.
 
 The current delivery covers the operation catalog and agent execution/acceptance guidance. Compatibility is limited to the device and versions stated in each report. HarmonyOS 5/6 compatibility requires separate device verification.
 
@@ -36,7 +35,7 @@ Give this repository to an agent that can operate your computer and connected ph
 Start the agent in this repository and send:
 
 ```text
-Read AGENTS.md, README_en.md, operations.json, and report-template/README_zh.md first.
+Read AGENTS.md, README_en.md, and operations.json first.
 Execute operations with default_selected set to true on the currently connected HarmonyOS phone.
 Run all 20 operations by default; there are no optional items or selection prompts. If multiple devices are connected, ask me to select one.
 Check and reuse host tools. If hdc, UI Tree/GUI tooling, or Node.js 18+ is missing, automatically install
@@ -45,14 +44,14 @@ Ask for help only with credentials, system permission prompts, phone authorizati
 If no phone is detected or authorization is missing, walk me through the README connection steps for developer mode,
 USB debugging, and computer authorization, then check again.
 Prefer UI Tree locators and state inspection. Use vision only when necessary and distinguish that fallback in the report.
-Mark already-satisfied operations as requiring no change. Mark missing targets, disabled controls,
-or changes that fail verification as execution failures.
+Mark already-satisfied operations as requiring no change. Mark notification apps without an exact search match as not found;
+mark other unlocatable targets, disabled controls, or changes that fail verification as execution failures.
 Keep the user experience improvement program in scope; report failure if it cannot be disabled.
 Batch operations by actual page; verify, capture screenshots, and persist progress immediately after execution.
 Share images across visible items. Re-enter only changed pages once locally; never repeat the entire run for verification or screenshots.
 Record the original Do Not Disturb state, enable it temporarily, and restore it on completion or failure; record the outcome.
-Generate actual JSON and HTML reports under the repository's report contract, including per-operation results,
-evidence, and uncovered scope. Historical records are references, not a substitute for verifying this device.
+Report successful and failed operations and failure reasons directly in text. List not-found and incomplete operations separately,
+and report Do Not Disturb restoration. Historical records are references, not a substitute for verifying this device.
 ```
 
 The agent should run the repository script first and handle unknown pages, overlays, or changed controls as exceptions. Accept results from evidence collected on the current device, not historical records.
@@ -107,6 +106,4 @@ Menu locations and restart behavior follow Huawei's official [developer options 
 
 ## Reports
 
-Read `report-template/README_zh.md`. Write actual records to the prescribed strict JSON, validate it, then render to a new output path. Keep raw temporary dumps/logs in `/tmp`; retain sanitized evidence needed to support the report.
-
-The agent generates reports from evidence captured during execution. Optional historical experiments retain their own instructions and are outside the default device workflow.
+The agent reads the current `progress.json` and evidence and reports in conversation which operations succeeded (including those requiring no change), which failed and why. List not-found and incomplete operations separately, and report Do Not Disturb restoration. Report only what was actually verified; do not create JSON or HTML reports or replay device actions for reporting. Keep temporary raw dumps and logs in `/tmp`, and retain progress and screenshots in the run's evidence directory for resumption and inspection.

@@ -1,1 +1,0 @@
-{"name":"cleanyourharmony-report-scene","private":true,"type":"module","scripts":{"build":"esbuild scene.js --bundle --format=iife --minify --outfile=scene.bundle.js","test":"node --test test.mjs"},"dependencies":{"three":"0.180.0"},"devDependencies":{"esbuild":"0.25.10"}}

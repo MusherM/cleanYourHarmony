@@ -1,13 +1,7 @@
-# 项目报告交付契约
+# 执行结果汇报
 
-- 本项目验收报告必须复用 `report-template/template.html`；先阅读 `report-template/README_zh.md`。
-- Agent 先输出严格 JSON，字段契约见 `report-template/report.schema.json`，格式参考 `example.json`。不得手写最终 HTML 或将 Markdown 代码围栏写入 JSON 文件。
-- 正式内容写入 `dev/<主题>/report_YYYY-MM-DD_HH-mm.json`；只填写实际记录。示例的时间与状态不可照搬。实际报告设 `mode: actual`。
-- 必须先运行 `node report-template/validate.mjs <json路径>`，退出码为 0 且输出 VALID 后，再运行 `node report-template/render.mjs <json路径> dev/<主题>/stage_report_YYYY-MM-DD_HH-mm.html`。生成器内置二次校验，且拒绝覆盖已有报告。
-- 时间、文件名、页面标题均使用北京时间；填写实际提交 SHA，没有 Git 仓库时写 `N/A：原因`。明确验证范围、环境、状态和未覆盖项，历史结果必须标明记录时间。
-- 构建、安装、启动、业务功能及回归分层记录；不得把上一级成功当作业务成功。通过和失败必须附可追溯证据说明（持久证据路径、采集时间，适用时附 SHA-256）。临时日志放 `/tmp`，不能将临时日志作为唯一持久证据。
-- 校验器只验证结构和状态一致性，不证明证据真实；交付前还须人工或工具核对证据内容，并打开生成页面检查展示。
-- 报告相关实现和文档位于 `report-template/`；保留原有历史报告。模板变更后运行 `node --test report-template/test.mjs`，并用新的输出路径生成预览。
+- 执行结束后读取本次 progress.json 和现场证据，直接在对话中用文字列出成功项目（含无需修改）、失败项目及具体原因；单独列出未找到和未完成项目，并说明勿扰恢复结果。
+- 只报告实际验证的状态，不把命令退出成功或项目未找到当作业务成功；证据不足时说明原因。无需生成 JSON 或 HTML 报告、运行报告校验器，或为报告重复操作设备。
 
 # 实机验证
 

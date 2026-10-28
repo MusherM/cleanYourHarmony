@@ -53,7 +53,7 @@
         "enabled": true,
         "checked": true,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -95,7 +95,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -137,7 +137,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -179,7 +179,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -221,7 +221,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -263,7 +263,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -305,7 +305,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -347,7 +347,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -389,7 +389,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -431,7 +431,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -473,7 +473,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -515,7 +515,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -557,7 +557,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -599,7 +599,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -641,7 +641,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -683,7 +683,7 @@
         "enabled": true,
         "checked": false,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -725,7 +725,7 @@
         "enabled": true,
         "checked": true,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -767,7 +767,7 @@
         "enabled": true,
         "checked": true,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -809,7 +809,7 @@
         "enabled": true,
         "checked": true,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     },
     {
@@ -851,7 +851,7 @@
         "enabled": false,
         "checked": true,
         "method": "ui_tree",
-        "report": "dev/reachability/stage_report_2026-10-27_11-00.html"
+        "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
       }
     }
   ],
