@@ -45,3 +45,5 @@ Evidence entries are plain text references: preferably project-relative paths, c
 - `alternate_3d_2026-10-27/`: a concurrently written scroll-driven 3D implementation, preserved unchanged for comparison.
 
 Run `node --test report-template/test.mjs` to check rejection, status consistency, escaping and file protection. Structural validation, visual checks and device acceptance are separate verification levels. This directory contains no device automation; historical reports remain in `dev/clean-settings/`.
+
+Use check status `not_found` for notification apps with no exact search result, with captured evidence. Reports count this separately from passed and failed; reports containing missing apps have overall status `partial`. Overlays, loading, and tool errors must not use this status.

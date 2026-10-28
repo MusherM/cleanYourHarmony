@@ -22,7 +22,7 @@
         "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]*$"},
         "name": {"type": "string", "minLength": 1},
         "level": {"enum": ["build", "install", "launch", "functional", "regression"]},
-        "status": {"enum": ["passed", "failed", "blocked", "not_tested"]},
+        "status": {"enum": ["passed", "failed", "blocked", "not_tested", "not_found"]},
         "expected": {"type": "string", "minLength": 1},
         "observed": {"type": "string", "minLength": 1},
         "evidence": {"type": "array", "items": {"type": "string", "minLength": 1}}

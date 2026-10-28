@@ -29,3 +29,10 @@ test('all report content survives rendering without decorative copy',()=>{
   const actual=clone();actual.mode='actual';assert.ok(!render(actual).includes('class="demo"'));
 });
 test('CLI rejects malformed/invalid JSON and protects output',()=>{const dir=mkdtempSync(join(tmpdir(),'harmony-report-'));try{const input=join(dir,'input.json'),output=join(dir,'out.html');const run=()=>spawnSync(process.execPath,[new URL('./render.mjs',import.meta.url).pathname,input,output],{encoding:'utf8'});writeFileSync(input,'{');assert.equal(run().status,1);assert.equal(existsSync(output),false);writeFileSync(input,JSON.stringify({...source,status:'passed'}));assert.equal(run().status,1);assert.equal(existsSync(output),false);writeFileSync(input,JSON.stringify(source));assert.equal(run().status,0);const before=readFileSync(output,'utf8');assert.equal(run().status,1);assert.equal(readFileSync(output,'utf8'),before);}finally{rmSync(dir,{recursive:true,force:true});}});
+test('missing app renders independently, requires evidence and cannot count as passed',()=>{
+  const d=clone();d.checks[0].status='not_found';d.status='partial';
+  assert.ok(validate(d).some(e=>e.includes('evidence')));
+  d.checks[0].evidence=['search screenshot: no exact result'];assert.deepEqual(validate(d),[]);
+  const html=render(d);assert.ok(html.includes('data-status="not_found"><strong>1</strong><span>未找到</span>'));
+  d.status='passed';assert.ok(validate(d).length);
+});

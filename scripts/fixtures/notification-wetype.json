@@ -1,0 +1,272 @@
+{
+  "attributes": {
+    "bounds": "[0,0][1320,2760]",
+    "checked": "",
+    "enabled": "",
+    "id": "",
+    "text": "",
+    "type": ""
+  },
+  "children": [
+    {
+      "attributes": {
+        "bounds": "[0,146][1320,1703]",
+        "bundleName": "com.huawei.hmos.settings",
+        "checked": "false",
+        "enabled": "true",
+        "id": "",
+        "text": "",
+        "type": "root",
+        "visible": "true"
+      },
+      "children": [
+        {
+          "attributes": {
+            "bounds": "[0,146][1320,1703]",
+            "checked": "false",
+            "enabled": "true",
+            "id": "",
+            "text": "",
+            "type": "Navigation",
+            "visible": "true"
+          },
+          "children": [
+            {
+              "attributes": {
+                "bounds": "[0,146][1320,1703]",
+                "checked": "false",
+                "enabled": "true",
+                "id": "",
+                "text": "",
+                "type": "NavigationContent",
+                "visible": "true"
+              },
+              "children": [
+                {
+                  "attributes": {
+                    "bounds": "[0,146][1320,1703]",
+                    "checked": "false",
+                    "enabled": "true",
+                    "id": "",
+                    "text": "",
+                    "type": "NavDestination",
+                    "visible": "true"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "bounds": "[0,146][1320,1703]",
+                        "checked": "false",
+                        "enabled": "true",
+                        "id": "",
+                        "text": "",
+                        "type": "NavDestinationContent",
+                        "visible": "true"
+                      },
+                      "children": [
+                        {
+                          "attributes": {
+                            "bounds": "[0,146][1320,1703]",
+                            "checked": "false",
+                            "enabled": "true",
+                            "id": "",
+                            "text": "",
+                            "type": "UIExtensionComponent",
+                            "visible": "true"
+                          },
+                          "children": [
+                            {
+                              "attributes": {
+                                "bounds": "[0,146][1320,1703]",
+                                "checked": "false",
+                                "enabled": "true",
+                                "id": "",
+                                "text": "",
+                                "type": "root",
+                                "visible": "true"
+                              },
+                              "children": [
+                                {
+                                  "attributes": {
+                                    "bounds": "[0,146][1320,1703]",
+                                    "checked": "false",
+                                    "enabled": "true",
+                                    "id": "",
+                                    "text": "",
+                                    "type": "Navigation",
+                                    "visible": "true"
+                                  },
+                                  "children": [
+                                    {
+                                      "attributes": {
+                                        "bounds": "[0,146][1320,1703]",
+                                        "checked": "false",
+                                        "enabled": "true",
+                                        "id": "",
+                                        "text": "",
+                                        "type": "NavigationContent",
+                                        "visible": "true"
+                                      },
+                                      "children": [
+                                        {
+                                          "attributes": {
+                                            "bounds": "[0,146][1320,1703]",
+                                            "checked": "false",
+                                            "enabled": "true",
+                                            "id": "",
+                                            "text": "",
+                                            "type": "NavDestination",
+                                            "visible": "true"
+                                          },
+                                          "children": [
+                                            {
+                                              "attributes": {
+                                                "bounds": "[0,146][1320,328]",
+                                                "checked": "false",
+                                                "enabled": "true",
+                                                "id": "",
+                                                "text": "",
+                                                "type": "TitleBar",
+                                                "visible": "true"
+                                              },
+                                              "children": [
+                                                {
+                                                  "attributes": {
+                                                    "bounds": "[0,146][1320,328]",
+                                                    "checked": "false",
+                                                    "enabled": "true",
+                                                    "id": "HdsTitleBar",
+                                                    "text": "",
+                                                    "type": "HdsTitleBar",
+                                                    "visible": "true"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "attributes": {
+                                                        "bounds": "[0,146][1320,328]",
+                                                        "checked": "false",
+                                                        "enabled": "true",
+                                                        "id": "",
+                                                        "text": "",
+                                                        "type": "StackCustomNode",
+                                                        "visible": "true"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "attributes": {
+                                                            "bounds": "[0,172][1320,302]",
+                                                            "checked": "false",
+                                                            "enabled": "true",
+                                                            "id": "",
+                                                            "text": "",
+                                                            "type": "Row",
+                                                            "visible": "true"
+                                                          },
+                                                          "children": [
+                                                            {
+                                                              "attributes": {
+                                                                "bounds": "[208,172][1268,302]",
+                                                                "checked": "false",
+                                                                "enabled": "true",
+                                                                "id": "NtfSearchPage_searchComponent",
+                                                                "text": "",
+                                                                "type": "Search",
+                                                                "visible": "true"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "attributes": {
+                                                                    "bounds": "[325,172][1164,302]",
+                                                                    "checked": "false",
+                                                                    "enabled": "true",
+                                                                    "id": "__SearchField__NtfSearchPage_searchComponent",
+                                                                    "text": "",
+                                                                    "type": "SearchField",
+                                                                    "visible": "true"
+                                                                  },
+                                                                  "children": []
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "bounds": "[0,0][1320,146]",
+        "bundleName": "com.ohos.sceneboard",
+        "checked": "false",
+        "enabled": "true",
+        "id": "session27",
+        "text": "",
+        "type": "WindowScene",
+        "visible": "true"
+      },
+      "children": [
+        {
+          "attributes": {
+            "bounds": "[0,0][1320,146]",
+            "checked": "false",
+            "enabled": "true",
+            "id": "StatusBarBox",
+            "text": "",
+            "type": "__Common__",
+            "visible": "true"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "bounds": "[0,146][1320,2760]",
+        "bundleName": "com.tencent.wetype.hmos",
+        "checked": "false",
+        "enabled": "true",
+        "id": "",
+        "text": "",
+        "type": "root",
+        "visible": "true"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "bounds": "[0,146][1320,1703]",
+        "bundleName": "com.ohos.sceneboard",
+        "checked": "false",
+        "enabled": "true",
+        "id": "keyboardPanel31",
+        "text": "",
+        "type": "WindowScene",
+        "visible": "true"
+      },
+      "children": []
+    }
+  ]
+}

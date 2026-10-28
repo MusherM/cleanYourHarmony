@@ -35,7 +35,7 @@ export function validate(data) {
   for (const [i, check] of data.checks.entries()) {
     if (ids.has(check.id)) errors.push(`$.checks[${i}].id: 重复 ID`);
     ids.add(check.id);
-    if (['passed','failed'].includes(check.status) && !check.evidence.length) errors.push(`$.checks[${i}].evidence: 已验证结论必须附证据`);
+    if (['passed','failed','not_found'].includes(check.status) && !check.evidence.length) errors.push(`$.checks[${i}].evidence: 已验证结论必须附证据`);
   }
   const states = data.checks.map(x => x.status);
   const expected = states.every(x => x === 'passed') ? 'passed' : states.every(x => x === 'not_tested') ? 'not_tested' : states.every(x => ['blocked','not_tested'].includes(x)) ? 'blocked' : 'partial';

@@ -1,7 +1,19 @@
 {
   "schema_version": 1,
   "purpose": "关闭广告、信息流、营销推广和非必要内容推荐，保留正常信息展示及实用服务。",
-  "verification_scope": "本轮只验证设置入口及 UI Tree 控件可达性，不执行开关修改。系统/应用版本需逐机核对。",
+  "verification_scope": "last_verification 仅为历史入口及 UI Tree 控件可达性记录，不代表本次执行结果；按 execution_policy 对当前设备的选中项目执行并现场取证。系统/应用版本需逐机核对。",
+  "execution_policy": {
+    "scope": "Agent 与固定路线脚本的共同执行契约；入口 scripts/run.mjs，详细规则见 README.md。",
+    "navigation": "复用 path/locator 预设语义路线及最近父页；按当前树匹配应用、前台页面及唯一目标，可单次工具调用串行导航，失败立即停止。旧树、节点序号及绝对坐标不得作为跨页面或跨运行点击依据。",
+    "batching": "按选中项目、应用及实际页面合并；screenshot.group 仅是证据分组。页面未变化时复用当次树并一次提取所需字段。",
+    "verification": "每次修改后刷新状态并立即留证；仅发生修改的页面在本页批次结束时就地重进一次，验证已修改项目。已满足目标只现场取证，不强制重进；禁止全量第二遍复查。",
+    "evidence": "按当前页处理→验证→截图落盘→持久进度→离开执行。滚动前保存即将离开视口的结果；失败原地处理，禁止完成全部操作后从头补拍。F01/F02 子页即时留证，正常回到父页时补 G03 合照。",
+    "progress": "设备操作前创建 dev/<主题>/evidence_<北京时间>/progress.json；逐页保存设备/版本、授权项目、当前页、修改前后状态、截图相对路径、采集时间、SHA-256、重进状态及勿扰恢复标记。恢复只推进未完成项，先核对设备和当前状态。",
+    "do_not_disturb": "先记录原状态；关闭时临时开启并验证，原已开启则保持。结束、失败及可捕获中断时恢复本次修改并验证；强制终止保留待恢复标记。原状态未知不猜测，开启/恢复失败单独记录。不改日程、例外及通知权限，仍检测遮挡。",
+    "recovery": "新解析器先离线检查保存的树；状态等待设超时。失败先查看当前树和截图，定位原因后最多一次针对性恢复，仍失败则记录并继续独立项目。命令退出码、业务成功标记、文件新鲜度和预期页面分别检查。",
+    "tool_setup": "Agent 先检测并复用可用工具；缺少 hdc、UI Tree/GUI 操作能力或 Node.js 18+ 时从官方来源自动安装适配当前系统与架构的版本并验证。仅将凭据、系统权限、手机授权或无法自行解决的环境阻塞交给用户。",
+    "selection": "默认直接执行全部20项，包括视频、音乐、阅读的系统通知，不设可选项，不询问选择。"
+  },
   "operations": [
     {
       "id": "B01",
@@ -18,7 +30,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -60,7 +72,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -102,7 +114,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -144,7 +156,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -186,7 +198,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -228,7 +240,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -270,7 +282,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -312,7 +324,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -354,7 +366,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -396,7 +408,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -438,7 +450,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -480,7 +492,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -510,7 +522,7 @@
       "id": "N04",
       "name": "关闭视频系统通知",
       "path": "设置 → 通知和状态栏 → 视频",
-      "default_selected": false,
+      "default_selected": true,
       "target": {
         "checked": false
       },
@@ -522,7 +534,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -552,7 +564,7 @@
       "id": "N05",
       "name": "关闭音乐系统通知",
       "path": "设置 → 通知和状态栏 → 音乐",
-      "default_selected": false,
+      "default_selected": true,
       "target": {
         "checked": false
       },
@@ -564,7 +576,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -606,7 +618,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -636,7 +648,7 @@
       "id": "N07",
       "name": "关闭阅读系统通知",
       "path": "设置 → 通知和状态栏 → 阅读",
-      "default_selected": false,
+      "default_selected": true,
       "target": {
         "checked": false
       },
@@ -648,7 +660,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -690,7 +702,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -732,7 +744,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -774,7 +786,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [
@@ -816,7 +828,7 @@
       "execution": {
         "method": "ui_tree_first",
         "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
-        "after_click": "重新取树核对，再离开页面重进验证；失败不自动重放 Toggle。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
         "failure_policy": {
           "status": "failed",
           "when": [

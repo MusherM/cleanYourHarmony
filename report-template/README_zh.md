@@ -43,3 +43,5 @@ node report-template/render.mjs dev/<主题>/report_YYYY-MM-DD_HH-mm.json dev/<�
 - `alternate_3d_2026-10-27/`：并行写入的另一套 3D 滚动实现，原样保留，仅用于对照。
 
 运行 `node --test report-template/test.mjs` 检查错误拒绝、状态一致性、内容转义和文件保护。结构校验、页面展示检查、设备业务验收是不同层级，互不替代。此目录不含设备执行工具；历史报告仍在 `dev/clean-settings/`。
+
+通知应用搜索无精确匹配时使用检查项状态 `not_found`（未找到），必须附现场证据；报告单独计数，不计为通过或失败。含未找到项的总状态为 `partial`。遮挡、加载或工具错误不能使用此状态。
