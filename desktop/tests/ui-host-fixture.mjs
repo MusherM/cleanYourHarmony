@@ -17,8 +17,10 @@ function finish(cancelled) {
   emit({event:'progress',...result}); emit({id:request.id,result}); request=null; emit({event:'idle',recoverable:[]});
 }
 emit({event:'ready',recoverable:[]});
+process.stderr.write('UI fixture ready\n');
 for await(const line of readline.createInterface({input:process.stdin})) {
   const m=JSON.parse(line);
+  process.stderr.write(`UI fixture request: ${m.method}\n`);
   switch(m.method) {
     case 'catalog': emit({id:m.id,result:catalog}); break;
     case 'devices': emit({id:m.id,result:[{id:'fixture-device',status:'Connected',model:'UI TEST DEVICE',software:'fixture'}]}); emit({event:'idle',recoverable:[]}); break;

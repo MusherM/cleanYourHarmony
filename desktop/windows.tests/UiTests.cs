@@ -55,8 +55,17 @@ public sealed class UiTests
             {
                 string output = Environment.GetEnvironmentVariable("CYH_UI_DIAGNOSTICS") ?? Path.GetTempPath();
                 Directory.CreateDirectory(output);
-                var lines = new List<string>();
-                if (app != null && automation != null) foreach (var candidate in app.GetAllTopLevelWindows(automation))
+                var lines = new List<string> { $"Interactive={Environment.UserInteractive}; testSession={Process.GetCurrentProcess().SessionId}" };
+                var candidates = new List<AutomationElement>();
+                if (app != null && automation != null)
+                {
+                    lines.Add($"App pid={app.ProcessId} exited={app.HasExited} hwnd={app.MainWindowHandle}");
+                    foreach (var top in automation.GetDesktop().FindAllChildren())
+                        lines.Add($"Desktop child pid={top.Properties.ProcessId.Value} type={top.ControlType} name={top.Name} class={top.ClassName}");
+                    candidates.AddRange(app.GetAllTopLevelWindows(automation));
+                    if (app.MainWindowHandle != IntPtr.Zero) candidates.Add(automation.FromHandle(app.MainWindowHandle));
+                }
+                foreach (var candidate in candidates)
                 {
                     lines.Add($"Window name={candidate.Name} class={candidate.ClassName} bounds={candidate.BoundingRectangle} offscreen={candidate.IsOffscreen}");
                     foreach (var element in candidate.FindAllDescendants())
@@ -64,7 +73,8 @@ public sealed class UiTests
                     if (!candidate.IsOffscreen && candidate.ActualWidth > 0 && candidate.ActualHeight > 0)
                     {
                         string screenshot = Path.Combine(output, $"{TestContext.CurrentContext.Test.Name}-{Guid.NewGuid():N}.png");
-                        candidate.CaptureToFile(screenshot); TestContext.AddTestAttachment(screenshot);
+                        try { candidate.CaptureToFile(screenshot); TestContext.AddTestAttachment(screenshot); }
+                        catch (Exception e) { lines.Add("Screenshot failed: " + e.Message); }
                     }
                 }
                 string log = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "cleanYourHarmony", "desktop.log");
