@@ -126,7 +126,7 @@ import Testing
 
         // Scroll from the first section to the last without switching categories.
         let wheel = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1, wheel1: -2000, wheel2: 0, wheel3: 0))
-        scroll.scrollWheel(try #require(NSEvent(cgEvent: wheel)))
+        scroll.scrollWheel(with: try #require(NSEvent(cgEvent: wheel)))
         try await waitForScroll(scroll) { $0 > 500 }
         #expect(scroll.contentView.bounds.origin.y > 500)
         #expect(elements(window).contains { $0.accessibilityIdentifier() == "select-B01" })
