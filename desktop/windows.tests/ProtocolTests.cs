@@ -12,7 +12,8 @@ public sealed class ProtocolTests
         Assert.That(root, Is.Not.Null.And.Not.Empty, "Run desktop/tests/windows.ps1 first");
         string data = Path.Combine(Path.GetTempPath(), "cyh 协议 " + Guid.NewGuid());
         var client = new EngineClient();
-        var ready = new TaskCompletionSource(), exited = new TaskCompletionSource();
+        var ready = new TaskCompletionSource();
+        var exited = new TaskCompletionSource();
         client.Event += value => { if (value["event"]?.GetValue<string>() == "ready") ready.TrySetResult(); };
         client.Exited += () => exited.TrySetResult();
         try
