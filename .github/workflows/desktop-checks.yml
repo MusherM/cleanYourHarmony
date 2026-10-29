@@ -32,8 +32,6 @@ jobs:
         with:
           node-version: 24.22.2
       - run: ./desktop/tests/windows.ps1 -Results "${{ runner.temp }}/cyh-windows-test-results"
-      - if: failure()
-        run: ./desktop/tests/diagnose-startup.ps1 -Results "${{ runner.temp }}/cyh-windows-test-results"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

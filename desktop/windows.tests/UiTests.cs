@@ -73,7 +73,7 @@ public sealed class UiTests
                 {
                     lines.Add($"Window name={candidate.Name} class={candidate.ClassName} bounds={candidate.BoundingRectangle} offscreen={candidate.IsOffscreen}");
                     foreach (var element in candidate.FindAllDescendants())
-                        lines.Add($"UIA {element.ControlType} id={element.AutomationId} name={element.Name} offscreen={element.IsOffscreen}");
+                        lines.Add($"UIA {element.ControlType} id={element.Properties.AutomationId.ValueOrDefault} name={element.Name} offscreen={element.IsOffscreen}");
                     if (!candidate.IsOffscreen && candidate.ActualWidth > 0 && candidate.ActualHeight > 0)
                     {
                         string screenshot = Path.Combine(output, $"{TestContext.CurrentContext.Test.Name}-{Guid.NewGuid():N}.png");
@@ -110,7 +110,7 @@ public sealed class UiTests
     {
         Invoke("clear-group-browser");
         Until(() => Find("selection-count").Name == "已选 17 项", "Group deselection count incorrect");
-        Assert.That(window.FindAllDescendants().Any(e => e.AutomationId.StartsWith("target-")), Is.False);
+        Assert.That(window.FindAllDescendants().Any(e => e.Properties.AutomationId.ValueOrDefault?.StartsWith("target-") == true), Is.False);
         Assert.That(Find("select-F01").AsCheckBox().IsChecked, Is.True);
         Invoke("clear-all"); Until(() => !Find("execute").IsEnabled, "Empty selection can execute");
         Invoke("select-group-browser");

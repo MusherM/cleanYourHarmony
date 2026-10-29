@@ -36,7 +36,6 @@ try {
     Check-Exit 'Real host protocol tests'
     Copy-Item desktop/tests/ui-host-fixture.mjs (Join-Path $engine 'scripts/desktop-host.mjs') -Force
     $env:CYH_UI_APP = Join-Path $app 'CleanYourHarmony.exe'
-    $env:CYH_UI_APP | Set-Content (Join-Path $Results 'test-app.txt')
     & dotnet test desktop/windows.tests/Desktop.Tests.csproj --filter FullyQualifiedName~UiTests --logger 'trx;LogFileName=ui.trx' --results-directory $Results 2>&1 | Tee-Object (Join-Path $Results 'ui.log')
     Check-Exit 'Native UI automation'
 } finally {
