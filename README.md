@@ -65,7 +65,7 @@ powershell -File desktop/tests/windows.ps1
 
 两端入口先运行共享执行器的行为测试，再运行原生客户端协议与界面测试。macOS 使用 Apple Swift Testing，通过真实 SwiftUI 控件的无障碍动作验证列表、分组选择、默认目标传递、锁定和停止；Windows 使用 NUnit、FlaUI UIA3 操作发布后的 WinUI 应用。协议测试启动真实 Node 执行器，核对并发请求、中文数据、错误回复和正常退出。界面执行测试使用隔离的模拟设备进程，不操作手机，不能代替 USB 驱动、安装包或实机验收。
 
-测试在临时目录保存日志和 JUnit／TRX 结果；缺少依赖、控件定位失败或超时会使测试失败，不以跳过代替通过。CI 对 macOS 和 Windows 分别执行同一入口并上传结果。2026-10-29 本次单复选框界面已在 macOS arm64 通过 56 项共享测试和 6 项原生测试，零失败、零跳过。Windows 套件尚待实际运行，不能据此宣称 Windows 已通过。
+测试在临时目录保存日志和 JUnit／TRX 结果；缺少依赖、控件定位失败或超时会使测试失败，不以跳过代替通过。CI 对 macOS 和 Windows 分别执行同一入口并上传结果。2026-10-29 本次单复选框界面已在 macOS arm64 通过 56 项共享测试和 6 项原生测试，零失败、零跳过。双端持续验证结果见 [Desktop checks](https://github.com/MusherM/cleanYourHarmony/actions/workflows/desktop-checks.yml)，具体运行环境以对应日志为准；CI 通过不等于 Windows 11 的安装、USB 驱动或实机业务验收通过。
 
 ### 本地通信与兼容性
 

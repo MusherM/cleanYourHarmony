@@ -25,10 +25,10 @@ internal sealed class EngineClient
         foreach (string value in new[] { host, "--hdc", hdc, "--data-dir", DataRoot }) info.ArgumentList.Add(value);
         process = new Process { StartInfo = info };
         process.Start();
-        _ = ReadOutput(process);
-        _ = ReadErrors(process);
+        var errors = ReadErrors(process);
+        _ = ReadOutput(process, errors);
     }
-    private async Task ReadOutput(Process child)
+    private async Task ReadOutput(Process child, Task errors)
     {
         try
         {
@@ -48,6 +48,7 @@ internal sealed class EngineClient
         finally
         {
             lock (pending) { foreach (var completion in pending.Values) completion.TrySetException(new IOException("执行器连接已断开")); pending.Clear(); }
+            await Task.WhenAll(child.WaitForExitAsync(), errors);
             Exited?.Invoke();
         }
     }

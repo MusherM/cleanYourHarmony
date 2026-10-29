@@ -80,6 +80,10 @@ import Testing
         #expect(selected[0]["target"] as? String == "simple")
         #expect(selected[1]["target"] as? Bool == false)
         #expect(selected[2]["target"] as? Bool == false)
+        // The model completes before SwiftUI has necessarily rendered its next frame.
+        try await ProtocolTests().waitFor("execute button after completion", {
+            elements(window).contains { $0.accessibilityIdentifier() == "execute" && $0.isAccessibilityEnabled() }
+        })
         #expect(try element("execute", in: window).accessibilityPerformPress())
         try await settle()
         #expect(try element("stop", in: window).accessibilityPerformPress())
