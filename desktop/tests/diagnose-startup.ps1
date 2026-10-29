@@ -1,7 +1,7 @@
 param([Parameter(Mandatory=$true)][string]$Results)
 $ErrorActionPreference = 'Stop'
-$uiLog = Join-Path $Results 'ui.log'
-if (!(Test-Path $uiLog) -or !(Select-String -Path $uiLog -Pattern '0xC000027B' -Quiet)) { exit 0 }
+$diagnostics = Get-ChildItem $Results -File | Where-Object { $_.Extension -in @('.txt', '.log') }
+if (!($diagnostics | Select-String -Pattern 'C000027B' -Quiet)) { exit 0 }
 $cdb = "${env:ProgramFiles(x86)}/Windows Kits/10/Debuggers/x64/cdb.exe"
 if (!(Test-Path $cdb)) {
     $installer = Join-Path $env:TEMP 'cyh-debuggers-setup.exe'

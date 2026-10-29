@@ -25,6 +25,16 @@ import Testing
         func accessibilityPerformPress() -> Bool { boolean("accessibilityPerformPress") }
     }
     func settle() async throws { try await Task.sleep(for: .milliseconds(250)) }
+    func waitForScroll(_ scroll: NSScrollView, matching condition: (CGFloat) -> Bool) async throws {
+        var previous = scroll.contentView.bounds.origin.y
+        var stableSamples = 0
+        try await ProtocolTests().waitFor("scroll animation reached a stable destination", {
+            let position = scroll.contentView.bounds.origin.y
+            stableSamples = condition(position) && abs(position - previous) < 0.1 ? stableSamples + 1 : 0
+            previous = position
+            return stableSamples >= 3
+        })
+    }
 
     func elements(_ root: Any) -> [Accessible] {
         guard let node = root as? NSObject else { return [] }
@@ -105,25 +115,25 @@ import Testing
         #expect(checkboxes.count == 20)
         let initial = scroll.contentView.bounds.origin.y
         #expect(try element("nav-system", in: window).accessibilityPerformPress())
-        try await settle()
+        try await waitForScroll(scroll) { $0 > initial + 500 }
         #expect(scroll.contentView.bounds.origin.y > initial + 500)
         #expect(try element("select-P01", in: window).accessibilityPerformPress())
         #expect(!model.items.first { $0.id == "P01" }!.selected)
         #expect(try element("nav-browser", in: window).accessibilityPerformPress())
-        try await settle()
+        try await waitForScroll(scroll) { abs($0 - initial) < 4 }
         #expect(abs(scroll.contentView.bounds.origin.y - initial) < 4)
         #expect(!model.items.first { $0.id == "P01" }!.selected)
 
         // Scroll from the first section to the last without switching categories.
         scroll.contentView.scroll(to: NSPoint(x: 0, y: scroll.documentView!.frame.height - scroll.contentView.bounds.height))
         scroll.reflectScrolledClipView(scroll.contentView)
-        try await settle()
+        try await waitForScroll(scroll) { $0 > 500 }
         #expect(scroll.contentView.bounds.origin.y > 500)
         #expect(elements(window).contains { $0.accessibilityIdentifier() == "select-B01" })
         #expect(elements(window).contains { $0.accessibilityIdentifier() == "select-P01" })
         // Pressing the already selected category must still navigate.
         #expect(try element("nav-browser", in: window).accessibilityPerformPress())
-        try await settle()
+        try await waitForScroll(scroll) { abs($0 - initial) < 4 }
         #expect(abs(scroll.contentView.bounds.origin.y - initial) < 4)
 
         #expect(try element("clear-group-browser", in: window).accessibilityPerformPress())
