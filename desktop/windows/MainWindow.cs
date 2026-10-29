@@ -38,14 +38,19 @@ public sealed class MainWindow : Window
     public MainWindow()
     {
         Title = "cleanYourHarmony";
+        App.StartupTrace("Resizing window");
         AppWindow.Resize(new SizeInt32(1180, 880));
+        App.StartupTrace("Building layout");
         BuildLayout();
+        App.StartupTrace("Attaching backdrop");
         if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported()) SystemBackdrop = new MicaBackdrop();
         engine.Event += data => DispatcherQueue.TryEnqueue(() => OnEvent(data));
         engine.Exited += () => DispatcherQueue.TryEnqueue(() => { ready = false; working = false; discovering = false; message.Text = "执行器已退出；重新打开应用可检查未完成任务。"; UpdateControls(); if (closing) { allowClose = true; Close(); } });
         AppWindow.Closing += (sender, e) => { if (allowClose || !engine.Running) return; e.Cancel = true; closing = true; timer.Stop(); _ = CloseSafely(); };
         timer.Tick += async (_, _) => await Refresh();
+        App.StartupTrace("Starting engine");
         try { engine.Start(); timer.Start(); } catch (Exception e) { message.Text = e.Message; }
+        App.StartupTrace("Constructor complete");
     }
     private static TextBlock Label(string text, double size) => new() { Text = text, FontSize = size, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
     private Button Action(string title, Action action, bool editing = true)
@@ -149,7 +154,7 @@ public sealed class MainWindow : Window
         if (!devices.Any(d => d?["id"]?.GetValue<string>() == deviceId)) deviceId = devices.Count == 1 ? devices[0]!["id"]!.GetValue<string>() : "";
         rendering = true; devicePicker.Items.Clear();
         foreach (var device in devices) { var item = new ComboBoxItem { Content = device!["model"]?.GetValue<string>() is { Length: > 0 } name ? name : device["id"]!.GetValue<string>(), Tag = device["id"]!.GetValue<string>() }; devicePicker.Items.Add(item); if ((string)item.Tag == deviceId) devicePicker.SelectedItem = item; }
-        rendering = false; ShowDevice(); UpdateControls(); ShowRecovery();
+        rendering = false; discovering = false; ShowDevice(); UpdateControls(); ShowRecovery();
     }
     private JsonNode? Device => devices.FirstOrDefault(d => d?["id"]?.GetValue<string>() == deviceId);
     private bool DeviceReady => Device?["status"]?.GetValue<string>() == "Connected" && Device?["error"] == null && Device?["model"]?.GetValue<string>() is { Length: > 0 };
