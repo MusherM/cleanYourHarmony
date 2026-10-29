@@ -1,5 +1,6 @@
 param([string]$Results = (Join-Path $env:TEMP 'cyh-windows-test-results'))
 $ErrorActionPreference = 'Stop'
+$started = Get-Date
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $work = Join-Path $env:TEMP ('cyh 测试 ' + [guid]::NewGuid())
 New-Item -ItemType Directory -Force $work, $Results | Out-Null
@@ -29,6 +30,13 @@ try {
     & dotnet test desktop/windows.tests/Desktop.Tests.csproj --filter FullyQualifiedName~UiTests --logger 'trx;LogFileName=ui.trx' --results-directory $Results 2>&1 | Tee-Object (Join-Path $Results 'ui.log')
     Check-Exit 'Native UI automation'
 } finally {
+    foreach ($name in @('app-crash.log', 'desktop.log')) {
+        $log = Join-Path $env:LOCALAPPDATA "cleanYourHarmony/$name"
+        if (Test-Path $log) { Copy-Item $log (Join-Path $Results $name) }
+    }
+    Get-WinEvent -FilterHashtable @{LogName='Application'; StartTime=$started} -ErrorAction SilentlyContinue |
+        Where-Object { $_.ProviderName -in @('.NET Runtime', 'Application Error', 'Windows Error Reporting') } |
+        Format-List TimeCreated, ProviderName, Id, Message | Out-File (Join-Path $Results 'application-events.log')
     Pop-Location
     Remove-Item Env:CYH_UI_APP, Env:CYH_PROTOCOL_APP, Env:CYH_UI_DIAGNOSTICS -ErrorAction SilentlyContinue
     # Keep failed test binaries for diagnosis; temporary and outside the repo.

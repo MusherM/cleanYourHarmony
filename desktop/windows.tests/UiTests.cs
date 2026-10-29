@@ -38,8 +38,11 @@ public sealed class UiTests
         var info = new ProcessStartInfo(executable!) { UseShellExecute = false };
         info.Environment["CYH_UI_CAPTURE"] = capture;
         automation = new UIA3Automation(); app = Application.Launch(info);
-        Until(() => (window = app.GetAllTopLevelWindows(automation).FirstOrDefault(w =>
-            w.Name == "cleanYourHarmony" && w.FindFirstDescendant(c => c.ByAutomationId("settings-list")) != null)!) != null,
+        Until(() => {
+            if (app.HasExited) Assert.Fail($"App exited before showing settings: 0x{app.ExitCode:X8}");
+            return (window = app.GetAllTopLevelWindows(automation).FirstOrDefault(w =>
+                w.Name == "cleanYourHarmony" && w.FindFirstDescendant(c => c.ByAutomationId("settings-list")) != null)!) != null;
+        },
             "App did not expose its settings window");
         Until(() => window.FindFirstDescendant(c => c.ByAutomationId("select-B01")) != null, "Catalog was not rendered");
         Until(() => Find("execute").IsEnabled, "Fixture device did not become ready");
@@ -60,6 +63,7 @@ public sealed class UiTests
                 if (app != null && automation != null)
                 {
                     lines.Add($"App pid={app.ProcessId} exited={app.HasExited} hwnd={app.MainWindowHandle}");
+                    if (app.HasExited) lines.Add($"Exit code=0x{app.ExitCode:X8}");
                     foreach (var top in automation.GetDesktop().FindAllChildren())
                         lines.Add($"Desktop child pid={top.Properties.ProcessId.Value} type={top.ControlType} name={top.Name} class={top.ClassName}");
                     candidates.AddRange(app.GetAllTopLevelWindows(automation));
