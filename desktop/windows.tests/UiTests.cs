@@ -38,7 +38,9 @@ public sealed class UiTests
         var info = new ProcessStartInfo(executable!) { UseShellExecute = false };
         info.Environment["CYH_UI_CAPTURE"] = capture;
         automation = new UIA3Automation(); app = Application.Launch(info);
-        Until(() => (window = app.GetMainWindow(automation, TimeSpan.FromMilliseconds(100))) != null, "App did not open a window");
+        Until(() => (window = app.GetAllTopLevelWindows(automation).FirstOrDefault(w =>
+            w.Name == "cleanYourHarmony" && w.FindFirstDescendant(c => c.ByAutomationId("settings-list")) != null)!) != null,
+            "App did not expose its settings window");
         Until(() => window.FindFirstDescendant(c => c.ByAutomationId("select-B01")) != null, "Catalog was not rendered");
         Until(() => Find("execute").IsEnabled, "Fixture device did not become ready");
         }
@@ -51,15 +53,29 @@ public sealed class UiTests
         {
             try
             {
-                if (window != null) foreach (var element in window.FindAllDescendants())
-                    TestContext.Progress.WriteLine($"UIA {element.ControlType} id={element.AutomationId} name={element.Name} offscreen={element.IsOffscreen}");
+                string output = Environment.GetEnvironmentVariable("CYH_UI_DIAGNOSTICS") ?? Path.GetTempPath();
+                Directory.CreateDirectory(output);
+                var lines = new List<string>();
+                if (app != null && automation != null) foreach (var candidate in app.GetAllTopLevelWindows(automation))
+                {
+                    lines.Add($"Window name={candidate.Name} class={candidate.ClassName} bounds={candidate.BoundingRectangle} offscreen={candidate.IsOffscreen}");
+                    foreach (var element in candidate.FindAllDescendants())
+                        lines.Add($"UIA {element.ControlType} id={element.AutomationId} name={element.Name} offscreen={element.IsOffscreen}");
+                    if (!candidate.IsOffscreen && candidate.ActualWidth > 0 && candidate.ActualHeight > 0)
+                    {
+                        string screenshot = Path.Combine(output, $"{TestContext.CurrentContext.Test.Name}-{Guid.NewGuid():N}.png");
+                        candidate.CaptureToFile(screenshot); TestContext.AddTestAttachment(screenshot);
+                    }
+                }
                 string log = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "cleanYourHarmony", "desktop.log");
-                if (File.Exists(log)) TestContext.Progress.WriteLine("Engine log:\n" + File.ReadAllText(log));
+                if (File.Exists(log)) lines.Add("Engine log:\n" + File.ReadAllText(log));
+                string diagnostics = Path.Combine(output, TestContext.CurrentContext.Test.Name + ".txt");
+                File.WriteAllLines(diagnostics, lines); TestContext.AddTestAttachment(diagnostics);
             }
             catch (Exception e) { TestContext.Progress.WriteLine("Diagnostics unavailable: " + e.Message); }
         }
         try { if (app != null && !app.HasExited && !(closedNormally = app.Close(false))) app.Kill(); }
-        finally { automation?.Dispose(); app?.Dispose(); if (File.Exists(capture)) File.Delete(capture); }
+        finally { automation?.Dispose(); app?.Dispose(); automation = null!; app = null!; window = null!; if (File.Exists(capture)) File.Delete(capture); }
         Assert.That(closedNormally, Is.True, "Application did not close gracefully");
     }
     [Test] public void AllTwentyRowsRemainInOneScrollableDocumentAndNavigationPreservesEdits()
