@@ -10,7 +10,7 @@ using Application = FlaUI.Core.Application;
 
 namespace CleanYourHarmony.Tests;
 
-[TestFixture, NonParallelizable, Apartment(ApartmentState.STA)]
+[TestFixture, NonParallelizable, Apartment(ApartmentState.MTA)]
 public sealed class UiTests
 {
     private Application app = null!;
