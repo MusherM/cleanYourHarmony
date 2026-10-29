@@ -1,0 +1,39 @@
+name: Desktop checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  macos-native:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+      - run: bash desktop/tests/macos.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: macos-native-results
+          path: /tmp/cyh-macos-test-results
+  windows-native:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+      - run: ./desktop/tests/windows.ps1 -Results "${{ runner.temp }}/cyh-windows-test-results"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-native-results
+          path: ${{ runner.temp }}/cyh-windows-test-results

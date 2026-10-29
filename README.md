@@ -2,7 +2,76 @@
 
 English: [README_en.md](README_en.md)
 
-已经是 AI 时代了我的朋友，为什么你还在看 README，请你直接复制本仓库的地址然后交给 Agent 执行吧。也许唯一需要你操作的就是连续点击版本号，打开 usb 调试，然后链接电脑后信任设备。
+鸿蒙手机设置工具，提供 macOS 原生界面（SwiftUI）和 Windows 原生工程（WinUI 3），共用本地固定路线执行器。正常运行无需 Agent、模型或网络。
+
+## 桌面应用
+
+左侧显示通过 hdc 读取的手机型号、系统版本与四类设置；右侧为包含全部 20 项的连续列表，四类名称作为列表内的小标题，侧栏点击可跳转到对应位置。每行只保留“是否执行”复选框。勾选后按清单默认目标执行：主页切换为简洁主页，其余项目关闭；取消勾选则保持原状。勾选不会立即修改手机。
+
+初次打开默认勾选全部 20 项并使用清爽化目标。切换分类保留编辑；未选项目保持原状。点击“执行所选项目”后按实际页面合并处理，实时显示结果。停止时先核验已发生的修改并恢复勿扰，异常退出后的任务可续跑。通知关闭会影响该应用的正常通知。
+
+- 目标平台：macOS 13.5+（arm64/x64），Windows 11 x64。
+- 当前本机已构建 macOS arm64 开发包；Intel Mac、Windows 安装与业务验收尚未完成。源码和构建入口不等于已发布安装包。
+- 运行时内置 Node.js 24.22.2（官方 macOS 二进制最低要求 13.5）、hdc、USB 动态库和执行脚本；Windows 发布使用自包含 .NET / Windows App SDK。
+- 手机仍需开启 USB 调试并授权电脑。锁屏凭据由用户输入；应用不修改锁屏配置。
+- 进度与截图：macOS 为 ~/Library/Application Support/cleanYourHarmony/runs；Windows 为 %LOCALAPPDATA%/cleanYourHarmony/runs。证据仅保存在本机。
+- 不使用自动更新、遥测或云端执行。没有整机回滚功能；停止任务不会撤销已经验证的业务设置，仅恢复本次临时改变的勿扰。
+
+### 构建与打包
+
+构建主机需要 Node.js 24+；macOS 需要 Swift 工具链，Windows 需要 .NET 8 SDK、Windows SDK、WinUI 构建工具和 Inno Setup 6。终端用户不需要这些开发工具。
+
+先从官方 OpenHarmony / HarmonyOS SDK 准备目标平台的 toolchains 目录，再封装固定运行时。Node 下载地址及 SHA-256 锁定在 packaging/runtime-lock.json，下载缓存保存在 build/downloads。
+
+```sh
+# macOS arm64，本机已安装 SDK 时可省略 --hdc-dir
+node packaging/prepare-runtime.mjs --platform darwin-arm64 --hdc-dir /path/to/toolchains
+node packaging/build-macos.mjs --arch arm64 --dmg
+
+# macOS Intel，必须使用 x64 hdc 和 USB 库，不能复制 arm64 工具
+node packaging/prepare-runtime.mjs --platform darwin-x64 --hdc-dir /path/to/x64/toolchains
+node packaging/build-macos.mjs --arch x64 --dmg
+
+# 离线行为测试，不会操作手机
+node --test scripts/runner.test.mjs scripts/desktop.test.mjs
+```
+
+Windows 构建主机执行：
+
+```powershell
+node packaging/prepare-runtime.mjs --platform win32-x64 --hdc-dir C:\SDK\toolchains
+pwsh -File packaging/build-windows.ps1
+```
+
+产物位于 dist/macos-arm64、dist/macos-x64 或 dist/windows-x64。build 与 dist 不纳入版本管理。未传发布参数时，仅生成开发包；macOS 使用临时签名，不能当作已公证的公开发行包。
+
+公开发布前，必须审核具体 hdc 二进制及依赖的再分发条款，不能仅凭 hdc 源码许可证判断 SDK 二进制可分发。prepare-runtime.mjs 的 --hdc-manifest 接受包含 platform、source、redistributionReviewed、files（文件名到 SHA-256）的已审核清单。没有清单时记录为仅供本地开发，发布模式拒绝继续。
+
+macOS 发布使用 --release，并配置 CYH_SIGN_IDENTITY、CYH_NOTARY_PROFILE（已有钥匙串配置名）；打包器执行签名、公证和 stapler 校验。Windows 使用 build-windows.ps1 -Release -CertificateThumbprint <已有证书指纹>。凭据不写入仓库。Windows 可通过 -DriverDirectory 纳入经过审核的签名驱动，清单另需 hardwareIds 和 inf；安装器仅对匹配硬件且驱动异常的设备请求提权安装。未提供经审核驱动时不会擅自替换系统驱动；首次连接兼容性必须在干净 Windows 环境验证。
+
+不同平台的 SDK 工具与签名证书未纳入本仓库；这是公开发布的外部前置条件。当前不能声称无需这些资产即可从零产生签名发行包。
+
+### 自动化测试
+
+```sh
+# macOS 14+ 测试主机，Swift 6 工具链、Node 24；需要可用桌面会话
+bash desktop/tests/macos.sh
+```
+
+```powershell
+# Windows 11 x64 测试主机，.NET 8 SDK、Node 24；需要已登录的桌面会话
+powershell -File desktop/tests/windows.ps1
+```
+
+两端入口先运行共享执行器的行为测试，再运行原生客户端协议与界面测试。macOS 使用 Apple Swift Testing，通过真实 SwiftUI 控件的无障碍动作验证列表、分组选择、默认目标传递、锁定和停止；Windows 使用 NUnit、FlaUI UIA3 操作发布后的 WinUI 应用。协议测试启动真实 Node 执行器，核对并发请求、中文数据、错误回复和正常退出。界面执行测试使用隔离的模拟设备进程，不操作手机，不能代替 USB 驱动、安装包或实机验收。
+
+测试在临时目录保存日志和 JUnit／TRX 结果；缺少依赖、控件定位失败或超时会使测试失败，不以跳过代替通过。CI 对 macOS 和 Windows 分别执行同一入口并上传结果。2026-10-29 本次单复选框界面已在 macOS arm64 通过 56 项共享测试和 6 项原生测试，零失败、零跳过。Windows 套件尚待实际运行，不能据此宣称 Windows 已通过。
+
+### 本地通信与兼容性
+
+原生界面通过标准输入／输出 JSON Lines 调用 scripts/desktop-host.mjs。协议见 [desktop/PROTOCOL.md](desktop/PROTOCOL.md)。工作线程串行执行设备命令，主线程处理停止请求；设备轮询不会与执行任务并行。
+
+首版适配基线为现有 HarmonyOS 7 语义路线。未知弹层、入口变化或禁用控件不会用旧坐标猜测。重新开启的设置可能出现额外确认页面，尚未逐项完成所有设备的双向实测。旧 schemaVersion 1 进度不支持直接作为 GUI 任务续跑；有待恢复勿扰时应先按原版本流程恢复，再创建新任务。
 
 <details>
 <summary>会帮我关掉哪些东西？</summary>
@@ -26,13 +95,15 @@ English: [README_en.md](README_en.md)
 - `operations.json`：20 项保留操作、UI Tree 定位规则、目标状态、截图分组、应用通知及排除项。
 - `dev/device-run/`：本地执行进度和现场证据，不纳入版本管理。
 
-当前交付层级为操作清单及 Agent 执行、验收规范。兼容性以每份报告中的实际设备和版本为限；HarmonyOS 5/6 需要另行实机验证。
+新增交付包含原生桌面源码、共享执行器和打包入口；各平台验收状态见上文。兼容性以每份报告中的实际设备和版本为限；HarmonyOS 5/6 需要另行实机验证。
 
 2026-10-28 实测记录：HOP-AL10、HarmonyOS 7.0.0.113，展开屏 2584×1828，全部 20 项通过（10 项修改并重进验证，10 项现场确认无需修改），勿扰恢复为原先关闭状态。此记录仅覆盖上述展开状态和版本，未验证折叠外屏及执行中折叠切换。
 
 2026-10-28 14:15 再次实机复核同一台设备与同一版本：20 项目标状态全部已达标，均记为现场确认无需修改（0 项开关改写），勿扰原状态（关闭）执行结束后已恢复；该次证据见 `dev/device-run/evidence_2026-10-28T14-15-43.259-08-00_77176/`。
 
-## 推荐使用 Agent 执行
+2026-10-29 桌面 GUI 实测：VYG-AL00，HarmonyOS 7.0.0.109。默认 20 项中 19 项无需修改，P01 用户体验改进计划因系统控件禁用失败，未找到／未完成均为 0；勿扰恢复为原先关闭。随后仅对 B01/B02 验证默认主页／开启榜单及简洁主页／关闭榜单两个方向，均修改并重进验证通过，最终恢复原目标及关闭勿扰。三个运行共 34 张现场证据通过 SHA-256 核对。此记录不代表其他 18 项已完成反向开启实测。Node.js 24.22.2 下 56 个离线测试通过。
+
+## 可选：使用 Agent 处理命令行及异常
 
 把本仓库交给能操作电脑和已连接手机的 Agent 即可。电脑端的工具检查和缺失工具安装由 Agent 完成；你只需连接手机，并按提示开启开发者选项、USB 调试和信任电脑。锁屏密码、设备授权及系统权限提示由你本人处理。仅能对话、不能操作电脑和设备的 Agent 无法代为执行。
 
@@ -73,7 +144,7 @@ node scripts/run.mjs --execute
 
 展开屏设置采用双栏时，顶层入口在左侧导航栏查找和滚动，顶层页面间切换直接复用可见左栏，避免系统返回退出设置；详情页以最后一个标题栏核对，通知搜索使用详情标题栏。应用内容区域之外的系统多任务按钮不视为遮挡；与内容重叠的其他窗口仍会阻止操作。浏览器启动等待可识别内容，目标控件最多等待 20 秒，短暂浮层在超时范围内等待消失。精确识别到“置顶显示通知合并到优先通知”的功能说明时，只正常返回关闭一次；其余持续存在的授权或引导弹窗由 Agent 处理。
 
-结果保存在 `dev/device-run/evidence_<本次时间>/`，包含 `progress.json`、截图和命令计时。只有全部业务项目有证据才报告完成；勿扰准备与恢复结果单独记录。设备独占锁防止同一脚本并发操作，执行期间其他 Agent 也不能操作该设备。
+CLI 新任务结果保存在 `dev/device-run/runs/<本次时间>_<运行ID>/`，包含 `progress.json`、截图和命令计时。只有全部业务项目有证据才报告完成；勿扰准备与恢复结果单独记录。设备独占锁防止同一脚本并发操作，执行期间其他 Agent 也不能操作该设备。
 
 失败后先检查进度和已有证据，定位原因并修复，再运行 `node scripts/run.mjs --execute --resume <原证据目录>`。已完成页不重放；设备、版本或清单改变时拒绝复用。恢复范围是同次任务续跑，不是把旧证据当作新的验收。强制杀进程后先确认进程已退出，检查 `/tmp/cyh-device-*.lock/owner.json`，再由 Agent 清理对应的过期锁；不得删掉仍在使用的锁。
 

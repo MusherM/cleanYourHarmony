@@ -26,14 +26,22 @@ export async function runPages({ pages, device, nav, progress, persist, evidence
     const pending = page.operations.filter(o => !['passed', 'unchanged', 'not_found'].includes(progress.items[o.id]?.status));
     if (!pending.length) continue;
     progress.currentPage = page.key; delete progress.stopReason; persist();
+    const navigationCancelled = nav.cancelled;
+    const visited = [];
     try {
       await nav.go(page);
+      // Once on a page, complete verification of any mutation before honouring
+      // cancellation. The next item is never started after the cancel flag.
+      nav.cancelled = () => false;
       for (const op of pending) {
-        if (cancelled()) throw new Error('执行被中断');
+        if (cancelled()) break;
+        progress.currentItem = op.id; persist();
         const { scope } = await nav.current(page, op.locator);
+        if (cancelled()) break;
+        visited.push(op);
         const current = state(scope, op.locator);
         const prev = progress.items[op.id];
-        const rec = progress.items[op.id] = { ...prev, id: op.id, group: op.screenshot.group, target: op.target.checked,
+        const rec = progress.items[op.id] = { ...prev, id: op.id, group: op.screenshot.group, target: op.requestedTarget ?? op.target.checked,
           before: prev?.before ?? current.checked, enabled: current.enabled, status: 'pending', observedAt: now() };
         delete rec.error; delete rec.failureKind;
         if (current.checked !== op.target.checked) {
@@ -51,7 +59,7 @@ export async function runPages({ pages, device, nav, progress, persist, evidence
         } else { rec.after = current.checked; }
       }
       // One screenshot can cover all currently visible members of this page.
-      const visible = pending.filter(o => progress.items[o.id]?.status !== 'failed');
+      const visible = visited.filter(o => progress.items[o.id]?.status !== 'failed');
       if (visible.length) {
         const { scope } = await nav.current(page);
         for (const op of visible) if (state(scope, op.locator).checked !== op.target.checked) throw new Error(`状态发生变化：${op.id}`);
@@ -73,7 +81,7 @@ export async function runPages({ pages, device, nav, progress, persist, evidence
         }
         persist();
       }
-      console.log(`${page.key}: ${pending.map(o => o.id + '=' + progress.items[o.id].status).join(', ')}`);
+      console.log(`${page.key}: ${visited.map(o => o.id + '=' + progress.items[o.id].status).join(', ')}`);
     } catch (e) {
       if (e instanceof NotificationNotFound && page.notification) {
         try {
@@ -95,7 +103,7 @@ export async function runPages({ pages, device, nav, progress, persist, evidence
       for (const op of pending) {
         const rec = progress.items[op.id] ??= { id: op.id };
         if (['passed', 'unchanged'].includes(rec.status)) continue;
-        rec.status = 'failed'; rec.failureKind = 'execution'; rec.error = e.message; rec.observedAt = now();
+        rec.status = cancelled() ? 'incomplete' : 'failed'; rec.failureKind = 'execution'; rec.error = e.message; rec.observedAt = now();
         if (shot) rec.evidence = [...(rec.evidence ?? []), shot];
       }
       progress.failures.push({ page: page.key, at: now(), reason: e.message });
@@ -103,6 +111,8 @@ export async function runPages({ pages, device, nav, progress, persist, evidence
       console.error(`${page.key}: ${e.message}`);
       progress.stopReason = e.message; persist();
       break; // Stop at the first infrastructure/navigation failure; Agent diagnoses before resume.
+    } finally {
+      nav.cancelled = navigationCancelled;
     }
   }
 }
@@ -124,7 +134,7 @@ export async function dnd({ nav, device, progress, persist, evidence, restore = 
       await nav.wait('N', s => nav.isPage(s, 'N', page.route) && dndControl(s).checked === target);
     }
     const shot = evidence(restore ? 'dnd-restored' : 'dnd-ready');
-    if (restore) progress.dnd.restorePending = false;
+    if (restore) { progress.dnd.restorePending = false; delete progress.dnd.restoreError; }
     progress.dnd[restore ? 'restored' : 'enabled'] = { at: now(), checked: target, evidence: shot };
     persist();
   } catch (e) {

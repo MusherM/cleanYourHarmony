@@ -5,8 +5,7 @@ export const APPS = {
   N: { bundle: 'com.huawei.hmos.settings', ability: 'com.huawei.hmos.settings.MainAbility', root: '设置' },
   F: { bundle: 'com.huawei.hmsapp.intelligent', ability: 'MainAbility', root: '我的' },
 };
-export function plan(catalog) {
-  const selected = catalog.operations;
+export function plan(catalog, selected = catalog.operations) {
   const pages = new Map();
   for (const op of selected) {
     const family = op.id[0] === 'P' ? 'N' : op.id[0];

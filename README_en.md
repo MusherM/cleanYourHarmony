@@ -2,7 +2,76 @@
 
 中文：[README.md](README.md)
 
-It's the AI era, my friend—why are you still reading a README? Copy this repository's URL and hand it to an agent. All you may need to do yourself is tap the build number repeatedly to enable developer mode, turn on USB debugging, then connect your phone to your computer and authorize the connection.
+A HarmonyOS settings utility with a native macOS interface (SwiftUI) and a native Windows project (WinUI 3), sharing a local deterministic executor. Normal operation requires no agent, model, or network.
+
+## Desktop application
+
+The sidebar displays the phone model and software version read through hdc, followed by four setting categories. All 20 settings appear in one continuous list with category subheadings; sidebar buttons scroll to the corresponding section. Each row has only an inclusion checkbox. Selected operations use the catalog cleanup defaults: Simple homepage and all other settings off. Unselected settings remain untouched; changing a checkbox does not immediately modify the phone.
+
+All 20 operations are initially selected with the existing cleanup defaults. Selections survive category changes; unselected settings are untouched. Execute batches operations by actual page and shows live results. Stopping verifies mutations already made and restores Do Not Disturb (DND); interrupted runs can be resumed. Disabling notifications also affects ordinary notifications from those apps.
+
+- Target platforms: macOS 13.5+ (arm64/x64), Windows 11 x64.
+- A macOS arm64 development app has been built locally. Intel Mac and Windows installation/business acceptance remain unverified. Source projects and build scripts are not released installers.
+- Bundled runtime: Node.js 24.22.2 (official macOS binaries require 13.5), hdc, USB libraries, and executor scripts. Windows uses self-contained .NET / Windows App SDK deployment.
+- Enable USB debugging and authorize the computer on the phone. Users enter lock-screen credentials; the app does not change lock-screen configuration.
+- Progress and screenshots: ~/Library/Application Support/cleanYourHarmony/runs on macOS; %LOCALAPPDATA%/cleanYourHarmony/runs on Windows. Evidence stays local.
+- No automatic updates, telemetry, or cloud execution. There is no whole-device rollback: stopping keeps verified business changes and restores only DND changes made temporarily by this run.
+
+### Build and package
+
+Build hosts need Node.js 24+, the Swift toolchain on macOS, or .NET 8 SDK, Windows SDK, WinUI build tools, and Inno Setup 6 on Windows. End users do not need these development tools.
+
+Obtain the target platform toolchains directory from an official OpenHarmony / HarmonyOS SDK. The Node download URL and SHA-256 are pinned in packaging/runtime-lock.json; archives are cached under build/downloads.
+
+```sh
+# macOS arm64; --hdc-dir may be omitted when the local SDK is installed
+node packaging/prepare-runtime.mjs --platform darwin-arm64 --hdc-dir /path/to/toolchains
+node packaging/build-macos.mjs --arch arm64 --dmg
+
+# Intel Mac requires x64 hdc and USB libraries, not copied arm64 binaries
+node packaging/prepare-runtime.mjs --platform darwin-x64 --hdc-dir /path/to/x64/toolchains
+node packaging/build-macos.mjs --arch x64 --dmg
+
+# Offline behavior tests; no phone operations
+node --test scripts/runner.test.mjs scripts/desktop.test.mjs
+```
+
+On a Windows build host:
+
+```powershell
+node packaging/prepare-runtime.mjs --platform win32-x64 --hdc-dir C:\SDK\toolchains
+pwsh -File packaging/build-windows.ps1
+```
+
+Outputs are under dist/macos-arm64, dist/macos-x64, or dist/windows-x64. build and dist are excluded from version control. Without release flags, these are development packages; the Mac app is ad-hoc signed, not a notarized public release.
+
+Before public distribution, review the actual hdc binaries and dependencies, not just the hdc source license. prepare-runtime.mjs --hdc-manifest accepts a reviewed manifest containing platform, source, redistributionReviewed, and files (filename-to-SHA-256 mapping). Without it, tools are recorded as development-only and release mode refuses to proceed.
+
+macOS release builds use --release with CYH_SIGN_IDENTITY and CYH_NOTARY_PROFILE (an existing keychain profile). The packager signs, notarizes, staples, and validates. Windows uses build-windows.ps1 -Release -CertificateThumbprint <existing certificate thumbprint>. Do not commit credentials. Windows optionally accepts -DriverDirectory with reviewed signed drivers; its manifest also needs hardwareIds and inf. The installer requests elevation only for matching connected hardware with driver problems. Without reviewed drivers, it does not replace system drivers; first-connection compatibility requires a clean Windows test.
+
+Platform SDK tools and signing credentials are external release prerequisites, not repository assets. The repository alone cannot produce signed distribution packages without them.
+
+### Automated tests
+
+```sh
+# macOS 14+ test host, Swift 6 toolchain, Node 24; requires a desktop session
+bash desktop/tests/macos.sh
+```
+
+```powershell
+# Windows 11 x64 test host, .NET 8 SDK, Node 24; requires a logged-in desktop session
+powershell -File desktop/tests/windows.ps1
+```
+
+Both entry points run shared executor behavior tests followed by native client protocol and UI tests. macOS uses Apple Swift Testing and accessibility actions on real SwiftUI controls to verify scrolling, group selection, default targets, editing locks, and stopping. Windows uses NUnit and FlaUI UIA3 against the published WinUI app. Protocol tests start the real Node host and verify concurrent requests, Chinese text, error responses, and graceful shutdown. UI execution tests use an isolated simulated device process and never operate a phone; they do not replace USB driver, installer, or physical-device acceptance.
+
+Logs and JUnit/TRX results are saved in temporary directories. Missing dependencies, missing controls, and timeouts fail tests instead of being silently skipped. CI runs the same entry points on macOS and Windows and uploads results. On 2026-10-29, the single-checkbox interface passed 56 shared tests and 6 native tests on macOS arm64, with zero failures or skipped tests. The Windows suite still awaits execution; this does not establish Windows acceptance.
+
+### Local protocol and compatibility
+
+Native interfaces use JSON Lines over stdin/stdout to scripts/desktop-host.mjs. See [desktop/PROTOCOL.md](desktop/PROTOCOL.md). A worker executes device commands serially while the main thread handles cancellation; discovery never runs concurrently with execution.
+
+The initial compatibility baseline is the existing HarmonyOS 7 semantic routes. Unknown overlays, changed routes, and disabled controls never trigger guessed coordinate clicks. Enabling settings may reveal additional confirmation screens; full bidirectional testing across devices is still pending. Legacy schemaVersion 1 runs cannot be resumed directly in the GUI; restore pending DND obligations using the original version before starting a new run.
 
 <details>
 <summary>What will it change?</summary>
@@ -26,13 +95,15 @@ An evidence-backed catalog for reducing ads, feeds, marketing messages, and unso
 - `operations.json`: 20 retained operations, UI Tree locator rules, target states, screenshot groups, app notifications, and exclusions.
 - `dev/device-run/`: local execution progress and evidence, excluded from version control.
 
-The current delivery covers the operation catalog and agent execution/acceptance guidance. Compatibility is limited to the device and versions stated in each report. HarmonyOS 5/6 compatibility requires separate device verification.
+The new delivery includes native desktop source, the shared executor, and packaging entry points; platform acceptance is described above. Compatibility is limited to the device and versions stated in each report. HarmonyOS 5/6 compatibility requires separate device verification.
 
 Device verification recorded on 2026-10-28: HOP-AL10, HarmonyOS 7.0.0.113, expanded display at 2584×1828. All 20 operations passed: 10 changed and verified after re-entry, and 10 confirmed already at target. Do Not Disturb was restored to its original off state. This record covers only that expanded state and version; the folded outer display and folding during execution were not tested.
 
 A second device run on the same day at 14:15 re-checked the same device and version: all 20 targets were already at their goal state, so every item was recorded as confirmed without modification (0 switch changes), and Do Not Disturb was restored to its original off state. That run's evidence is in dev/device-run/evidence_2026-10-28T14-15-43.259-08-00_77176/.
 
-## Recommended: run with an agent
+Desktop GUI verification on 2026-10-29: VYG-AL00, HarmonyOS 7.0.0.109. Of the 20 default operations, 19 were already at target; P01 failed because its system control was disabled. Not-found and incomplete counts were both 0; DND was restored to off. Separate B01/B02 runs verified default homepage / rankings on, then simple homepage / rankings off, with actual changes and re-entry checks. Original targets and DND off were restored. SHA-256 checks passed for 34 evidence images across these three runs. This does not establish reverse-enable coverage for the other 18 operations. All 56 offline tests passed under Node.js 24.22.2.
+
+## Optional: use an agent for CLI execution and exceptions
 
 Give this repository to an agent that can operate your computer and connected phone. The agent checks the computer's tools and installs anything missing. You only need to connect the phone and follow prompts to enable developer options, USB debugging, and trust for the computer. Enter lock-screen credentials and handle device authorization or system permission prompts yourself. A chat-only agent without computer and device access cannot perform the work.
 
@@ -75,7 +146,7 @@ Consecutive reads on the same page reuse the current snapshot for up to 500 ms. 
 
 When expanded-screen Settings uses two panes, top-level entries are located and scrolled in the left navigation bar. Switching top-level pages reuses that visible sidebar to avoid exiting Settings with system Back. Detail pages are checked against the last title bar, which also supplies notification search. System multitasking handles outside app content are accepted; other windows overlapping content still block actions. Browser startup waits for recognizable content, target controls receive up to 20 seconds to load, and transient overlays receive a bounded wait to disappear. An exact match for the notice about merging pinned notifications into priority notifications is dismissed with one normal Back action. Other persistent permission or onboarding dialogs are handled by the agent.
 
-Results go to dev/device-run/evidence_<current-time>/, including progress.json, screenshots, and command timing. Completion requires evidence for all business items; Do Not Disturb preparation/restoration is recorded separately. A device lease prevents concurrent instances; other agents must not operate that device during the run.
+Results go to dev/device-run/runs/<current-time>_<run-id>/, including progress.json, screenshots, and command timing. Completion requires evidence for all business items; Do Not Disturb preparation/restoration is recorded separately. A device lease prevents concurrent instances; other agents must not operate that device during the run.
 
 On failure, inspect progress and existing evidence, diagnose and fix the cause, then run node scripts/run.mjs --execute --resume <original-evidence-directory>. Completed pages are not replayed. Device, version, or catalog changes reject resume. Resume continues the same task; it is not a fresh acceptance run using old evidence. After forced termination, first verify the process is gone and inspect /tmp/cyh-device-*.lock/owner.json before removing only its stale lease; never remove a live lease.
 

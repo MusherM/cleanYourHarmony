@@ -9,13 +9,13 @@ import { APPS } from './routes.mjs';
 export class Device {
   constructor(id, log, hdc = 'hdc') { this.id = id; this.log = log; this.hdc = hdc; this.revision = 0; this.temporaryFiles = new Set(); }
   static list(hdc = 'hdc') {
-    const r = spawnSync(hdc, ['list', 'targets'], { encoding: 'utf8', timeout: 15000 });
-    if (r.error || r.status !== 0) throw new Error('hdc 不可用；由 Agent 安装或修复工具链后继续');
-    return r.stdout.trim().split(/\r?\n/).map(s => s.trim()).filter(s => s && s !== '[Empty]');
+    const r = spawnSync(hdc, ['list', 'targets'], { encoding: 'utf8', timeout: 15000, windowsHide: true });
+    if (r.error || r.status !== 0 || /failed|error|\[Fail\]/i.test((r.stdout ?? '') + (r.stderr ?? ''))) throw new Error('hdc 不可用，请检查应用工具包及 USB 连接');
+    return r.stdout.trim().split(/\r?\n/).map(s => s.trim()).filter(s => s && s !== '[Empty]' && !/Unauthorized|Offline/.test(s));
   }
   run(args, marker) {
     const start = Date.now();
-    const r = spawnSync(this.hdc, ['-t', this.id, ...args], { encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024 });
+    const r = spawnSync(this.hdc, ['-t', this.id, ...args], { encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024, windowsHide: true });
     const output = (r.stdout ?? '') + (r.stderr ?? '');
     this.log({ action: args[0] === 'file' ? 'file-transfer' : args[1]?.split(' ').slice(0, 2).join(' '), ms: Date.now() - start, exit: r.status });
     if (r.error || r.status !== 0 || /\[Fail\]|\berror\b(?!\s*[:=]?\s*0)|inaccessible|not found/i.test(output.replace(/No Error/gi, '')) || (marker && !marker.test(output))) {
@@ -63,15 +63,22 @@ export class Device {
     finally { fs.rmSync(dir, { recursive: true, force: true }); }
   }
   shot(file) { this.revision++; this.capture('shot', file); }
-  info() {
+  identity() {
+    const model = this.shell('param', 'get', 'const.product.model').trim();
+    const software = this.shell('param', 'get', 'const.product.software.version').trim();
+    if (!model || !software) throw new Error('设备型号或系统版本不可读取');
+    return { model, software };
+  }
+  info(families = Object.keys(APPS)) {
     const apps = {};
-    for (const app of Object.values(APPS)) {
+    for (const family of new Set(families)) {
+      const app = APPS[family];
       const output = this.shell('bm', 'dump', '-n', app.bundle);
       const data = JSON.parse(output.slice(output.indexOf('{')));
       if (!data.versionName) throw new Error('无法读取应用版本：' + app.bundle);
       apps[app.bundle] = data.versionName;
     }
-    return { model: this.shell('param', 'get', 'const.product.model').trim(), software: this.shell('param', 'get', 'const.product.software.version').trim(), apps };
+    return { ...this.identity(), apps };
   }
   launch(app) {
     this.revision++;
