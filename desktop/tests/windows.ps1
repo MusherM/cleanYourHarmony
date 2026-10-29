@@ -40,6 +40,9 @@ try {
     & dotnet test desktop/windows.tests/Desktop.Tests.csproj --filter FullyQualifiedName~UiTests --logger 'trx;LogFileName=ui.trx' --results-directory $Results 2>&1 | Tee-Object (Join-Path $Results 'ui.log')
     Check-Exit 'Native UI automation'
 } finally {
+    Get-ChildItem $work -Recurse -File | Where-Object { $_.Extension -in @('.pri', '.xbf') } |
+        Select-Object FullName, Length | Format-Table -AutoSize | Out-String -Width 300 |
+        Set-Content (Join-Path $Results 'xaml-resources.log')
     foreach ($name in @('app-crash.log', 'desktop.log')) {
         $log = Join-Path $env:LOCALAPPDATA "cleanYourHarmony/$name"
         if (Test-Path $log) { Copy-Item $log (Join-Path $Results "app-$name") }

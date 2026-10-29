@@ -21,6 +21,11 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
   </ItemGroup>
   <Target Name="VerifyPublishedXamlResources" AfterTargets="Publish">
-    <Error Condition="!Exists('$(PublishDir)resources.pri')" Text="The published WinUI app is missing resources.pri; native control templates cannot load." />
+    <PropertyGroup>
+      <AppResourceIndex Condition="Exists('$(TargetDir)resources.pri')">$(TargetDir)resources.pri</AppResourceIndex>
+      <AppResourceIndex Condition="'$(AppResourceIndex)' == '' and Exists('$(TargetDir)$(TargetName).pri')">$(TargetDir)$(TargetName).pri</AppResourceIndex>
+    </PropertyGroup>
+    <Copy Condition="'$(AppResourceIndex)' != ''" SourceFiles="$(AppResourceIndex)" DestinationFiles="$(PublishDir)resources.pri" SkipUnchangedFiles="true" />
+    <Error Condition="!Exists('$(PublishDir)resources.pri')" Text="The published WinUI app is missing resources.pri; no app resource index was found in $(TargetDir)." />
   </Target>
 </Project>
