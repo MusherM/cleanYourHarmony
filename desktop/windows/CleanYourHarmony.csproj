@@ -9,6 +9,7 @@
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <SelfContained>true</SelfContained>
@@ -19,4 +20,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
   </ItemGroup>
+  <Target Name="VerifyPublishedXamlResources" AfterTargets="Publish">
+    <Error Condition="!Exists('$(PublishDir)resources.pri')" Text="The published WinUI app is missing resources.pri; native control templates cannot load." />
+  </Target>
 </Project>
