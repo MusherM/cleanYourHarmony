@@ -82,6 +82,11 @@ public sealed class UiTests
         Assert.That(request["selection"]!.AsArray().Select(x => x!["id"]!.GetValue<string>()), Is.EquivalentTo(new[] { "B01", "B02", "B03" }));
         Assert.That(request["selection"]!.AsArray().Single(x => x!["id"]!.GetValue<string>() == "B01")!["target"]!.GetValue<string>(), Is.EqualTo("simple"));
         Assert.That(request["selection"]!.AsArray().Single(x => x!["id"]!.GetValue<string>() == "B02")!["target"]!.GetValue<bool>(), Is.False);
+        Until(() => Find("execute").IsEnabled, "Controls did not unlock after the first run");
+        Invoke("execute");
+        Until(() => !Find("select-B01").IsEnabled, "A second execution did not start");
+        Invoke("stop");
+        Until(() => window.FindFirstDescendant(c => c.ByName("执行未完成")) != null, "Second execution did not stop cleanly");
     }
     [Test] public void StopWaitsForCleanupAndNeverReportsFullSuccess()
     {

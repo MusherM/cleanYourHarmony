@@ -43,7 +43,7 @@ public sealed class MainWindow : Window
         BuildLayout();
         engine.Event += data => DispatcherQueue.TryEnqueue(() => OnEvent(data));
         engine.Exited += () => DispatcherQueue.TryEnqueue(() => { ready = false; working = false; discovering = false; message.Text = "执行器已退出；重新打开应用可检查未完成任务。"; UpdateControls(); if (closing) { allowClose = true; Close(); } });
-        AppWindow.Closing += (_, e) => { if (allowClose || !engine.Running) return; e.Cancel = true; closing = true; timer.Stop(); _ = CloseSafely(); };
+        AppWindow.Closing += (sender, e) => { if (allowClose || !engine.Running) return; e.Cancel = true; closing = true; timer.Stop(); _ = CloseSafely(); };
         timer.Tick += async (_, _) => await Refresh();
         try { engine.Start(); timer.Start(); } catch (Exception e) { message.Text = e.Message; }
     }
@@ -92,17 +92,18 @@ public sealed class MainWindow : Window
         rows.Children.Clear(); resultLabels.Clear(); sectionHeaders.Clear();
         foreach (var group in categories)
         {
-            var header = new Grid { Padding = new Thickness(16, 24, 16, 12), IsEnabled = !working };
+            var header = new Grid { Padding = new Thickness(16, 24, 16, 12) };
             var title = Label(group.Name, 18); AutomationProperties.SetHeadingLevel(title, Microsoft.UI.Xaml.Automation.Peers.AutomationHeadingLevel.Level2); header.Children.Add(title);
             var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, HorizontalAlignment = HorizontalAlignment.Right };
             var selectGroup = Action("全选本组", () => SetSelection(true, group.Id), false); AutomationProperties.SetAutomationId(selectGroup, "select-group-" + group.Id); actions.Children.Add(selectGroup);
             var clearGroup = Action("取消本组", () => SetSelection(false, group.Id), false); AutomationProperties.SetAutomationId(clearGroup, "clear-group-" + group.Id); actions.Children.Add(clearGroup);
+            selectGroup.IsEnabled = clearGroup.IsEnabled = !working;
             header.Children.Add(actions); sectionHeaders[group.Id] = header; rows.Children.Add(header);
         foreach (var item in settings.Where(i => i.Category == group.Id))
         {
-            var row = new Grid { Padding = new Thickness(16, 14, 16, 14), MinHeight = 60, IsEnabled = !working };
+            var row = new Grid { Padding = new Thickness(16, 14, 16, 14), MinHeight = 60 };
             row.ColumnDefinitions.Add(new() { Width = new GridLength(60) }); row.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
-            var check = new CheckBox { IsChecked = item.Selected, VerticalAlignment = VerticalAlignment.Center };
+            var check = new CheckBox { IsChecked = item.Selected, IsEnabled = !working, VerticalAlignment = VerticalAlignment.Center };
             AutomationProperties.SetName(check, "执行 " + item.Name); AutomationProperties.SetAutomationId(check, "select-" + item.Id); row.Children.Add(check);
             var text = new StackPanel { Spacing = 4, VerticalAlignment = VerticalAlignment.Center }; text.Children.Add(Label(item.Name, 16));
             var result = Label(item.Result + (item.Detail.Length > 0 ? "：" + item.Detail : ""), 12); resultLabels[item.Id] = result; text.Children.Add(result);
@@ -180,7 +181,7 @@ public sealed class MainWindow : Window
     {
         if (working || discovering || !DeviceReady) return;
         JsonObject parameters;
-        if (method == "execute") { var selection = new JsonArray(); foreach (var item in settings.Where(i => i.Selected)) selection.Add(new JsonObject { ["id"] = item.Id, ["target"] = item.Target }); parameters = new() { ["request"] = new JsonObject { ["deviceId"] = deviceId, ["selection"] = selection } }; }
+        if (method == "execute") { var selection = new JsonArray(); foreach (var item in settings.Where(i => i.Selected)) selection.Add(new JsonObject { ["id"] = item.Id, ["target"] = item.Target.DeepClone() }); parameters = new() { ["request"] = new JsonObject { ["deviceId"] = deviceId, ["selection"] = selection } }; }
         else parameters = new() { ["deviceId"] = deviceId, ["directory"] = resume };
         hasRunOutcome = true; working = true; stop.IsEnabled = true; directory = ""; dnd.Text = ""; message.Text = "正在检查设备…";
         foreach (var item in settings) { item.Result = ""; item.Detail = ""; item.Evidence = null; }
