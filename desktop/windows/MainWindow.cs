@@ -38,9 +38,9 @@ public sealed class MainWindow : Window
     public MainWindow()
     {
         Title = "cleanYourHarmony";
-        SystemBackdrop = new MicaBackdrop();
         AppWindow.Resize(new SizeInt32(1180, 880));
         BuildLayout();
+        if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported()) SystemBackdrop = new MicaBackdrop();
         engine.Event += data => DispatcherQueue.TryEnqueue(() => OnEvent(data));
         engine.Exited += () => DispatcherQueue.TryEnqueue(() => { ready = false; working = false; discovering = false; message.Text = "执行器已退出；重新打开应用可检查未完成任务。"; UpdateControls(); if (closing) { allowClose = true; Close(); } });
         AppWindow.Closing += (sender, e) => { if (allowClose || !engine.Running) return; e.Cancel = true; closing = true; timer.Stop(); _ = CloseSafely(); };
