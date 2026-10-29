@@ -17,6 +17,7 @@ public sealed class UiTests
     private UIA3Automation automation = null!;
     private Window window = null!;
     private string capture = "";
+    private string? startupFailure;
     private AutomationElement Find(string id) => window.FindFirstDescendant(c => c.ByAutomationId(id)) ?? throw new AssertionException("Missing control: " + id);
     private static void Until(Func<bool> check, string reason)
     {
@@ -28,6 +29,9 @@ public sealed class UiTests
     private double ScrollPosition => Find("settings-list").Patterns.Scroll.Pattern.VerticalScrollPercent.Value;
     [SetUp] public void Start()
     {
+        Assert.That(startupFailure, Is.Null, "A previous launch failed; see its UI tree and engine log instead of repeating the same launch.");
+        try
+        {
         string? executable = Environment.GetEnvironmentVariable("CYH_UI_APP");
         Assert.That(executable, Is.Not.Null.And.Not.Empty, "Run desktop/tests/windows.ps1 to prepare an isolated UI fixture app.");
         capture = Path.Combine(Path.GetTempPath(), "cyh-ui-" + Guid.NewGuid() + ".json");
@@ -35,12 +39,25 @@ public sealed class UiTests
         info.Environment["CYH_UI_CAPTURE"] = capture;
         automation = new UIA3Automation(); app = Application.Launch(info);
         Until(() => (window = app.GetMainWindow(automation, TimeSpan.FromMilliseconds(100))) != null, "App did not open a window");
-        Until(() => window.FindFirstDescendant(c => c.ByAutomationId("select-P01")) != null, "Catalog was not rendered");
+        Until(() => window.FindFirstDescendant(c => c.ByAutomationId("select-B01")) != null, "Catalog was not rendered");
         Until(() => Find("execute").IsEnabled, "Fixture device did not become ready");
+        }
+        catch (Exception e) { startupFailure = e.Message; throw; }
     }
     [TearDown] public void Stop()
     {
         bool closedNormally = true;
+        if (TestContext.CurrentContext.Result.Outcome.Status == NUnit.Framework.Interfaces.TestStatus.Failed)
+        {
+            try
+            {
+                if (window != null) foreach (var element in window.FindAllDescendants())
+                    TestContext.Progress.WriteLine($"UIA {element.ControlType} id={element.AutomationId} name={element.Name} offscreen={element.IsOffscreen}");
+                string log = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "cleanYourHarmony", "desktop.log");
+                if (File.Exists(log)) TestContext.Progress.WriteLine("Engine log:\n" + File.ReadAllText(log));
+            }
+            catch (Exception e) { TestContext.Progress.WriteLine("Diagnostics unavailable: " + e.Message); }
+        }
         try { if (app != null && !app.HasExited && !(closedNormally = app.Close(false))) app.Kill(); }
         finally { automation?.Dispose(); app?.Dispose(); if (File.Exists(capture)) File.Delete(capture); }
         Assert.That(closedNormally, Is.True, "Application did not close gracefully");
