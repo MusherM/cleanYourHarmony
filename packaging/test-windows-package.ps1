@@ -15,10 +15,13 @@ try {
 } finally {
     $log = Join-Path $env:LOCALAPPDATA 'cleanYourHarmony/desktop.log'
     if (Test-Path $log) { Copy-Item $log "$Results/app-desktop.log"; Get-Content $log }
-    & "$install/runtime/hdc.exe" list targets -v 2>&1 | Tee-Object "$Results/hdc-discovery.log"
+    $diagnostic = Start-Process "$install/runtime/hdc.exe" -ArgumentList 'list','targets','-v' -PassThru -NoNewWindow -RedirectStandardOutput "$Results/hdc-discovery.log" -RedirectStandardError "$Results/hdc-discovery-error.log"
+    if (!$diagnostic.WaitForExit(15000)) { $diagnostic.Kill(); Write-Output 'HDC diagnostic timed out after 15 seconds' }
+    Get-Content "$Results/hdc-discovery.log", "$Results/hdc-discovery-error.log"
     Remove-Item Env:CYH_INSTALLED_APP, Env:CYH_PACKAGE_RESULTS -ErrorAction SilentlyContinue
     # This server belongs to the isolated CI installation, never a user's SDK.
-    & "$install/runtime/hdc.exe" kill
+    $stop = Start-Process "$install/runtime/hdc.exe" -ArgumentList 'kill' -PassThru -NoNewWindow
+    if (!$stop.WaitForExit(15000)) { $stop.Kill(); throw 'HDC cleanup timed out' }
     $result = Start-Process "$install/unins000.exe" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait -PassThru
     if ($result.ExitCode -ne 0 -or (Test-Path "$install/CleanYourHarmony.exe")) { throw 'Uninstall verification failed' }
 }

@@ -45,7 +45,7 @@ public sealed class InstalledPackageTests
             {
                 if (window != null)
                     foreach (var element in window.FindAllDescendants())
-                        TestContext.Progress.WriteLine($"UIA {element.ControlType} id={element.Properties.AutomationId.ValueOrDefault} name={element.Name}");
+                        TestContext.Progress.WriteLine($"UIA {element.Properties.ControlType.ValueOrDefault} id={element.Properties.AutomationId.ValueOrDefault} name={element.Properties.Name.ValueOrDefault}");
                 string log = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "cleanYourHarmony", "desktop.log");
                 if (File.Exists(log)) TestContext.Progress.WriteLine(File.ReadAllText(log));
             }

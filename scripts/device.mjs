@@ -9,13 +9,13 @@ import { APPS } from './routes.mjs';
 export class Device {
   constructor(id, log, hdc = 'hdc') { this.id = id; this.log = log; this.hdc = hdc; this.revision = 0; this.temporaryFiles = new Set(); }
   static list(hdc = 'hdc') {
-    const r = spawnSync(hdc, ['list', 'targets'], { encoding: 'utf8', timeout: 15000, windowsHide: true });
+    const r = spawnSync(hdc, ['list', 'targets'], { cwd: path.isAbsolute(hdc) ? path.dirname(hdc) : undefined, encoding: 'utf8', timeout: 15000, windowsHide: true });
     if (r.error || r.status !== 0 || /failed|error|\[Fail\]/i.test((r.stdout ?? '') + (r.stderr ?? ''))) throw new Error('hdc 不可用，请检查应用工具包及 USB 连接');
     return r.stdout.trim().split(/\r?\n/).map(s => s.trim()).filter(s => s && s !== '[Empty]' && !/Unauthorized|Offline/.test(s));
   }
   run(args, marker) {
     const start = Date.now();
-    const r = spawnSync(this.hdc, ['-t', this.id, ...args], { encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024, windowsHide: true });
+    const r = spawnSync(this.hdc, ['-t', this.id, ...args], { cwd: path.isAbsolute(this.hdc) ? path.dirname(this.hdc) : undefined, encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024, windowsHide: true });
     const output = (r.stdout ?? '') + (r.stderr ?? '');
     this.log({ action: args[0] === 'file' ? 'file-transfer' : args[1]?.split(' ').slice(0, 2).join(' '), ms: Date.now() - start, exit: r.status });
     if (r.error || r.status !== 0 || /\[Fail\]|\berror\b(?!\s*[:=]?\s*0)|inaccessible|not found/i.test(output.replace(/No Error/gi, '')) || (marker && !marker.test(output))) {
