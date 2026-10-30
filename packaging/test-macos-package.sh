@@ -10,6 +10,7 @@ cleanup() { if mount | grep -F "$mount" >/dev/null; then hdiutil detach "$mount"
 trap cleanup EXIT
 hdiutil verify "$dmg"
 hdiutil attach "$dmg" -readonly -nobrowse -mountpoint "$mount"
+test "$(stat -f '%Lp' "$mount")" = '755'
 test -d "$mount/cleanYourHarmony.app"
 test -L "$mount/Applications"
 test "$(readlink "$mount/Applications")" = '/Applications'

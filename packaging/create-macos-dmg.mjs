@@ -5,6 +5,7 @@ import {spawnSync} from 'node:child_process';
 
 export function createMacOSDiskImage(app, destination) {
   const staging = fs.mkdtempSync(path.join(os.tmpdir(), 'cyh-dmg-'));
+  fs.chmodSync(staging, 0o755);
   function run(command, args) {
     const result = spawnSync(command, args, {stdio:'inherit', timeout:300000});
     if (result.error || result.status !== 0) throw Error(`${command}: ${result.error?.message ?? result.status}`);
