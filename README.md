@@ -23,7 +23,7 @@ English: [README_en.md](README_en.md)
 - [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-macos-x64.dmg)
 - [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-windows-x64-Setup.exe)
 
-Mac 将 DMG 中的 app 复制到 Applications；Windows 运行 Setup。系统可能因未公证／未签名阻止首次打开。Release 附有 SHA-256 校验和及对应构建源码；复现安装包请使用明确命名的 `cleanYourHarmony-1.0-source.tar.gz`，GitHub 自动生成的源码仍对应最初的 v1.0 tag。
+Mac 打开 DMG，将 app 拖到同一窗口中的 Applications（应用程序）文件夹；Windows 运行 Setup。系统可能因未公证／未签名阻止首次打开。Release 附有 SHA-256 校验和及对应构建源码；复现安装包请使用明确命名的 `cleanYourHarmony-1.0-source.tar.gz`，GitHub 自动生成的源码仍对应最初的 v1.0 tag。
 
 ### 构建与打包
 

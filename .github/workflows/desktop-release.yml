@@ -11,6 +11,10 @@ on:
         required: true
         default: v1.0
         type: string
+      macos_only:
+        description: Replace only Mac packages and corresponding source/checksums
+        type: boolean
+        default: false
 permissions:
   actions: read
   contents: write
@@ -23,6 +27,7 @@ jobs:
       GH_REPO: ${{ github.repository }}
       BUILD_RUN: ${{ inputs.run_id }}
       RELEASE_TAG: ${{ inputs.tag }}
+      MACOS_ONLY: ${{ inputs.macos_only }}
     steps:
       - name: Verify run and transfer tested assets
         shell: bash
@@ -32,15 +37,30 @@ jobs:
           [[ "$RELEASE_TAG" =~ ^v?[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]
           gh run view "$BUILD_RUN" --json status,conclusion,workflowName,headSha > run.json
           jq -e '.status == "completed" and .conclusion == "success" and .workflowName == "Desktop packages"' run.json
-          gh run download "$BUILD_RUN" --name package-darwin-arm64 --name package-darwin-x64 --name package-win32-x64 --dir artifacts
+          gh run download "$BUILD_RUN" --name package-darwin-arm64 --name package-darwin-x64 --dir artifacts
           mkdir release
           version="${RELEASE_TAG#v}"
           cp "artifacts/package-darwin-arm64/cleanYourHarmony-$version-macos-arm64.dmg" release/
           cp "artifacts/package-darwin-x64/cleanYourHarmony-$version-macos-x64.dmg" release/
-          cp "artifacts/package-win32-x64/cleanYourHarmony-$version-windows-x64-Setup.exe" release/
-          gh release download "$RELEASE_TAG" --pattern SHA256SUMS.txt --pattern "cleanYourHarmony-$version-source.tar.gz" --dir release
+          if [[ "$MACOS_ONLY" == 'true' ]]; then
+            gh release download "$RELEASE_TAG" --pattern SHA256SUMS.txt --pattern "cleanYourHarmony-$version-windows-x64-Setup.exe" --dir release
+            (cd release && grep "  cleanYourHarmony-$version-windows-x64-Setup.exe$" SHA256SUMS.txt | sha256sum --check)
+            sha=$(jq -r .headSha run.json)
+            gh api "repos/$GH_REPO/tarball/$sha" > "release/cleanYourHarmony-$version-source.tar.gz"
+            tar -tzf "release/cleanYourHarmony-$version-source.tar.gz" > /dev/null
+            (cd release && sha256sum "cleanYourHarmony-$version-macos-arm64.dmg" "cleanYourHarmony-$version-macos-x64.dmg" "cleanYourHarmony-$version-windows-x64-Setup.exe" "cleanYourHarmony-$version-source.tar.gz" > SHA256SUMS.txt)
+          else
+            gh run download "$BUILD_RUN" --name package-win32-x64 --dir windows-artifact
+            cp "windows-artifact/cleanYourHarmony-$version-windows-x64-Setup.exe" release/
+            gh release download "$RELEASE_TAG" --pattern SHA256SUMS.txt --pattern "cleanYourHarmony-$version-source.tar.gz" --dir release
+          fi
           cd release
           sha256sum --check SHA256SUMS.txt
-          gh release upload "$RELEASE_TAG" "cleanYourHarmony-$version-macos-arm64.dmg" "cleanYourHarmony-$version-macos-x64.dmg" "cleanYourHarmony-$version-windows-x64-Setup.exe" --clobber
+          cat SHA256SUMS.txt
+          if [[ "$MACOS_ONLY" == 'true' ]]; then
+            gh release upload "$RELEASE_TAG" "cleanYourHarmony-$version-macos-arm64.dmg" "cleanYourHarmony-$version-macos-x64.dmg" "cleanYourHarmony-$version-source.tar.gz" SHA256SUMS.txt --clobber
+          else
+            gh release upload "$RELEASE_TAG" "cleanYourHarmony-$version-macos-arm64.dmg" "cleanYourHarmony-$version-macos-x64.dmg" "cleanYourHarmony-$version-windows-x64-Setup.exe" --clobber
+          fi
           gh release view "$RELEASE_TAG" --json assets > published.json
           jq -e '[.assets[] | select(.state != "uploaded")] | length == 0' published.json

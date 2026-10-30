@@ -23,7 +23,7 @@ All 20 operations are initially selected with the existing cleanup defaults. Sel
 - [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-macos-x64.dmg)
 - [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-windows-x64-Setup.exe)
 
-On Mac, copy the app from the DMG to Applications; on Windows, run Setup. The OS may block first launch because these packages are unnotarized/unsigned. The Release includes SHA-256 checksums and corresponding build sources. Use the explicitly named `cleanYourHarmony-1.0-source.tar.gz` to reproduce the installers; GitHub’s automatic source archives still reference the original v1.0 tag.
+On Mac, open the DMG and drag the app onto the Applications folder in the same window; on Windows, run Setup. The OS may block first launch because these packages are unnotarized/unsigned. The Release includes SHA-256 checksums and corresponding build sources. Use the explicitly named `cleanYourHarmony-1.0-source.tar.gz` to reproduce the installers; GitHub’s automatic source archives still reference the original v1.0 tag.
 
 ### Build and package
 

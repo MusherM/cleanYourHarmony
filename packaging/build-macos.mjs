@@ -3,6 +3,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { createMacOSDiskImage } from './create-macos-dmg.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const args = process.argv.slice(2), arg = key => args[args.indexOf(key) + 1];
 const arch = args.includes('--arch') ? arg('--arch') : process.arch;
@@ -37,7 +38,7 @@ run('codesign',['--force','--sign',identity,...signing,app]);
 run('codesign',['--verify','--deep','--strict',app]);
 if (args.includes('--dmg') || release) {
   const dmg = path.join(destination, `cleanYourHarmony-${arch}.dmg`);
-  run('hdiutil',['create','-volname','cleanYourHarmony','-srcfolder',app,'-ov','-format','UDZO',dmg]);
+  createMacOSDiskImage(app, dmg);
   if (release) {
     run('codesign',['--sign',identity,'--timestamp',dmg]);
     run('xcrun',['notarytool','submit',dmg,'--keychain-profile',process.env.CYH_NOTARY_PROFILE,'--wait']);
