@@ -86,10 +86,20 @@ import Testing
         #expect(model.dndMessage == "勿扰已恢复原状态")
         let request = try JSONSerialization.jsonObject(with: Data(contentsOf: data.appendingPathComponent("ui-request.json"))) as! [String: Any]
         let selected = request["selection"] as! [[String: Any]]
-        #expect(selected.compactMap { $0["id"] as? String } == ["B01", "B02", "B03"])
-        #expect(selected[0]["target"] as? String == "simple")
-        #expect(selected[1]["target"] as? Bool == false)
-        #expect(selected[2]["target"] as? Bool == false)
+        #expect(selected.compactMap { $0["id"] as? String } == model.items.filter(\.selected).map(\.id))
+        #expect(selected.first { $0["id"] as? String == "B01" }!["target"] as? String == "simple")
+        #expect(selected.first { $0["id"] as? String == "B02" }!["target"] as? Bool == false)
+        #expect(selected.first { $0["id"] as? String == "B03" }!["target"] as? Bool == false)
+        #expect(model.showCompletion)
+        try await settle()
+        if let view = window.contentView, let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds) {
+            view.cacheDisplay(in: view.bounds, to: bitmap)
+            try bitmap.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: "/tmp/cyh-completion-page.png"))
+        }
+        try await ProtocolTests().waitFor("completion report", {
+            elements(window).contains { $0.accessibilityIdentifier() == "back-to-settings" && $0.isAccessibilityEnabled() }
+        })
+        #expect(try element("back-to-settings", in: window).accessibilityPerformPress())
         // The model completes before SwiftUI has necessarily rendered its next frame.
         try await ProtocolTests().waitFor("execute button after completion", {
             elements(window).contains { $0.accessibilityIdentifier() == "execute" && $0.isAccessibilityEnabled() }

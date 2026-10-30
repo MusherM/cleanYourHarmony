@@ -1,7 +1,7 @@
 [Setup]
 AppId=app.cleanyourharmony.desktop
 AppName=cleanYourHarmony
-AppVersion=1.0.0
+AppVersion=1.1.0
 DefaultDirName={localappdata}\Programs\cleanYourHarmony
 DefaultGroupName=cleanYourHarmony
 PrivilegesRequired=lowest

@@ -94,3 +94,12 @@ test('invalid target fails before any device work or result directory is created
   await assert.rejects(executeSession({request:{deviceId:'unused',selection:[{id:'B02',target:'on'}]},root,DeviceClass:ForbiddenDevice}),/目标/);
   assert.equal(calls,0);assert.equal(fs.existsSync(root),false);
 });
+
+test('visible category list matches full and partial execution order', () => {
+  const data = publicCatalog(catalog);
+  const visible = data.categories.flatMap(c => data.operations.filter(o => o.category === c.id).map(o => o.id));
+  for (const ids of [visible, visible.filter((_, i) => i % 2 === 0)]) {
+    const selected = resolveSelection(catalog, ids.map(id => ({ id, target: catalog.operations.find(o => o.id === id).control.default })));
+    assert.deepEqual(plan(catalog, selected).flatMap(p => p.operations.map(o => o.id)), ids);
+  }
+});

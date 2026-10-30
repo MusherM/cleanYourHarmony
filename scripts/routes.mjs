@@ -15,6 +15,6 @@ export function plan(catalog, selected = catalog.operations) {
     if (!pages.has(key)) pages.set(key, { key, family, route, notification: op.id.startsWith('N'), operations: [] });
     pages.get(key).operations.push(op);
   }
-  // Sort lexically within each app to keep common route prefixes adjacent.
-  return [...pages.values()].sort((a, b) => a.key.localeCompare(b.key, 'zh-CN'));
+  // Match list categories, then keep common route prefixes adjacent within each category.
+  return [...pages.values()].sort((a, b) => catalog.categories.findIndex(c => c.id === a.operations[0].category) - catalog.categories.findIndex(c => c.id === b.operations[0].category) || a.key.localeCompare(b.key, 'zh-CN'));
 }

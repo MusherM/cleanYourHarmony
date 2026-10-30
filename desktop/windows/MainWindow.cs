@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Automation;
 using Windows.Graphics;
 namespace CleanYourHarmony;
@@ -17,6 +18,9 @@ internal sealed class Setting
 }
 public sealed class MainWindow : Window
 {
+    private readonly Grid root = new();
+    private readonly Grid completionPage = new() { Visibility = Visibility.Collapsed, Padding = new Thickness(32) };
+    private readonly Button backToSettings = new() { Content = "返回设置", HorizontalAlignment = HorizontalAlignment.Center };
     private readonly EngineClient engine = new();
     private readonly List<Setting> settings = [];
     private readonly NavigationView navigation = new() { IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed, IsSettingsVisible = false, PaneDisplayMode = NavigationViewPaneDisplayMode.Left, OpenPaneLength = 250, IsPaneToggleButtonVisible = false };
@@ -34,7 +38,7 @@ public sealed class MainWindow : Window
     private JsonArray devices = [], recoverable = [];
     private string deviceId = "", directory = "";
     private bool working, discovering, ready, closing, allowClose, rendering, hasRunOutcome;
-    private readonly Dictionary<string, TextBlock> resultLabels = [];
+    private readonly Dictionary<string, (FontIcon Icon, TextBlock Detail)> resultLabels = [];
     public MainWindow()
     {
         Title = "cleanYourHarmony";
@@ -84,7 +88,24 @@ public sealed class MainWindow : Window
         execute.Style = (Style)Application.Current.Resources["AccentButtonStyle"]; execute.Click += async (_, _) => await StartRun();
         stop.Click += async (_, _) => { stop.IsEnabled = false; message.Text = "正在停止并恢复勿扰…"; await TryRequest("cancel"); };
         actions.Children.Add(stop); actions.Children.Add(execute); footer.Children.Add(actions); Grid.SetRow(footer, 4); content.Children.Add(footer);
-        navigation.Content = content; Content = navigation; UpdateControls();
+        navigation.Content = content; root.Children.Add(navigation); root.Children.Add(completionPage); Content = root;
+        AutomationProperties.SetAutomationId(completionPage, "completion-page");
+        AutomationProperties.SetAutomationId(backToSettings, "back-to-settings");
+        backToSettings.Click += (_, _) => { completionPage.Visibility = Visibility.Collapsed; navigation.Visibility = Visibility.Visible; };
+        UpdateControls();
+    }
+    private static void UpdateResultIcon(FontIcon icon, string result)
+    {
+        icon.Visibility = result.Length == 0 ? Visibility.Collapsed : Visibility.Visible;
+        icon.Glyph = result switch { "已修改" or "无需修改" => "\uE73E", "失败" => "\uEA39", "未找到" => "\uE9CE", _ => "\uE823" };
+        icon.Foreground = result switch {
+            "已修改" or "无需修改" => new SolidColorBrush(Microsoft.UI.Colors.ForestGreen),
+            "失败" => new SolidColorBrush(Microsoft.UI.Colors.Red),
+            "未找到" => new SolidColorBrush(Microsoft.UI.Colors.DarkOrange),
+            _ => (Brush)Application.Current.Resources["TextFillColorSecondaryBrush"]
+        };
+        ToolTipService.SetToolTip(icon, result); AutomationProperties.SetName(icon, result);
+        AutomationProperties.SetAutomationId(icon, "result-" + result);
     }
     private void SetSelection(bool selected, string? group = null) { foreach (var item in settings.Where(i => group == null || i.Category == group)) item.Selected = selected; RenderRows(); UpdateControls(); }
     private void RenderRows()
@@ -107,8 +128,11 @@ public sealed class MainWindow : Window
             var check = new CheckBox { IsChecked = item.Selected, IsEnabled = !working, VerticalAlignment = VerticalAlignment.Center };
             AutomationProperties.SetName(check, "执行 " + item.Name); AutomationProperties.SetAutomationId(check, "select-" + item.Id); row.Children.Add(check);
             var text = new StackPanel { Spacing = 4, VerticalAlignment = VerticalAlignment.Center }; text.Children.Add(Label(item.Name, 16));
-            var result = Label(item.Result + (item.Detail.Length > 0 ? "：" + item.Detail : ""), 12); resultLabels[item.Id] = result; text.Children.Add(result);
-            if (item.Evidence is { } evidence) text.Children.Add(Action("查看现场证据", () => OpenEvidence(evidence), false));
+            var detail = Label(item.Detail, 12); text.Children.Add(detail);
+            row.ColumnDefinitions.Add(new() { Width = new GridLength(36) });
+            var icon = new FontIcon { FontSize = 19, VerticalAlignment = VerticalAlignment.Center };
+            Grid.SetColumn(icon, 2); row.Children.Add(icon);
+            resultLabels[item.Id] = (icon, detail); UpdateResultIcon(icon, item.Result);
             Grid.SetColumn(text, 1); row.Children.Add(text);
             RoutedEventHandler onSelection = (_, _) => { item.Selected = check.IsChecked == true; UpdateControls(); };
             check.Checked += onSelection; check.Unchecked += onSelection;
@@ -165,6 +189,7 @@ public sealed class MainWindow : Window
     }
     private void UpdateControls()
     {
+        backToSettings.IsEnabled = !working;
         selectionLabel.Text = $"已选 {settings.Count(i => i.Selected)} 项";
         execute.IsEnabled = ready && DeviceReady && !working && !discovering && settings.Any(i => i.Selected) && Pending?["restorePending"]?.GetValue<bool>() != true;
         execute.Visibility = working ? Visibility.Collapsed : Visibility.Visible; stop.Visibility = working ? Visibility.Visible : Visibility.Collapsed;
@@ -184,13 +209,14 @@ public sealed class MainWindow : Window
         JsonObject parameters;
         if (method == "execute") { var selection = new JsonArray(); foreach (var item in settings.Where(i => i.Selected)) selection.Add(new JsonObject { ["id"] = item.Id, ["target"] = item.Target.DeepClone() }); parameters = new() { ["request"] = new JsonObject { ["deviceId"] = deviceId, ["selection"] = selection } }; }
         else parameters = new() { ["deviceId"] = deviceId, ["directory"] = resume };
+        completionPage.Visibility = Visibility.Collapsed; navigation.Visibility = Visibility.Visible;
         hasRunOutcome = true; working = true; stop.IsEnabled = true; directory = ""; dnd.Text = ""; message.Text = "正在检查设备…";
         foreach (var item in settings) { item.Result = ""; item.Detail = ""; item.Evidence = null; }
         RenderRows(); UpdateControls(); ShowRecovery(); var reply = await TryRequest(method, parameters);
         if (reply is null) { working = false; RenderRows(); UpdateControls(); }
-        else if (reply["result"] is JsonObject result) { directory = result["directory"]!.GetValue<string>(); ShowProgress(result["progress"]!.AsObject()); }
+        else if (reply["result"] is JsonObject result) { directory = result["directory"]!.GetValue<string>(); ShowProgress(result["progress"]!.AsObject(), final: true); }
     }
-    private void ShowProgress(JsonObject data)
+    private void ShowProgress(JsonObject data, bool final = false)
     {
         string state = data["status"]?.GetValue<string>() ?? "";
         var selected = data["selected"]!.AsArray().Select(x => x!.GetValue<string>()).ToHashSet(); var records = data["items"]!.AsObject();
@@ -202,12 +228,56 @@ public sealed class MainWindow : Window
             item.Result = labels.GetValueOrDefault(status, selected.Contains(item.Id) ? "未完成" : ""); item.Detail = record?["error"]?.GetValue<string>() ?? record?["reason"]?.GetValue<string>() ?? "";
             item.Evidence = record?["evidence"]?.AsArray().LastOrDefault()?["path"]?.GetValue<string>();
             if (new[] { "passed", "unchanged", "failed", "not_found" }.Contains(status)) processed++;
-            if (resultLabels.TryGetValue(item.Id, out var label)) label.Text = item.Result + (item.Detail.Length > 0 ? "：" + item.Detail : "");
+            if (resultLabels.TryGetValue(item.Id, out var statusView)) { UpdateResultIcon(statusView.Icon, item.Result); statusView.Detail.Text = item.Detail; }
         }
         progress.Visibility = state == "running" ? Visibility.Visible : Visibility.Collapsed; progress.Maximum = Math.Max(selected.Count, 1); progress.Value = processed;
         message.Text = state switch { "completed" => "全部所选项目已验证", "completed_with_missing" => "执行结束，部分应用未找到", "completed_with_failures" => "执行结束，部分项目失败", "running" => $"已处理 {processed} / {selected.Count} 项 · {settings.FirstOrDefault(i => i.Id == data["currentItem"]?.GetValue<string>())?.Name ?? "准备执行"}", _ => "执行未完成" };
         if (state != "running" && data["stopReason"]?.GetValue<string>() is { } reason) message.Text += "：" + reason;
         if (data["dnd"] is JsonObject d) dnd.Text = d["restorePending"]?.GetValue<bool>() == true ? "勿扰待恢复" : d["enableError"] != null ? "勿扰准备失败：" + d["enableError"]!.GetValue<string>() : d["restored"] != null ? "勿扰已恢复原状态" : d["original"]?.GetValue<bool>() == true ? "勿扰原已开启，保持开启" : "勿扰已临时开启";
+        if (final && state != "running" && data["finishedAt"] != null) ShowCompletion(state, selected);
+    }
+    private void ShowCompletion(string state, HashSet<string> selected)
+    {
+        bool animate = completionPage.Visibility != Visibility.Visible;
+        completionPage.Children.Clear(); completionPage.RowDefinitions.Clear();
+        completionPage.RowDefinitions.Add(new() { Height = GridLength.Auto });
+        completionPage.RowDefinitions.Add(new() { Height = new GridLength(1, GridUnitType.Star) });
+        completionPage.RowDefinitions.Add(new() { Height = GridLength.Auto });
+        var report = settings.Where(i => selected.Contains(i.Id)).ToList();
+        foreach (var item in report.Where(i => i.Result == "执行中")) item.Result = "未完成";
+        bool success = report.Any(i => i.Result is "已修改" or "无需修改");
+        bool allFailed = report.Count > 0 && report.All(i => i.Result == "失败");
+        var header = new StackPanel { Spacing = 16, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 24, 0, 24) };
+        var icon = new FontIcon { Glyph = success ? "\uE73E" : allFailed ? "\uEA39" : "\uE738", FontSize = 64, HorizontalAlignment = HorizontalAlignment.Center,
+            Foreground = new SolidColorBrush(success ? Microsoft.UI.Colors.ForestGreen : allFailed ? Microsoft.UI.Colors.Red : Microsoft.UI.Colors.Gray) };
+        header.Children.Add(icon);
+        foreach (var entry in new[] { (success ? "执行完成" : allFailed ? "执行失败" : "执行已结束", 30d), (message.Text, 14d),
+            (string.Join(" · ", new[] { "已修改", "无需修改", "失败", "未找到", "未完成" }.Select(label => $"{label} {report.Count(i => i.Result == label)}")), 14d),
+            (dnd.Text.Length == 0 ? "勿扰状态未确认" : dnd.Text, 14d) })
+        { var text = Label(entry.Item1, entry.Item2); text.HorizontalAlignment = HorizontalAlignment.Center; header.Children.Add(text); }
+        completionPage.Children.Add(header);
+        var reportRows = new StackPanel { Spacing = 16, Margin = new Thickness(20) };
+        reportRows.Children.Add(Label("执行报告", 22));
+        foreach (var item in report)
+        {
+            var row = new StackPanel { Spacing = 6 };
+            row.Children.Add(Label(item.Name + " · " + item.Result, 16));
+            if (item.Detail.Length > 0) { var detail = Label(item.Detail, 13); detail.IsTextSelectionEnabled = true; row.Children.Add(detail); }
+            if (item.Evidence is { } evidence) row.Children.Add(Action("查看证据", () => OpenEvidence(evidence), false));
+            reportRows.Children.Add(row);
+        }
+        var reportScroll = new ScrollViewer { Content = reportRows, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+        Grid.SetRow(reportScroll, 1); completionPage.Children.Add(reportScroll);
+        backToSettings.Margin = new Thickness(0, 20, 0, 0); backToSettings.IsEnabled = !working;
+        Grid.SetRow(backToSettings, 2); completionPage.Children.Add(backToSettings);
+        navigation.Visibility = Visibility.Collapsed; completionPage.Visibility = Visibility.Visible;
+        if (animate)
+        {
+            var animation = new DoubleAnimation { From = 0, To = 1, Duration = new Duration(TimeSpan.FromMilliseconds(550)) };
+            Storyboard.SetTarget(animation, icon); Storyboard.SetTargetProperty(animation, "Opacity");
+            var storyboard = new Storyboard(); storyboard.Children.Add(animation); storyboard.Begin();
+        }
+
     }
     private void OpenEvidence(string name)
     {

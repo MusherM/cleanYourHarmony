@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 import AppKit
 
 struct Category: Decodable, Identifiable { let id: String; let name: String; let icon: String }
@@ -34,6 +35,14 @@ final class AppModel: ObservableObject {
     @Published var completed = 0
     @Published var total = 0
     @Published var directory = ""
+    @Published var showCompletion = false
+    @Published var outcome = ""
+    @Published var reportIDs: [String] = []
+    @Published var reportMessage = ""
+    var reportItems: [SettingItem] { items.filter { reportIDs.contains($0.id) } }
+    var reportHasSuccess: Bool { reportItems.contains { ["已修改", "无需修改"].contains($0.result) } }
+    var reportAllFailed: Bool { !reportItems.isEmpty && reportItems.allSatisfy { $0.result == "失败" } }
+    var reportSummary: String { ["已修改", "无需修改", "失败", "未找到", "未完成"].map { label in "\(label) \(reportItems.filter { $0.result == label }.count)" }.joined(separator: " · ") }
     @Published var recoverable: [[String: Any]] = []
     private var process: Process?
     private var input: FileHandle?
@@ -156,19 +165,21 @@ final class AppModel: ObservableObject {
     }
     private func startRun(_ method: String, _ params: [String: Any]) {
         hasRunOutcome = true
+        showCompletion = false; outcome = ""; reportIDs = []
         working = true; stopping = false; directory = ""; completed = 0; total = 0; dndMessage = ""; message = "正在检查设备…"
         for item in items { item.result = ""; item.detail = ""; item.evidence = [] }
         send(method, params) { [weak self] reply in
             guard let self = self else { return }
             if let error = reply["error"] as? String { self.message = error; self.working = false; return }
-            if let result = reply["result"] as? [String: Any], let progress = result["progress"] as? [String: Any] { self.directory = result["directory"] as? String ?? ""; self.showProgress(progress) }
+            if let result = reply["result"] as? [String: Any], let progress = result["progress"] as? [String: Any] { self.directory = result["directory"] as? String ?? ""; self.showProgress(progress, final: true) }
         }
     }
     func stop() { stopping = true; message = "正在停止并恢复勿扰…"; send("cancel") }
     func close() { timer?.invalidate(); if working || discovering { stop() } else { send("shutdown") } }
-    func showProgress(_ progress: [String: Any]) {
+    func showProgress(_ progress: [String: Any], final: Bool = false) {
         let records = progress["items"] as? [String: [String: Any]] ?? [:]
         let selected = progress["selected"] as? [String] ?? []
+        reportIDs = selected
         total = selected.count; completed = records.values.filter { ["passed","unchanged","failed","not_found"].contains($0["status"] as? String ?? "") }.count
         let labels = ["passed":"已修改", "unchanged":"无需修改", "failed":"失败", "not_found":"未找到", "pending":"执行中", "incomplete":"未完成"]
         for item in items {
@@ -178,6 +189,7 @@ final class AppModel: ObservableObject {
             item.evidence = (record?["evidence"] as? [[String: Any]] ?? []).compactMap { $0["path"] as? String }
         }
         let status = progress["status"] as? String ?? ""
+        outcome = status
         if status == "running" {
             let name = items.first { $0.id == progress["currentItem"] as? String }?.name
             message = stopping ? "正在停止并恢复勿扰…" : name.map { "正在处理：\($0)" } ?? "正在准备执行…"
@@ -192,6 +204,11 @@ final class AppModel: ObservableObject {
             else if dnd["original"] as? Bool == true { dndMessage = "勿扰原已开启，保持开启" }
             else { dndMessage = "勿扰已临时开启" }
         }
+        if final, status != "running", progress["finishedAt"] != nil {
+            for item in reportItems where item.result == "执行中" { item.result = "未完成" }
+            reportMessage = message
+            showCompletion = true
+        }
     }
     func openEvidence(_ name: String) {
         let root = URL(fileURLWithPath: directory).standardizedFileURL
@@ -201,6 +218,30 @@ final class AppModel: ObservableObject {
     }
 }
 
+struct ResultIcon: View {
+    let result: String
+    private var symbol: String {
+        switch result {
+        case "已修改", "无需修改": return "checkmark.circle.fill"
+        case "失败": return "xmark.circle.fill"
+        case "未找到": return "questionmark.circle.fill"
+        case "执行中": return "hourglass.circle"
+        default: return "clock"
+        }
+    }
+    private var color: Color {
+        switch result {
+        case "已修改", "无需修改": return .green
+        case "失败": return .red
+        case "未找到": return .orange
+        default: return .secondary
+        }
+    }
+    var body: some View {
+        Image(systemName: symbol).font(.system(size: 19)).foregroundStyle(color)
+            .help(result).accessibilityLabel(result).accessibilityIdentifier("result-\(result)")
+    }
+}
 struct SettingRow: View {
     @ObservedObject var item: SettingItem
     @ObservedObject var model: AppModel
@@ -208,19 +249,59 @@ struct SettingRow: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 20) {
                 Toggle("执行 \(item.name)", isOn: $item.selected).labelsHidden().toggleStyle(.checkbox).frame(width: 44)
-                    .accessibilityIdentifier("select-\(item.id)")
+                    .accessibilityIdentifier("select-\(item.id)").disabled(model.working)
                     .onChange(of: item.selected) { _ in model.objectWillChange.send() }
                 Text(item.name).font(.system(size: 16)).frame(maxWidth: .infinity, alignment: .leading)
-                if !item.result.isEmpty { Text(item.result).font(.system(size: 12)).foregroundStyle(item.result == "失败" ? Color.red : Color.secondary) }
-                if let evidence = item.evidence.last { Button { model.openEvidence(evidence) } label: { Image(systemName: "photo") }.buttonStyle(.borderless).help("查看现场证据") }
+                if !item.result.isEmpty { ResultIcon(result: item.result) }
             }
             if !item.detail.isEmpty { Text(item.detail).font(.callout).foregroundStyle(.secondary).padding(.leading, 64).textSelection(.enabled) }
-        }.padding(.horizontal, 20).padding(.vertical, 17).disabled(model.working)
+        }.padding(.horizontal, 20).padding(.vertical, 17)
+    }
+}
+struct CompletionView: View {
+    @ObservedObject var model: AppModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var appeared = false
+    private var success: Bool { model.reportHasSuccess }
+    var body: some View {
+        VStack(spacing: 20) {
+            VStack(spacing: 16) {
+                Image(systemName: success ? "checkmark.circle.fill" : model.reportAllFailed ? "xmark.circle.fill" : "minus.circle")
+                    .font(.system(size: 72)).foregroundStyle(success ? Color.green : model.reportAllFailed ? Color.red : Color.secondary)
+                    .scaleEffect(appeared ? 1 : 0.65).opacity(appeared ? 1 : 0)
+                Text(success ? "执行完成" : model.reportAllFailed ? "执行失败" : "执行已结束").font(.system(size: 30, weight: .bold)).accessibilityIdentifier("completion-page")
+                Text(model.reportMessage).foregroundStyle(.secondary).textSelection(.enabled)
+                Text(model.reportSummary).font(.callout)
+                Text(model.dndMessage.isEmpty ? "勿扰状态未确认" : model.dndMessage).font(.callout)
+            }.frame(maxWidth: .infinity).padding(.top, 28)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("执行报告").font(.title2.bold()).padding(.bottom, 16)
+                    ForEach(model.reportItems) { item in
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Text(item.name)
+                                Spacer()
+                                Text(item.result).foregroundStyle(["失败", "未找到", "未完成"].contains(item.result) ? Color.orange : Color.secondary)
+                                if let evidence = item.evidence.last { Button("查看证据") { model.openEvidence(evidence) } }
+                            }
+                            if !item.detail.isEmpty { Text(item.detail).font(.callout).foregroundStyle(.secondary).textSelection(.enabled) }
+                        }.padding(.vertical, 12)
+                        Divider()
+                    }
+                }.padding(24)
+            }.background(Color.secondary.opacity(0.05), in: RoundedRectangle(cornerRadius: 12))
+            Button("返回设置") { model.showCompletion = false }.accessibilityIdentifier("back-to-settings").controlSize(.large).disabled(model.working)
+        }.padding(32)
+            .onAppear { withAnimation(reduceMotion ? nil : .spring(response: 0.55, dampingFraction: 0.65)) { appeared = true } }
     }
 }
 struct MainView: View {
     @ObservedObject var model: AppModel
     var body: some View {
+        if model.showCompletion {
+            CompletionView(model: model).frame(minWidth: 960, minHeight: 700).frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(nsColor: .windowBackgroundColor))
+        } else {
         ScrollViewReader { scroll in
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 24) {
@@ -290,6 +371,7 @@ struct MainView: View {
                 }.padding(24)
             }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(nsColor: .windowBackgroundColor))
         }.frame(minWidth: 960, minHeight: 700).onAppear { model.start() }
+        }
         }
     }
 }

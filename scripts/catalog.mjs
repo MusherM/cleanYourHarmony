@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { plan } from './routes.mjs';
 import { fileURLToPath } from 'node:url';
 
 export const catalogPath = fileURLToPath(new URL('../operations.json', import.meta.url));
@@ -21,7 +22,7 @@ export function resolveSelection(catalog, selection = defaultSelection(catalog))
   return operations.sort((a, b) => catalog.operations.indexOf(catalog.operations.find(o => o.id === a.id)) - catalog.operations.indexOf(catalog.operations.find(o => o.id === b.id)));
 }
 export function publicCatalog(catalog) {
-  return { categories: catalog.categories, operations: catalog.operations.map(o => ({
+  return { categories: catalog.categories, operations: plan(catalog).flatMap(page => page.operations).map(o => ({
     id: o.id, name: o.display_name, category: o.category, selected: o.default_selected, control: o.control,
   })) };
 }

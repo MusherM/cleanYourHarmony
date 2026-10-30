@@ -17,6 +17,41 @@ import Testing
         return model
     }
 
+    @Test func completionWaitsForCleanupAndReportsOnlyThisRun() throws {
+        let model = try model()
+        var progress: [String: Any] = ["status": "incomplete", "selected": ["B01", "F01"], "items": ["B01": ["status": "pending"]], "dnd": ["restorePending": true]]
+        model.showProgress(progress)
+        #expect(!model.showCompletion)
+        progress["finishedAt"] = "2026-10-30T00:00:00Z"
+        model.showProgress(progress)
+        #expect(!model.showCompletion)
+        model.showProgress(progress, final: true)
+        #expect(model.showCompletion)
+        #expect(model.reportItems.count == 2)
+        #expect(model.reportItems.allSatisfy { $0.result == "未完成" })
+        #expect(model.reportSummary.contains("未完成 2"))
+        #expect(model.dndMessage == "勿扰待恢复")
+        #expect(model.outcome == "incomplete")
+    }
+
+    @Test func completionPresentationUsesVerifiedItemResults() throws {
+        let model = try model()
+        for (statuses, success, failed) in [
+            (["passed", "failed"], true, false),
+            (["unchanged", "not_found"], true, false),
+            (["failed", "failed"], false, true),
+            (["failed", "incomplete"], false, false),
+            (["not_found", "not_found"], false, false)
+        ] {
+            model.showProgress(["status": "incomplete", "selected": ["B01", "B02"],
+                "items": ["B01": ["status": statuses[0]], "B02": ["status": statuses[1]]]])
+            #expect(model.reportHasSuccess == success)
+            #expect(model.reportAllFailed == failed)
+        }
+        model.showProgress(["status": "incomplete", "selected": [], "items": [:]])
+        #expect(!model.reportHasSuccess && !model.reportAllFailed)
+    }
+
     @Test func selectionIsScopedAndPreservesCleanupDefaults() throws {
         let model = try model()
         #expect(model.items.count == 20)

@@ -8,7 +8,7 @@ const emit = value => process.stdout.write(JSON.stringify(value) + '\n');
 const catalog = publicCatalog(readCatalog());
 const capture = process.env.CYH_UI_CAPTURE ?? path.join(process.argv[process.argv.indexOf('--data-dir') + 1], 'ui-request.json');
 let request, selected, items, timer;
-const progress = status => ({status, selected, items, currentItem:selected[0], dnd:{restorePending:status==='running', ...(status!=='running'?{restored:{checked:false}}:{})}});
+const progress = status => ({status, ...(status!=='running'?{finishedAt:new Date().toISOString()}:{}), selected, items, currentItem:selected[0], dnd:{restorePending:status==='running', ...(status!=='running'?{restored:{checked:false}}:{})}});
 function finish(cancelled) {
   clearTimeout(timer);
   if (!request) return;

@@ -6,12 +6,14 @@ A HarmonyOS settings utility with a native macOS interface (SwiftUI) and a nativ
 
 ## Desktop application
 
-The sidebar displays the phone model and software version read through hdc, followed by four setting categories. All 20 settings appear in one continuous list with category subheadings; sidebar buttons scroll to the corresponding section. Each row has only an inclusion checkbox. Selected operations use the catalog cleanup defaults: Simple homepage and all other settings off. Unselected settings remain untouched; changing a checkbox does not immediately modify the phone.
+The sidebar displays the phone model and software version read through hdc, followed by four setting categories. All 20 settings appear in one continuous list with category subheadings; sidebar buttons scroll to the corresponding section. Each row has an inclusion checkbox and a result icon: changed and unchanged use a green check, failures use a red cross, and missing or pending states remain distinct. Hover over the icon for the precise status; screenshots are available in the completion report. Selected operations use the catalog cleanup defaults: Simple homepage and all other settings off. Unselected settings remain untouched; changing a checkbox does not immediately modify the phone.
 
 All 20 operations are initially selected with the existing cleanup defaults. Selections survive category changes; unselected settings are untouched. Execute batches operations by actual page and shows live results. Stopping verifies mutations already made and restores Do Not Disturb (DND); interrupted runs can be resumed. Disabling notifications also affects ordinary notifications from those apps.
 
+The list and executor share the same page-plan order. After cleanup, the app opens a completion page with a green success animation whenever at least one item is changed or unchanged. Only all-failed runs show a failure page; other runs with no successful items show a neutral end state. Its report includes counts and per-item outcomes for changed, unchanged, failed, missing, and incomplete items, along with reasons, evidence links, and DND restoration status. Return to Settings opens the operation list again.
+
 - Target platforms: macOS 13.5+ (arm64/x64), Windows 11 x64.
-- [Download 1.0](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.0): macOS Apple Silicon / Intel DMGs and Windows x64 Setup, including runtime dependencies. Mac packages are ad-hoc signed and not notarized; Windows packages are unsigned.
+- [Download 1.1](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.1): macOS Apple Silicon / Intel DMGs and Windows x64 Setup, including runtime dependencies. Mac packages are ad-hoc signed and not notarized; Windows packages are unsigned.
 - Bundled runtime: Node.js 24.22.2 (official macOS binaries require 13.5), hdc, USB libraries, and executor scripts. Windows uses self-contained .NET / Windows App SDK deployment.
 - Enable USB debugging and authorize the computer on the phone. Users enter lock-screen credentials; the app does not change lock-screen configuration.
 - Progress and screenshots: ~/Library/Application Support/cleanYourHarmony/runs on macOS; %LOCALAPPDATA%/cleanYourHarmony/runs on Windows. Evidence stays local.
@@ -19,11 +21,11 @@ All 20 operations are initially selected with the existing cleanup defaults. Sel
 
 ### Download and install
 
-- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-macos-arm64.dmg)
-- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-macos-x64.dmg)
-- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-windows-x64-Setup.exe)
+- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.1/cleanYourHarmony-1.1-macos-arm64.dmg)
+- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.1/cleanYourHarmony-1.1-macos-x64.dmg)
+- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.1/cleanYourHarmony-1.1-windows-x64-Setup.exe)
 
-On Mac, open the DMG and drag the app onto the Applications folder in the same window; on Windows, run Setup. The OS may block first launch because these packages are unnotarized/unsigned. The Release includes SHA-256 checksums and corresponding build sources. Use the explicitly named `cleanYourHarmony-1.0-source.tar.gz` to reproduce the installers; GitHub’s automatic source archives still reference the original v1.0 tag.
+On Mac, open the DMG and drag the app onto the Applications folder in the same window; on Windows, run Setup. The OS may block first launch because these packages are unnotarized/unsigned. The Release includes SHA-256 checksums and corresponding build sources. Use the explicitly named `cleanYourHarmony-1.1-source.tar.gz` to reproduce the installers; the automatic source archives, v1.1 tag, and installers reference the same commit.
 
 ### Build and package
 
