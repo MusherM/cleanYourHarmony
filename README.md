@@ -11,26 +11,34 @@ English: [README_en.md](README_en.md)
 初次打开默认勾选全部 20 项并使用清爽化目标。切换分类保留编辑；未选项目保持原状。点击“执行所选项目”后按实际页面合并处理，实时显示结果。停止时先核验已发生的修改并恢复勿扰，异常退出后的任务可续跑。通知关闭会影响该应用的正常通知。
 
 - 目标平台：macOS 13.5+（arm64/x64），Windows 11 x64。
-- 当前本机已构建 macOS arm64 开发包；Intel Mac、Windows 安装与业务验收尚未完成。源码和构建入口不等于已发布安装包。
+- [1.0 下载](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.0)：macOS Apple Silicon / Intel DMG 和 Windows x64 Setup；均内置运行依赖。macOS 为 ad-hoc 签名、未公证，Windows 未签名。
 - 运行时内置 Node.js 24.22.2（官方 macOS 二进制最低要求 13.5）、hdc、USB 动态库和执行脚本；Windows 发布使用自包含 .NET / Windows App SDK。
 - 手机仍需开启 USB 调试并授权电脑。锁屏凭据由用户输入；应用不修改锁屏配置。
 - 进度与截图：macOS 为 ~/Library/Application Support/cleanYourHarmony/runs；Windows 为 %LOCALAPPDATA%/cleanYourHarmony/runs。证据仅保存在本机。
 - 不使用自动更新、遥测或云端执行。没有整机回滚功能；停止任务不会撤销已经验证的业务设置，仅恢复本次临时改变的勿扰。
 
+### 下载与安装
+
+- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-macos-arm64.dmg)
+- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-macos-x64.dmg)
+- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-windows-x64-Setup.exe)
+
+Mac 将 DMG 中的 app 复制到 Applications；Windows 运行 Setup。系统可能因未公证／未签名阻止首次打开。Release 附有 SHA-256 校验和及对应构建源码；复现安装包请使用明确命名的 `cleanYourHarmony-1.0-source.tar.gz`，GitHub 自动生成的源码仍对应最初的 v1.0 tag。
+
 ### 构建与打包
 
 构建主机需要 Node.js 24+；macOS 需要 Swift 工具链，Windows 需要 .NET 8 SDK、Windows SDK、WinUI 构建工具和 Inno Setup 6。终端用户不需要这些开发工具。
 
-先从官方 OpenHarmony / HarmonyOS SDK 准备目标平台的 toolchains 目录，再封装固定运行时。Node 下载地址及 SHA-256 锁定在 packaging/runtime-lock.json，下载缓存保存在 build/downloads。
+`prepare-official-runtime.mjs` 自动下载官方 OpenHarmony 6.1 Release SDK，核对归档 SHA-256 后提取 hdc 和 USB 库，再封装 Node.js。下载来源、版本和校验和锁定在 packaging/runtime-lock.json，缓存保存在 build/downloads；无需本机 DevEco SDK。包内保留组件许可证、来源信息和 libusb 对应源码。
 
 ```sh
-# macOS arm64，本机已安装 SDK 时可省略 --hdc-dir
-node packaging/prepare-runtime.mjs --platform darwin-arm64 --hdc-dir /path/to/toolchains
-node packaging/build-macos.mjs --arch arm64 --dmg
+# macOS Apple Silicon 构建主机
+node packaging/prepare-official-runtime.mjs darwin-arm64
+node packaging/build-macos.mjs --arch arm64 --distributable --dmg
 
-# macOS Intel，必须使用 x64 hdc 和 USB 库，不能复制 arm64 工具
-node packaging/prepare-runtime.mjs --platform darwin-x64 --hdc-dir /path/to/x64/toolchains
-node packaging/build-macos.mjs --arch x64 --dmg
+# macOS Intel 构建主机
+node packaging/prepare-official-runtime.mjs darwin-x64
+node packaging/build-macos.mjs --arch x64 --distributable --dmg
 
 # 离线行为测试，不会操作手机
 node --test scripts/runner.test.mjs scripts/desktop.test.mjs
@@ -39,17 +47,17 @@ node --test scripts/runner.test.mjs scripts/desktop.test.mjs
 Windows 构建主机执行：
 
 ```powershell
-node packaging/prepare-runtime.mjs --platform win32-x64 --hdc-dir C:\SDK\toolchains
-pwsh -File packaging/build-windows.ps1
+node packaging/prepare-official-runtime.mjs win32-x64
+pwsh -File packaging/build-windows.ps1 -Distributable
 ```
 
-产物位于 dist/macos-arm64、dist/macos-x64 或 dist/windows-x64。build 与 dist 不纳入版本管理。未传发布参数时，仅生成开发包；macOS 使用临时签名，不能当作已公证的公开发行包。
+产物位于 dist/macos-arm64、dist/macos-x64 或 dist/windows-x64。build 与 dist 不纳入版本管理。`--distributable`／`-Distributable` 要求已核验的运行时来源：macOS 采用 ad-hoc 签名、未公证，Windows 安装包未签名。正式证书签名仍使用下述 release 参数。
 
 公开发布前，必须审核具体 hdc 二进制及依赖的再分发条款，不能仅凭 hdc 源码许可证判断 SDK 二进制可分发。prepare-runtime.mjs 的 --hdc-manifest 接受包含 platform、source、redistributionReviewed、files（文件名到 SHA-256）的已审核清单。没有清单时记录为仅供本地开发，发布模式拒绝继续。
 
 macOS 发布使用 --release，并配置 CYH_SIGN_IDENTITY、CYH_NOTARY_PROFILE（已有钥匙串配置名）；打包器执行签名、公证和 stapler 校验。Windows 使用 build-windows.ps1 -Release -CertificateThumbprint <已有证书指纹>。凭据不写入仓库。Windows 可通过 -DriverDirectory 纳入经过审核的签名驱动，清单另需 hardwareIds 和 inf；安装器仅对匹配硬件且驱动异常的设备请求提权安装。未提供经审核驱动时不会擅自替换系统驱动；首次连接兼容性必须在干净 Windows 环境验证。
 
-不同平台的 SDK 工具与签名证书未纳入本仓库；这是公开发布的外部前置条件。当前不能声称无需这些资产即可从零产生签名发行包。
+官方工具自动下载；正式签名证书仍是外部前置条件。没有证书时可以复现上述未公证／未签名安装包，不能生成经过开发者证书签名和公证的发行包。
 
 ### 自动化测试
 
@@ -66,6 +74,10 @@ powershell -File desktop/tests/windows.ps1
 两端入口覆盖共享执行器行为、原生客户端协议与界面测试。Windows 先运行独立 WinUI 窗口的按钮交互测试并保存截图，确认 runner 能执行 GUI 自动化，再测试正式应用。macOS 使用 Apple Swift Testing，通过真实 SwiftUI 控件的无障碍动作验证列表、分组选择、默认目标传递、锁定和停止；Windows 使用 NUnit、FlaUI UIA3 操作发布后的 WinUI 应用。协议测试启动真实 Node 执行器，核对并发请求、中文数据、错误回复和正常退出。界面执行测试使用隔离的模拟设备进程，不操作手机，不能代替 USB 驱动、安装包或实机验收。
 
 测试在临时目录保存日志和 JUnit／TRX 结果；缺少依赖、控件定位失败或超时会使测试失败，不以跳过代替通过。CI 对 macOS 和 Windows 分别执行同一入口并上传结果。2026-10-29，提交 `b163f7c` 已在 [GitHub Actions 双端验证](https://github.com/MusherM/cleanYourHarmony/actions/runs/40845687532) 中通过：macOS 为 56 项共享测试＋6 项原生测试；Windows 为 56 项共享测试＋1 项独立 GUI 环境验证＋1 项协议测试＋4 项应用 GUI 测试。两端均为零失败、零跳过。双端持续验证结果见 [Desktop checks](https://github.com/MusherM/cleanYourHarmony/actions/workflows/desktop-checks.yml)，具体运行环境以对应日志为准；CI 通过不等于 Windows 11 的安装、USB 驱动或实机业务验收通过。
+
+[Desktop packages](https://github.com/MusherM/cleanYourHarmony/actions/workflows/desktop-packages.yml) 在 macOS arm64、macOS Intel 和 Windows x64 上运行完整行为套件，再构建安装包。包级检查包含校验和、隔离 PATH 下启动内置 Node/hdc、真实协议、中文和空格安装路径、原生窗口启动与正常关闭；Windows 还验证静默安装、真实 hdc 设备枚举与未就绪状态及卸载。安装包附件只有对应任务成功后才可发布。CI 没有 USB 手机，不能代替实机设置和驱动兼容性验收。
+
+2026-10-30，安装包构建提交 `39b38c6` 在 [三平台打包验证](https://github.com/MusherM/cleanYourHarmony/actions/runs/40985950809) 中通过：macOS 26 ARM 和 Intel 各 62 项测试，Windows Server 2025 x64 共 63 项测试，均零失败、零跳过。三个包均通过内置运行时和实际安装启动检查，Windows 另通过界面与真实枚举结果对照及卸载检查。未验证干净 Windows 11、USB 驱动或实机设置操作。
 
 ### 本地通信与兼容性
 

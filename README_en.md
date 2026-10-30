@@ -11,26 +11,34 @@ The sidebar displays the phone model and software version read through hdc, foll
 All 20 operations are initially selected with the existing cleanup defaults. Selections survive category changes; unselected settings are untouched. Execute batches operations by actual page and shows live results. Stopping verifies mutations already made and restores Do Not Disturb (DND); interrupted runs can be resumed. Disabling notifications also affects ordinary notifications from those apps.
 
 - Target platforms: macOS 13.5+ (arm64/x64), Windows 11 x64.
-- A macOS arm64 development app has been built locally. Intel Mac and Windows installation/business acceptance remain unverified. Source projects and build scripts are not released installers.
+- [Download 1.0](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.0): macOS Apple Silicon / Intel DMGs and Windows x64 Setup, including runtime dependencies. Mac packages are ad-hoc signed and not notarized; Windows packages are unsigned.
 - Bundled runtime: Node.js 24.22.2 (official macOS binaries require 13.5), hdc, USB libraries, and executor scripts. Windows uses self-contained .NET / Windows App SDK deployment.
 - Enable USB debugging and authorize the computer on the phone. Users enter lock-screen credentials; the app does not change lock-screen configuration.
 - Progress and screenshots: ~/Library/Application Support/cleanYourHarmony/runs on macOS; %LOCALAPPDATA%/cleanYourHarmony/runs on Windows. Evidence stays local.
 - No automatic updates, telemetry, or cloud execution. There is no whole-device rollback: stopping keeps verified business changes and restores only DND changes made temporarily by this run.
 
+### Download and install
+
+- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-macos-arm64.dmg)
+- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-macos-x64.dmg)
+- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.0/cleanYourHarmony-1.0-windows-x64-Setup.exe)
+
+On Mac, copy the app from the DMG to Applications; on Windows, run Setup. The OS may block first launch because these packages are unnotarized/unsigned. The Release includes SHA-256 checksums and corresponding build sources. Use the explicitly named `cleanYourHarmony-1.0-source.tar.gz` to reproduce the installers; GitHub’s automatic source archives still reference the original v1.0 tag.
+
 ### Build and package
 
 Build hosts need Node.js 24+, the Swift toolchain on macOS, or .NET 8 SDK, Windows SDK, WinUI build tools, and Inno Setup 6 on Windows. End users do not need these development tools.
 
-Obtain the target platform toolchains directory from an official OpenHarmony / HarmonyOS SDK. The Node download URL and SHA-256 are pinned in packaging/runtime-lock.json; archives are cached under build/downloads.
+`prepare-official-runtime.mjs` downloads the official OpenHarmony 6.1 Release SDK, verifies its SHA-256, extracts hdc and USB libraries, and bundles Node.js. Sources, versions, and checksums are pinned in packaging/runtime-lock.json; archives are cached under build/downloads. No local DevEco SDK is needed. Packages preserve component licenses, provenance, and corresponding libusb source.
 
 ```sh
-# macOS arm64; --hdc-dir may be omitted when the local SDK is installed
-node packaging/prepare-runtime.mjs --platform darwin-arm64 --hdc-dir /path/to/toolchains
-node packaging/build-macos.mjs --arch arm64 --dmg
+# macOS Apple Silicon build host
+node packaging/prepare-official-runtime.mjs darwin-arm64
+node packaging/build-macos.mjs --arch arm64 --distributable --dmg
 
-# Intel Mac requires x64 hdc and USB libraries, not copied arm64 binaries
-node packaging/prepare-runtime.mjs --platform darwin-x64 --hdc-dir /path/to/x64/toolchains
-node packaging/build-macos.mjs --arch x64 --dmg
+# macOS Intel build host
+node packaging/prepare-official-runtime.mjs darwin-x64
+node packaging/build-macos.mjs --arch x64 --distributable --dmg
 
 # Offline behavior tests; no phone operations
 node --test scripts/runner.test.mjs scripts/desktop.test.mjs
@@ -39,17 +47,17 @@ node --test scripts/runner.test.mjs scripts/desktop.test.mjs
 On a Windows build host:
 
 ```powershell
-node packaging/prepare-runtime.mjs --platform win32-x64 --hdc-dir C:\SDK\toolchains
-pwsh -File packaging/build-windows.ps1
+node packaging/prepare-official-runtime.mjs win32-x64
+pwsh -File packaging/build-windows.ps1 -Distributable
 ```
 
-Outputs are under dist/macos-arm64, dist/macos-x64, or dist/windows-x64. build and dist are excluded from version control. Without release flags, these are development packages; the Mac app is ad-hoc signed, not a notarized public release.
+Outputs are under dist/macos-arm64, dist/macos-x64, or dist/windows-x64. build and dist are excluded from version control. `--distributable` / `-Distributable` requires verified runtime provenance. Mac packages are ad-hoc signed and not notarized; Windows installers are unsigned. Certificate signing uses the release flags below.
 
 Before public distribution, review the actual hdc binaries and dependencies, not just the hdc source license. prepare-runtime.mjs --hdc-manifest accepts a reviewed manifest containing platform, source, redistributionReviewed, and files (filename-to-SHA-256 mapping). Without it, tools are recorded as development-only and release mode refuses to proceed.
 
 macOS release builds use --release with CYH_SIGN_IDENTITY and CYH_NOTARY_PROFILE (an existing keychain profile). The packager signs, notarizes, staples, and validates. Windows uses build-windows.ps1 -Release -CertificateThumbprint <existing certificate thumbprint>. Do not commit credentials. Windows optionally accepts -DriverDirectory with reviewed signed drivers; its manifest also needs hardwareIds and inf. The installer requests elevation only for matching connected hardware with driver problems. Without reviewed drivers, it does not replace system drivers; first-connection compatibility requires a clean Windows test.
 
-Platform SDK tools and signing credentials are external release prerequisites, not repository assets. The repository alone cannot produce signed distribution packages without them.
+Official tools are downloaded automatically; signing credentials remain external prerequisites. Without certificates, the commands above reproduce unnotarized/unsigned installers, not developer-certificate-signed and notarized distributions.
 
 ### Automated tests
 
@@ -66,6 +74,10 @@ powershell -File desktop/tests/windows.ps1
 Both entry points cover shared executor behavior, native client protocol, and UI tests. Windows first automates a button in an independent WinUI window and saves a screenshot to verify the runner supports GUI automation, then tests the actual app. macOS uses Apple Swift Testing and accessibility actions on real SwiftUI controls to verify scrolling, group selection, default targets, editing locks, and stopping. Windows uses NUnit and FlaUI UIA3 against the published WinUI app. Protocol tests start the real Node host and verify concurrent requests, Chinese text, error responses, and graceful shutdown. UI execution tests use an isolated simulated device process and never operate a phone; they do not replace USB driver, installer, or physical-device acceptance.
 
 Logs and JUnit/TRX results are saved in temporary directories. Missing dependencies, missing controls, and timeouts fail tests instead of being silently skipped. CI runs the same entry points on macOS and Windows and uploads results. On 2026-10-29, commit `b163f7c` passed [both platforms in GitHub Actions](https://github.com/MusherM/cleanYourHarmony/actions/runs/40845687532): macOS ran 56 shared tests and 6 native tests; Windows ran 56 shared tests, 1 independent GUI environment test, 1 protocol test, and 4 application GUI tests. Both platforms had zero failures and zero skips. See [Desktop checks](https://github.com/MusherM/cleanYourHarmony/actions/workflows/desktop-checks.yml) for ongoing results on both platforms and the job logs for exact runner environments. Passing CI does not establish Windows 11 installer, USB driver, or physical-device acceptance.
+
+[Desktop packages](https://github.com/MusherM/cleanYourHarmony/actions/workflows/desktop-packages.yml) runs complete behavior suites on macOS arm64, macOS Intel, and Windows x64 before building installers. Package checks cover checksums, bundled Node/hdc with an isolated PATH, real protocol requests, Chinese/space installation paths, native window startup, and graceful close. Windows also tests silent installation, real hdc discovery and unavailable-device states, and uninstall. Assets may be published only after their jobs pass. CI has no USB phone and does not establish physical-device or driver compatibility acceptance.
+
+On 2026-10-30, package build commit `39b38c6` passed [three-platform packaging checks](https://github.com/MusherM/cleanYourHarmony/actions/runs/40985950809): 62 tests each on macOS 26 ARM and Intel, and 63 tests on Windows Server 2025 x64, with zero failures or skips. All three packages passed bundled-runtime and actual installation/startup checks; Windows also passed GUI comparison against real enumeration and uninstall checks. Clean Windows 11, USB drivers, and physical-device settings remain unverified.
 
 ### Local protocol and compatibility
 
