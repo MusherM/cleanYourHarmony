@@ -11,6 +11,7 @@ const runtime = path.join(root, 'build', 'runtime', `darwin-${arch}`);
 const manifest = JSON.parse(fs.readFileSync(path.join(runtime, 'manifest.json')));
 for (const [file, expected] of Object.entries(manifest.files)) if (createHash('sha256').update(fs.readFileSync(path.join(runtime,file))).digest('hex') !== expected) throw new Error('工具校验失败：' + file);
 const release = args.includes('--release');
+if (args.includes('--distributable') && !manifest.redistributionReviewed) throw new Error('分发包需要已核验的工具来源与许可证');
 if (release && (!manifest.redistributionReviewed || !process.env.CYH_SIGN_IDENTITY || !process.env.CYH_NOTARY_PROFILE)) throw new Error('发布需要已审核的工具分发清单、CYH_SIGN_IDENTITY 和 CYH_NOTARY_PROFILE');
 const destination = path.join(root, 'dist', `macos-${arch}`), app = path.join(destination, 'cleanYourHarmony.app');
 if (fs.existsSync(app)) fs.rmSync(app, { recursive: true });
@@ -29,6 +30,9 @@ for (const file of ['libusb_shared.dylib','hdc','node']) {
   const entitlements = file === 'node' ? ['--entitlements',path.join(root,'packaging','node-entitlements.plist')] : [];
   run('codesign',['--force','--sign',identity,...signing,...entitlements,path.join(resources,'runtime',file)]);
 }
+manifest.sourceFiles = {...manifest.files};
+for (const file of Object.keys(manifest.files)) manifest.files[file] = createHash('sha256').update(fs.readFileSync(path.join(resources,'runtime',file))).digest('hex');
+fs.writeFileSync(path.join(resources,'runtime','manifest.json'), JSON.stringify(manifest,null,2) + '\n');
 run('codesign',['--force','--sign',identity,...signing,app]);
 run('codesign',['--verify','--deep','--strict',app]);
 if (args.includes('--dmg') || release) {

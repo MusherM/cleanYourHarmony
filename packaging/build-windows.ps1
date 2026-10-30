@@ -1,4 +1,4 @@
-param([switch]$Release, [string]$CertificateThumbprint, [string]$TimestampUrl = 'http://timestamp.digicert.com', [string]$DriverDirectory)
+param([switch]$Release, [switch]$Distributable, [string]$CertificateThumbprint, [string]$TimestampUrl = 'http://timestamp.digicert.com', [string]$DriverDirectory)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $runtime = Join-Path $root 'build/runtime/win32-x64'
@@ -7,6 +7,7 @@ foreach ($entry in $manifest.files.PSObject.Properties) {
     if ((Get-FileHash (Join-Path $runtime $entry.Name) -Algorithm SHA256).Hash.ToLower() -ne $entry.Value) { throw "Runtime checksum mismatch: $($entry.Name)" }
 }
 if ($Release -and (!$manifest.redistributionReviewed -or !$CertificateThumbprint)) { throw 'Release requires reviewed tool provenance and a signing certificate thumbprint.' }
+if ($Distributable -and !$manifest.redistributionReviewed) { throw 'Distribution requires verified tool provenance and licenses.' }
 $destination = Join-Path $root 'dist/windows-x64'
 New-Item -ItemType Directory -Force $destination | Out-Null
 # Avoid stale publish files being included in a later installer.

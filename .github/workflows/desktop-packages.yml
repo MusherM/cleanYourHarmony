@@ -1,0 +1,76 @@
+name: Desktop packages
+on:
+  workflow_dispatch:
+  push:
+    branches: [desktop-app, main]
+    paths: ['packaging/**', 'desktop/**', 'scripts/**', 'operations.json', '.github/workflows/desktop-packages.yml']
+permissions:
+  contents: read
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-26
+            platform: darwin-arm64
+            arch: arm64
+          - runner: macos-26-intel
+            platform: darwin-x64
+            arch: x64
+          - runner: windows-2025
+            platform: win32-x64
+            arch: x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+      - uses: actions/setup-dotnet@v4
+        if: runner.os == 'Windows'
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/cache@v4
+        with:
+          path: build/downloads
+          key: runtime-${{ matrix.platform }}-${{ hashFiles('packaging/runtime-lock.json') }}
+      - name: Native behavior suites (macOS)
+        if: runner.os == 'macOS'
+        run: bash desktop/tests/macos.sh
+      - name: Native behavior suites (Windows)
+        if: runner.os == 'Windows'
+        run: ./desktop/tests/windows.ps1 -Results "${{ runner.temp }}/cyh-native-results"
+      - name: Prepare verified official tools
+        run: node packaging/prepare-official-runtime.mjs ${{ matrix.platform }}
+      - name: Build and install macOS DMG
+        if: runner.os == 'macOS'
+        run: |
+          node packaging/build-macos.mjs --arch ${{ matrix.arch }} --distributable --dmg
+          bash packaging/test-macos-package.sh ${{ matrix.arch }}
+          mkdir -p dist/release
+          cp dist/macos-${{ matrix.arch }}/cleanYourHarmony-${{ matrix.arch }}.dmg dist/release/cleanYourHarmony-1.0-macos-${{ matrix.arch }}.dmg
+      - name: Build and install Windows installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:PATH += ";${env:ProgramFiles(x86)}\Inno Setup 6"
+          ./packaging/build-windows.ps1 -Distributable
+          ./packaging/test-windows-package.ps1 -Results "${{ runner.temp }}/cyh-package-results"
+          New-Item -ItemType Directory -Force dist/release | Out-Null
+          Copy-Item dist/windows-x64/cleanYourHarmony-Setup.exe dist/release/cleanYourHarmony-1.0-windows-x64-Setup.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.platform }}
+          path: dist/release/*
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: package-results-${{ matrix.platform }}
+          path: |
+            ${{ runner.temp }}/cyh-native-results
+            ${{ runner.temp }}/cyh-package-results
+            /tmp/cyh-macos-test-results
+            /tmp/cyh-package-results

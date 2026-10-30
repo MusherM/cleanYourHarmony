@@ -1,5 +1,20 @@
 {
   "nodeVersion": "24.22.2",
+  "libusbSource": {
+    "url": "https://codeload.github.com/openharmony/third_party_libusb/tar.gz/51a9d49d23c686f1f42414b9db864d9fd2b551c1",
+    "sha256": "39e28357e2c5ffa983d01ad16e109745d85f6c1685f681eef97af9a11b97282d"
+  },
+  "hdcSdk": {
+    "version": "OpenHarmony 6.1 Release / SDK 6.1.0.31",
+    "baseUrl": "https://repo.huaweicloud.com/openharmony/os/6.1-Release/",
+    "licenseSource": "https://github.com/openharmony/docs/blob/OpenHarmony-v6.1-Release/zh-cn/release-notes/OpenHarmony-v6.1-release.md",
+    "hdcSource": "https://github.com/openharmony/developtools_hdc/tree/adfbce9bd8d6fdfe3dd75bd6d4ea5ce6eb082c7d",
+    "archives": {
+      "darwin-arm64": { "file": "L2-SDK-MAC-M1-PUBLIC.tar.gz", "sha256": "7d54a52d1b3835548347d042ef5d8d21ef97e3043c8e5f48005745817c000cc3" },
+      "darwin-x64": { "file": "ohos-sdk-mac-public.tar.gz", "sha256": "71176812af5b891a5ee690584b55a8dd9fc3d57ba52d837206a31445d13eaf80" },
+      "win32-x64": { "file": "ohos-sdk-windows_linux-public.tar.gz", "sha256": "b833b75a64ee46bbd7880921abbb49b733ec5c8171b6684c9b524d57f624cee0" }
+    }
+  },
   "node": {
     "darwin-arm64": { "file": "node-v24.22.2-darwin-arm64.tar.gz", "sha256": "aa9549349e47dffaa42dcf95d6e06ade8c4bdafc980979883b88767670df385a" },
     "darwin-x64": { "file": "node-v24.22.2-darwin-x64.tar.gz", "sha256": "d5e336d588c45be0c37dbd52cc29895593009ca4997a77a1fd02815131ed0e52" },
