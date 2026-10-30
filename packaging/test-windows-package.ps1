@@ -13,6 +13,9 @@ try {
     & dotnet test desktop/windows.tests/Desktop.Tests.csproj --filter FullyQualifiedName~InstalledPackageTests --logger 'trx;LogFileName=installed.trx' --results-directory $Results 2>&1 | Tee-Object "$Results/installed-ui.log"
     if ($LASTEXITCODE -ne 0) { throw 'Installed app GUI test failed' }
 } finally {
+    $log = Join-Path $env:LOCALAPPDATA 'cleanYourHarmony/desktop.log'
+    if (Test-Path $log) { Copy-Item $log "$Results/app-desktop.log"; Get-Content $log }
+    & "$install/runtime/hdc.exe" list targets -v 2>&1 | Tee-Object "$Results/hdc-discovery.log"
     Remove-Item Env:CYH_INSTALLED_APP, Env:CYH_PACKAGE_RESULTS -ErrorAction SilentlyContinue
     # This server belongs to the isolated CI installation, never a user's SDK.
     & "$install/runtime/hdc.exe" kill
