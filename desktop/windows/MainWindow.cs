@@ -74,6 +74,7 @@ public sealed class MainWindow : Window
         columns.ColumnDefinitions.Add(new() { Width = new GridLength(60) }); columns.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
         columns.Children.Add(Label("执行", 13)); var settingTitle = Label("设置项目", 13); Grid.SetColumn(settingTitle, 1); columns.Children.Add(settingTitle); Grid.SetRow(columns, 1); content.Children.Add(columns);
         scroll.Content = rows; AutomationProperties.SetAutomationId(scroll, "settings-list"); Grid.SetRow(scroll, 2); content.Children.Add(scroll);
+        AutomationProperties.SetAutomationId(message, "device-status");
         var status = new StackPanel { Spacing = 10, Margin = new Thickness(0, 18, 0, 18) }; status.Children.Add(progress); status.Children.Add(message); status.Children.Add(dnd); status.Children.Add(recoveryPanel); Grid.SetRow(status, 3); content.Children.Add(status);
         var footer = new Grid(); footer.Children.Add(selectionLabel);
         var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10, HorizontalAlignment = HorizontalAlignment.Right };

@@ -60,6 +60,7 @@ jobs:
           cp dist/macos-${{ matrix.arch }}/cleanYourHarmony-${{ matrix.arch }}.dmg dist/release/cleanYourHarmony-1.0-macos-${{ matrix.arch }}.dmg
       - name: Build and install Windows installer
         if: runner.os == 'Windows'
+        timeout-minutes: 10
         shell: pwsh
         run: |
           $env:PATH += ";${env:ProgramFiles(x86)}\Inno Setup 6"
