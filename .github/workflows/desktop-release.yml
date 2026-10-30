@@ -1,0 +1,46 @@
+name: Publish tested desktop packages
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Successful Desktop packages run ID
+        required: true
+        type: string
+      tag:
+        description: Existing release tag with reviewed source and SHA256SUMS.txt
+        required: true
+        default: v1.0
+        type: string
+permissions:
+  actions: read
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      BUILD_RUN: ${{ inputs.run_id }}
+      RELEASE_TAG: ${{ inputs.tag }}
+    steps:
+      - name: Verify run and transfer tested assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$BUILD_RUN" =~ ^[0-9]+$ ]]
+          [[ "$RELEASE_TAG" =~ ^v?[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]
+          gh run view "$BUILD_RUN" --json status,conclusion,workflowName,headSha > run.json
+          jq -e '.status == "completed" and .conclusion == "success" and .workflowName == "Desktop packages"' run.json
+          gh run download "$BUILD_RUN" --name package-darwin-arm64 --name package-darwin-x64 --name package-win32-x64 --dir artifacts
+          mkdir release
+          version="${RELEASE_TAG#v}"
+          cp "artifacts/package-darwin-arm64/cleanYourHarmony-$version-macos-arm64.dmg" release/
+          cp "artifacts/package-darwin-x64/cleanYourHarmony-$version-macos-x64.dmg" release/
+          cp "artifacts/package-win32-x64/cleanYourHarmony-$version-windows-x64-Setup.exe" release/
+          gh release download "$RELEASE_TAG" --pattern SHA256SUMS.txt --pattern "cleanYourHarmony-$version-source.tar.gz" --dir release
+          cd release
+          sha256sum --check SHA256SUMS.txt
+          gh release upload "$RELEASE_TAG" "cleanYourHarmony-$version-macos-arm64.dmg" "cleanYourHarmony-$version-macos-x64.dmg" "cleanYourHarmony-$version-windows-x64-Setup.exe" --clobber
+          gh release view "$RELEASE_TAG" --json assets > published.json
+          jq -e '[.assets[] | select(.state != "uploaded")] | length == 0' published.json
