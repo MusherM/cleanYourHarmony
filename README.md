@@ -77,7 +77,7 @@ powershell -File desktop/tests/windows.ps1
 
 [Desktop packages](https://github.com/MusherM/cleanYourHarmony/actions/workflows/desktop-packages.yml) 在 macOS arm64、macOS Intel 和 Windows x64 上运行完整行为套件，再构建安装包。包级检查包含校验和、隔离 PATH 下启动内置 Node/hdc、真实协议、中文和空格安装路径、原生窗口启动与正常关闭；Windows 还验证静默安装、真实 hdc 设备枚举与未就绪状态及卸载。安装包附件只有对应任务成功后才可发布。CI 没有 USB 手机，不能代替实机设置和驱动兼容性验收。
 
-2026-10-30，安装包构建提交 `39b38c6` 在 [三平台打包验证](https://github.com/MusherM/cleanYourHarmony/actions/runs/40985950809) 中通过：macOS 26 ARM 和 Intel 各 62 项测试，Windows Server 2025 x64 共 63 项测试，均零失败、零跳过。三个包均通过内置运行时和实际安装启动检查，Windows 另通过界面与真实枚举结果对照及卸载检查。未验证干净 Windows 11、USB 驱动或实机设置操作。
+2026-10-30，安装包构建提交 `a1888a1` 在 [三平台打包验证](https://github.com/MusherM/cleanYourHarmony/actions/runs/40990557452) 中通过：macOS 26 ARM 和 Intel 各 62 项测试，Windows Server 2025 x64 共 63 项测试，均零失败、零跳过。三个包均通过内置运行时和实际安装启动检查；两个 Mac 镜像另验证 app、Applications 快捷方式及目录权限，Windows 另通过界面与真实枚举结果对照及卸载检查。未验证干净 Windows 11、USB 驱动或实机设置操作。
 
 ### 本地通信与兼容性
 
