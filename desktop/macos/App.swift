@@ -51,6 +51,7 @@ final class AppModel: ObservableObject {
     private var hasRunOutcome = false
     private var buffer = Data()
     private let readQueue = DispatchQueue(label: "cyh.protocol")
+    var executorRunning: Bool { process?.isRunning == true }
     var termination: (() -> Void)?
     var device: DeviceInfo? { devices.first { $0.id == deviceID } }
     var selectedCount: Int { items.filter(\.selected).count }
@@ -118,6 +119,7 @@ final class AppModel: ObservableObject {
         if let id = object["id"] as? String { callbacks.removeValue(forKey: id)?(object); return }
         switch object["event"] as? String {
         case "ready":
+            if termination != nil { send("shutdown"); return }
             connected = true; recoverable = object["recoverable"] as? [[String: Any]] ?? []
             send("catalog") { [weak self] reply in
                 guard let self = self, let result = reply["result"] as? [String: Any] else { return }
@@ -175,7 +177,13 @@ final class AppModel: ObservableObject {
         }
     }
     func stop() { stopping = true; message = "正在停止并恢复勿扰…"; send("cancel") }
-    func close() { timer?.invalidate(); if working || discovering { stop() } else { send("shutdown") } }
+    func close() {
+        timer?.invalidate()
+        if working { stopping = true; message = "正在停止并恢复勿扰，完成后退出…" }
+        else { message = "正在退出…" }
+        // The host cancels active work, restores DND, and exits after its worker finishes.
+        send("shutdown")
+    }
     func showProgress(_ progress: [String: Any], final: Bool = false) {
         let records = progress["items"] as? [String: [String: Any]] ?? [:]
         let selected = progress["selected"] as? [String] ?? []
@@ -375,10 +383,23 @@ struct MainView: View {
         }
     }
 }
+struct QuitOnWindowClose: NSViewRepresentable {
+    final class CloseButtonView: NSView {
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            guard let button = window?.standardWindowButton(.closeButton) else { return }
+            button.target = self
+            button.action = #selector(quitApplication)
+        }
+        @objc private func quitApplication() { NSApp.terminate(nil) }
+    }
+    func makeNSView(context: Context) -> CloseButtonView { CloseButtonView() }
+    func updateNSView(_ view: CloseButtonView, context: Context) {}
+}
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let model = AppModel()
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        guard model.connected else { return .terminateNow }
+        guard model.executorRunning else { return .terminateNow }
         model.termination = { NSApplication.shared.reply(toApplicationShouldTerminate: true) }
         model.close(); return .terminateLater
     }
@@ -387,7 +408,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 @main struct CleanYourHarmonyApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
-        WindowGroup { MainView(model: delegate.model) }.defaultSize(width: 1120, height: 820)
-            .commands { CommandGroup(replacing: .newItem) {} }
+        WindowGroup { MainView(model: delegate.model).background(QuitOnWindowClose()) }.defaultSize(width: 1120, height: 820)
+            .commands { CommandGroup(replacing: .newItem) {
+                Button("关闭并退出") { NSApp.terminate(nil) }.keyboardShortcut("w", modifiers: .command)
+            } }
     }
 }

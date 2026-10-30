@@ -7,6 +7,25 @@ import Testing
         for _ in 0..<150 { if condition() { return }; try await Task.sleep(for: .milliseconds(100)) }
         Issue.record("Timed out: \(description)")
     }
+    @Test func closingDuringStartupDoesNotLeaveExecutorRunning() async throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent("cyh startup close \(UUID())")
+        let runtime = temporary.appendingPathComponent("runtime")
+        try FileManager.default.createDirectory(at: runtime, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: temporary) }
+        let node = try #require(ProcessInfo.processInfo.environment["CYH_TEST_NODE"])
+        for name in ["node", "hdc"] { try FileManager.default.createSymbolicLink(atPath: runtime.appendingPathComponent(name).path, withDestinationPath: node) }
+        try FileManager.default.createSymbolicLink(at: temporary.appendingPathComponent("engine"), withDestinationURL: root)
+        let model = AppModel(resources: temporary, dataDirectory: temporary.appendingPathComponent("data"))
+        model.start()
+        #expect(model.executorRunning && !model.connected)
+        var closed = false
+        model.termination = { closed = true }
+        model.close()
+        try await waitFor("startup shutdown", { closed })
+        #expect(closed && !model.executorRunning && !model.connected)
+    }
+
     @Test func nativeClientTalksToRealNodeHostAndClosesGracefully() async throws {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let temporary = FileManager.default.temporaryDirectory.appendingPathComponent("cyh 协议 \(UUID())")

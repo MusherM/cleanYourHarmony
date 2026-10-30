@@ -9,7 +9,7 @@ on:
       tag:
         description: Existing release tag matching the tested build commit
         required: true
-        default: v1.1
+        default: v1.2
         type: string
       macos_only:
         description: Replace only Mac packages and corresponding source/checksums

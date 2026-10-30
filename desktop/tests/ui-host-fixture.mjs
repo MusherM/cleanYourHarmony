@@ -30,7 +30,7 @@ for await(const line of readline.createInterface({input:process.stdin})) {
       emit({event:'progress',directory:'',progress:progress('running')});
       timer=setTimeout(()=>finish(false),3000); break;
     case 'cancel': emit({id:m.id,result:{accepted:true}}); finish(true); break;
-    case 'shutdown': emit({id:m.id,result:{accepted:true}}); process.exit(0);
+    case 'shutdown': emit({id:m.id,result:{accepted:true}}); finish(true); process.exit(0);
     default: emit({id:m.id,error:'Unsupported UI fixture request'});
   }
 }

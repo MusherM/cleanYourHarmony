@@ -110,8 +110,14 @@ import Testing
         try await ProtocolTests().waitFor("cancel cleanup", { !model.working })
         #expect(model.message == "执行未完成")
         #expect(model.dndMessage == "勿扰已恢复原状态")
+        // Closing during an active run must request shutdown and still receive cleanup results.
+        model.execute()
+        #expect(model.working)
         var closed = false; model.termination = { closed = true }; model.close()
-        try await ProtocolTests().waitFor("fixture shutdown", { closed })
+        try await ProtocolTests().waitFor("fixture shutdown after active run cleanup", { closed })
+        #expect(model.message == "执行器已退出；重新打开应用可检查未完成任务。")
+        #expect(model.dndMessage == "勿扰已恢复原状态")
+        #expect(!model.executorRunning)
         try fm.removeItem(at: temporary)
     }
 
