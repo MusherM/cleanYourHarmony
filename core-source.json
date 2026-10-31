@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "commit": "0895a5632e5aeccd1588779224167a2adf0f81d7",
-  "digest": "6cbdef8e5f55e6e20470975b035e5aae5505e523efa9bc92b121860c079bfdef",
+  "commit": "b9324672975d6287be31a7c81444104406b756d4",
+  "digest": "ae8cd476970a166e2ecad87f08d377a8771f78eafe900c2212b737cc664cebb5",
   "files": {
     "core/adapters/assistant.mjs": "736747aa60b7d2b0e08ad639310aa7f9d1865e732520b132990b5f92366749b2",
     "core/adapters/browser.mjs": "50b4ba564d8dbb31c82e90d9595fb9d714875b4dae4b32e7e1e279c4bf25fca2",
-    "core/adapters/index.mjs": "90ed0f1d1060792fdfa7b0c18f43fccf5c7ba7f223e894db2d2b322687f6a808",
+    "core/adapters/calendar.mjs": "b561edc4b2a73ecd0a27ea969f0edf0ea1696ae8014f75fb7454fa66d05c3248",
+    "core/adapters/index.mjs": "b91730634cf96519b280a1a397aeed7b580072ef19ba204812da8fe86f584284",
     "core/adapters/notification.mjs": "d7100fd7bd289be45bb57f7068b3795c487f0b5c981e4aaf8104385cd7426f57",
     "core/adapters/settings.mjs": "321a55e746ca4029305e551efb7064d4efcc689fbe2097f61b024a6dff791f16",
     "core/catalog.mjs": "b226d0adad47d607e7a74338d3a8b71514d3d8807af04a6b9992b877362f6c5e",
@@ -14,13 +15,13 @@
     "core/errors.mjs": "c51606f416c7e15e619f62c8eb219db9a7e48f4e2c639b821b56df864789012b",
     "core/index.mjs": "5ef2faf3486c812b08eac0dbe0ba4d8615da1069100b96e480b9056a6af59787",
     "core/integrity.mjs": "da3a7d2983b7e0d96a30d881e8f2c2f74417688d96cd2dd43e0fd8e190f62939",
-    "core/navigator.mjs": "4ca2f2cecc061d63069ce233a40e101c5bda9b615a1c51fc87947317c5140df6",
+    "core/navigator.mjs": "4e6fb2be711f16e42ee716af35af6758314bcc2eea412cab5bda3e412fa28e93",
     "core/routes.mjs": "e0b9bd35d1b81be66e83c59329cef3fbe25c588b27d35b1638763e963f6154ea",
-    "core/runner.mjs": "a7cc5213e24703411d1abca8933cd80b3c195e64ac647a71ae86f9f9353abe0b",
+    "core/runner.mjs": "3f6d46ef93848b9089b6d1602ebfc712325eb2822cbeea469011760abfb62aaf",
     "core/session.mjs": "bbfb48e26a04bd82296544d25fbb858ad6002e25374f6bf6ee46ac275f425fe6",
-    "core/ui-tree.mjs": "30edfe2b31248240d2c8be18968014595f6d6dc7139a58725bd28d7ff34031e6",
-    "core/validation.mjs": "af3ec424519ffcd1140f76952f2cd6ebfeecc9368ee9f66677cdcd06ef233df3",
-    "operations.json": "489d40ea370ca43ed7f9a64cc1795efea237db82bf58f50468f6a83dc71456ac",
+    "core/ui-tree.mjs": "984825a2b402d2127fba470a37d4825a24d3d0e25874d5e4876a7cbd82dec2c2",
+    "core/validation.mjs": "d0ad57df623d82069479ef99ae624f31995ee963951ac615ff370b7c0377b986",
+    "operations.json": "c57c518950bea4a4080fd73c0d9d35e13897ece8362a2d696fd95964e37cecc3",
     "scripts/run.mjs": "2a156dd304b301eed7c3ff9b9fda8b2f243a1ecd102de752a7b87e1f1be73734"
   }
 }

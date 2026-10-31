@@ -54,11 +54,12 @@ import Testing
 
     @Test func selectionIsScopedAndPreservesCleanupDefaults() throws {
         let model = try model()
-        #expect(model.items.count == 20)
+        #expect(model.items.count == 22)
         model.selectAll(false, categoryID: "browser")
-        #expect(model.selectedCount == 17)
+        #expect(model.selectedCount == 19)
         #expect(model.items.first { $0.id == "B01" }!.target as? String == "simple")
-        #expect(model.items.filter { $0.id != "B01" }.allSatisfy { $0.target as? Bool == false })
+        #expect(model.items.filter { $0.id != "B01" && $0.id != "C02" }.allSatisfy { $0.target as? Bool == false })
+        #expect(model.items.first { $0.id == "C02" }!.target as? String == "星期一")
         let independent = model.items.filter { $0.category != "browser" }.allSatisfy { $0.selected }
         #expect(independent)
         model.selectAll(false)
@@ -66,7 +67,7 @@ import Testing
         model.selectAll(true, categoryID: "system")
         #expect(model.items.filter(\.selected).map(\.id) == ["P01"])
         model.selectAll(true)
-        #expect(model.selectedCount == 20)
+        #expect(model.selectedCount == 22)
     }
 
     @Test func executionRequiresAuthorizedIdleDeviceAndSelection() throws {

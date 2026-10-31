@@ -33,7 +33,7 @@ public sealed class InstalledPackageTests
             Assert.That(window, Is.Not.Null, "Installed window did not load");
             var status = window!.FindFirstDescendant(c => c.ByAutomationId("device-status")).Name;
             Assert.That(status, Is.AnyOf("未检测到手机", "请选择目标手机", "请解锁手机并允许 USB 调试"), "Real HDC discovery must finish without a tool error");
-            Assert.That(window!.FindAllDescendants(c => c.ByControlType(ControlType.CheckBox)).Count(e => e.AutomationId.StartsWith("select-")), Is.EqualTo(20));
+            Assert.That(window!.FindAllDescendants(c => c.ByControlType(ControlType.CheckBox)).Count(e => e.AutomationId.StartsWith("select-")), Is.EqualTo(22));
             Assert.That(window.FindFirstDescendant(c => c.ByAutomationId("execute")).IsEnabled, Is.False);
             window.FindFirstDescendant(c => c.ByAutomationId("clear-all")).Patterns.Invoke.Pattern.Invoke();
             deadline.Restart();

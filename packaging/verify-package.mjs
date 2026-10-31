@@ -47,7 +47,7 @@ function request(id, method, params) {
 const timeout = setTimeout(() => host.kill(),45000);
 try {
   const catalog = await request('catalog','catalog');
-  assert.equal(catalog.operations.length,20);
+  assert.equal(catalog.operations.length,22);
   assert.equal(catalog.categories[0].name,'浏览器');
   const plan = await request('plan','plan',{selection:[{id:'B01',target:'simple'},{id:'B02',target:false}]});
   assert.deepEqual(plan.flatMap(page => page.items).sort(),['B01','B02']);

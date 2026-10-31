@@ -127,9 +127,9 @@ import Testing
         defer { window.close() }
         try await settle()
         let scroll = try #require(descendants(window.contentView!).compactMap { $0 as? NSScrollView }.first { $0.documentView!.frame.height > $0.contentView.bounds.height })
-        #expect(model.items.count == 20)
+        #expect(model.items.count == 22)
         let checkboxes = elements(window).filter { ($0.accessibilityIdentifier() ?? "").hasPrefix("select-") && !($0.accessibilityIdentifier() ?? "").hasPrefix("select-group-") && $0.accessibilityIdentifier() != "select-all" }
-        #expect(checkboxes.count == 20)
+        #expect(checkboxes.count == 22)
         let initial = scroll.contentView.bounds.origin.y
         #expect(try element("nav-system", in: window).accessibilityPerformPress())
         try await waitForScroll(scroll) { $0 > initial + 500 }
@@ -155,14 +155,14 @@ import Testing
 
         #expect(try element("clear-group-browser", in: window).accessibilityPerformPress())
         try await settle()
-        #expect(model.selectedCount == 16)
+        #expect(model.selectedCount == 18)
         #expect(try element("clear-all", in: window).accessibilityPerformPress())
         try await settle()
         #expect(model.selectedCount == 0)
         #expect(try !element("execute", in: window).isAccessibilityEnabled())
         #expect(try element("select-all", in: window).accessibilityPerformPress())
         try await settle()
-        #expect(model.selectedCount == 20)
+        #expect(model.selectedCount == 22)
 
         model.working = true
         try await settle()

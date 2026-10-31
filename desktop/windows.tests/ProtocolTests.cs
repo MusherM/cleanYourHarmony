@@ -23,7 +23,7 @@ public sealed class ProtocolTests
             var replies = await Task.WhenAll(Enumerable.Range(0, 8).Select(_ => client.Request("catalog"))).WaitAsync(TimeSpan.FromSeconds(15));
             foreach (var reply in replies)
             {
-                Assert.That(reply["result"]!["operations"]!.AsArray().Count, Is.EqualTo(20));
+                Assert.That(reply["result"]!["operations"]!.AsArray().Count, Is.EqualTo(22));
                 Assert.That(reply["result"]!["categories"]![0]!["name"]!.GetValue<string>(), Is.EqualTo("浏览器"));
             }
             Assert.ThrowsAsync<InvalidOperationException>(async () => await client.Request("plan", new JsonObject { ["selection"] = new JsonArray() }).WaitAsync(TimeSpan.FromSeconds(10)));

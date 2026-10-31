@@ -6,14 +6,14 @@ English: [README_en.md](README_en.md)
 
 ## 桌面应用
 
-左侧显示通过 hdc 读取的手机型号、系统版本与四类设置；右侧为包含全部 20 项的连续列表，四类名称作为列表内的小标题，侧栏点击可跳转到对应位置。每行提供“是否执行”复选框；执行结果用图标表示：已修改与无需修改均为绿色勾，失败为红色叉，未找到和待处理状态单独区分。悬停图标可查看具体状态，现场截图可在完成报告中查看。勾选后按清单默认目标执行：主页切换为简洁主页，其余项目关闭；取消勾选则保持原状。勾选不会立即修改手机。
+左侧显示通过 hdc 读取的手机型号、系统版本与五类设置；右侧为包含全部 22 项的连续列表，五类名称作为列表内的小标题，侧栏点击可跳转到对应位置。每行提供“是否执行”复选框；执行结果用图标表示：已修改与无需修改均为绿色勾，失败为红色叉，未找到和待处理状态单独区分。悬停图标可查看具体状态，现场截图可在完成报告中查看。勾选后按清单默认目标执行：主页切换为简洁主页，一周开始日设为星期一，其余项目关闭；取消勾选则保持原状。勾选不会立即修改手机。
 
-初次打开默认勾选全部 20 项并使用清爽化目标。切换分类保留编辑；未选项目保持原状。点击“执行所选项目”后按实际页面合并处理，实时显示结果。停止时先核验已发生的修改并恢复勿扰，异常退出后的任务可续跑。macOS 点击红色关闭按钮或按 ⌘W 会退出整个应用；有任务时保留窗口显示收尾状态，停止任务并尝试恢复勿扰后再结束应用及执行器，不后台驻留。通知关闭会影响该应用的正常通知。
+初次打开默认勾选全部 22 项并使用清爽化目标。切换分类保留编辑；未选项目保持原状。点击“执行所选项目”后按实际页面合并处理，实时显示结果。停止时先核验已发生的修改并恢复勿扰，异常退出后的任务可续跑。macOS 点击红色关闭按钮或按 ⌘W 会退出整个应用；有任务时保留窗口显示收尾状态，停止任务并尝试恢复勿扰后再结束应用及执行器，不后台驻留。通知关闭会影响该应用的正常通知。
 
 列表与执行采用相同的页面计划顺序。执行收尾后自动进入完成页，只要有一项已修改或无需修改就显示绿色成功动画，全部项目失败才显示失败页，其余无成功项的情况显示中性的执行结束页，并列出已修改、无需修改、失败、未找到、未完成的数量及逐项结果、原因、现场证据入口和勿扰恢复状态。点击“返回设置”可回到项目列表。
 
 - 目标平台：macOS 13.5+（arm64/x64），Windows 11 x64。
-- [1.3 下载](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.3)：macOS Apple Silicon / Intel DMG 和 Windows x64 Setup；均内置运行依赖。macOS 为 ad-hoc 签名、未公证，Windows 未签名。
+- [1.4 下载](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.4)：macOS Apple Silicon / Intel DMG 和 Windows x64 Setup；均内置运行依赖。macOS 为 ad-hoc 签名、未公证，Windows 未签名。
 - 运行时内置 Node.js 24.22.2（官方 macOS 二进制最低要求 13.5）、hdc、USB 动态库和执行脚本；Windows 发布使用自包含 .NET / Windows App SDK。
 - 手机仍需开启 USB 调试并授权电脑。锁屏凭据由用户输入；应用不修改锁屏配置。
 - 进度与截图：macOS 为 ~/Library/Application Support/cleanYourHarmony/runs；Windows 为 %LOCALAPPDATA%/cleanYourHarmony/runs。证据仅保存在本机。
@@ -21,11 +21,11 @@ English: [README_en.md](README_en.md)
 
 ### 下载与安装
 
-- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-macos-arm64.dmg)
-- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-macos-x64.dmg)
-- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-windows-x64-Setup.exe)
+- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4/cleanYourHarmony-1.4-macos-arm64.dmg)
+- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4/cleanYourHarmony-1.4-macos-x64.dmg)
+- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4/cleanYourHarmony-1.4-windows-x64-Setup.exe)
 
-Mac 打开 DMG，将 app 拖到同一窗口中的 Applications（应用程序）文件夹；Windows 运行 Setup。系统可能因未公证／未签名阻止首次打开。Release 附有 SHA-256 校验和及对应构建源码；复现安装包请使用明确命名的 `cleanYourHarmony-1.3-source.tar.gz`，GitHub 自动源码、v1.3 tag 与本版安装包使用同一提交。
+Mac 打开 DMG，将 app 拖到同一窗口中的 Applications（应用程序）文件夹；Windows 运行 Setup。系统可能因未公证／未签名阻止首次打开。Release 附有 SHA-256 校验和及对应构建源码；复现安装包请使用明确命名的 `cleanYourHarmony-1.4-source.tar.gz`，GitHub 自动源码、v1.4 tag 与本版安装包使用同一提交。
 
 ### 构建与打包
 

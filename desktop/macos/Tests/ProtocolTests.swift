@@ -39,8 +39,8 @@ import Testing
         let model = AppModel(resources: temporary, dataDirectory: temporary.appendingPathComponent("data"))
         model.start()
         do {
-            try await waitFor("catalog", { model.items.count == 20 })
-            #expect(model.categories.map(\.name) == ["浏览器", "负一屏", "应用通知", "系统"])
+            try await waitFor("catalog", { model.items.count == 22 })
+            #expect(model.categories.map(\.name) == ["浏览器", "负一屏", "应用通知", "系统", "日历"])
             var responses = 0
             for _ in 0..<8 { model.send("catalog") { reply in
                 #expect((reply["result"] as? [String: Any])?["operations"] is [[String: Any]])

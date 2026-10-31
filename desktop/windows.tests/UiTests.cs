@@ -92,30 +92,30 @@ public sealed class UiTests
         finally { automation?.Dispose(); app?.Dispose(); automation = null!; app = null!; window = null!; if (File.Exists(capture)) File.Delete(capture); }
         Assert.That(closedNormally, Is.True, "Application did not close gracefully");
     }
-    [Test] public void AllTwentyRowsRemainInOneScrollableDocumentAndNavigationPreservesEdits()
+    [Test] public void AllTwentyTwoRowsRemainInOneScrollableDocumentAndNavigationPreservesEdits()
     {
-        Assert.That(window.FindAllDescendants(c => c.ByControlType(ControlType.CheckBox)).Count(e => e.AutomationId.StartsWith("select-")), Is.EqualTo(20));
+        Assert.That(window.FindAllDescendants(c => c.ByControlType(ControlType.CheckBox)).Count(e => e.AutomationId.StartsWith("select-")), Is.EqualTo(22));
         Find("select-B02").AsCheckBox().IsChecked = false;
-        Until(() => Find("selection-count").Name == "已选 19 项", "Checkbox action did not update the plan");
+        Until(() => Find("selection-count").Name == "已选 21 项", "Checkbox action did not update the plan");
         Find("nav-system").Click(); Until(() => ScrollPosition > 70, "System jump did not scroll");
         Assert.That(Find("select-P01").IsOffscreen, Is.False);
         Find("nav-browser").Click(); Until(() => ScrollPosition < 1, "Browser jump did not return to the top");
         Assert.That(Find("select-B02").AsCheckBox().IsChecked, Is.False);
         Find("settings-list").Patterns.Scroll.Pattern.SetScrollPercent(-1, 100);
         Until(() => !Find("select-P01").IsOffscreen, "Continuous scroll did not reach the final row");
-        Assert.That(window.FindAllDescendants(c => c.ByControlType(ControlType.CheckBox)).Count(e => e.AutomationId.StartsWith("select-")), Is.EqualTo(20));
+        Assert.That(window.FindAllDescendants(c => c.ByControlType(ControlType.CheckBox)).Count(e => e.AutomationId.StartsWith("select-")), Is.EqualTo(22));
         Find("nav-browser").Click(); Until(() => ScrollPosition < 1, "Repeated category click did not jump");
     }
     [Test] public void GroupSelectionAndEmptySelectionAreIndependent()
     {
         Invoke("clear-group-browser");
-        Until(() => Find("selection-count").Name == "已选 17 项", "Group deselection count incorrect");
+        Until(() => Find("selection-count").Name == "已选 19 项", "Group deselection count incorrect");
         Assert.That(window.FindAllDescendants().Any(e => e.Properties.AutomationId.ValueOrDefault?.StartsWith("target-") == true), Is.False);
         Assert.That(Find("select-F01").AsCheckBox().IsChecked, Is.True);
         Invoke("clear-all"); Until(() => !Find("execute").IsEnabled, "Empty selection can execute");
         Invoke("select-group-browser");
         Until(() => Find("selection-count").Name == "已选 3 项", "Group selection count incorrect");
-        Invoke("select-all"); Until(() => Find("selection-count").Name == "已选 20 项", "Global selection failed");
+        Invoke("select-all"); Until(() => Find("selection-count").Name == "已选 22 项", "Global selection failed");
     }
     [Test] public void ExecutionFreezesEditingAndReportsPartialFailure()
     {
