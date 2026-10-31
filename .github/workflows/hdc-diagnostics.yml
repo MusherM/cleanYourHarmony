@@ -1,5 +1,8 @@
 name: HDC Windows diagnostics
-on: workflow_dispatch
+on:
+  push:
+    branches: [desktop-app]
+    paths: ['.github/workflows/hdc-diagnostics.yml']
 permissions:
   contents: read
 jobs:
