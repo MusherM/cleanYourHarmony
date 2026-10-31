@@ -59,7 +59,7 @@ jobs:
           node packaging/build-macos.mjs --arch ${{ matrix.arch }} --distributable --dmg
           bash packaging/test-macos-package.sh ${{ matrix.arch }}
           mkdir -p dist/release
-          cp dist/macos-${{ matrix.arch }}/cleanYourHarmony-${{ matrix.arch }}.dmg dist/release/cleanYourHarmony-1.4-macos-${{ matrix.arch }}.dmg
+          cp dist/macos-${{ matrix.arch }}/cleanYourHarmony-${{ matrix.arch }}.dmg dist/release/cleanYourHarmony-1.4.1-macos-${{ matrix.arch }}.dmg
       - name: Build and install Windows installer
         if: runner.os == 'Windows'
         timeout-minutes: 10
@@ -69,7 +69,7 @@ jobs:
           ./packaging/build-windows.ps1 -Distributable
           ./packaging/test-windows-package.ps1 -Results "${{ runner.temp }}/cyh-package-results"
           New-Item -ItemType Directory -Force dist/release | Out-Null
-          Copy-Item dist/windows-x64/cleanYourHarmony-Setup.exe dist/release/cleanYourHarmony-1.4-windows-x64-Setup.exe
+          Copy-Item dist/windows-x64/cleanYourHarmony-Setup.exe dist/release/cleanYourHarmony-1.4.1-windows-x64-Setup.exe
       - uses: actions/upload-artifact@v4
         with:
           name: package-${{ matrix.platform }}

@@ -39,20 +39,28 @@ input.on('line',line => { const value = JSON.parse(line); replies.get(value.id)?
 const exit = new Promise((resolve,reject) => { host.on('error',reject); host.on('exit',code => code === 0 ? resolve() : reject(Error(`Host exit ${code}: ${stderr}`))); });
 function request(id, method, params) {
   return new Promise((resolve,reject) => {
-    const timer = setTimeout(() => reject(Error('Host response timeout: ' + id)),15000);
+    const timer = setTimeout(() => reject(Error('Host response timeout: ' + id)),35000);
     replies.set(id,value => { clearTimeout(timer); value.error ? reject(Error(value.error)) : resolve(value.result); });
     host.stdin.write(JSON.stringify({id,method,params}) + '\n');
   });
 }
-const timeout = setTimeout(() => host.kill(),45000);
+const timeout = setTimeout(() => host.kill(),60000);
 try {
   const catalog = await request('catalog','catalog');
   assert.equal(catalog.operations.length,22);
   assert.equal(catalog.categories[0].name,'浏览器');
   const plan = await request('plan','plan',{selection:[{id:'B01',target:'simple'},{id:'B02',target:false}]});
   assert.deepEqual(plan.flatMap(page => page.items).sort(),['B01','B02']);
+  const devices = await request('devices','devices');
+  assert.ok(Array.isArray(devices), 'real hdc enumeration must complete');
   assert.equal(await request('shutdown','shutdown'),true);
   await exit;
+  const owned = /应用管理 hdc 服务 pid=(\d+)/.exec(stderr);
+  if (owned) {
+    assert.match(stderr, new RegExp('应用管理的 hdc 服务已退出 pid=' + owned[1]));
+    assert.throws(() => process.kill(Number(owned[1]), 0), { code: 'ESRCH' });
+    console.log('PASS: owned hdc process exited before host shutdown');
+  } else assert.match(stderr, /复用已有 hdc 服务/);
   console.log('PASS: packaged checksums, native dependencies, isolated PATH, real host catalog/selection/shutdown');
 } finally {
   clearTimeout(timeout); input.close();

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
 import { Worker } from 'node:worker_threads';
-import { readCatalog, publicCatalog, resolveSelection, plan, dataRoot, discoverRuns } from '../core/index.mjs';
+import { readCatalog, publicCatalog, resolveSelection, plan, dataRoot, discoverRuns, HdcService } from '../core/index.mjs';
 
 const args = process.argv.slice(2);
 const arg = key => { const i = args.indexOf(key); return i >= 0 ? args[i + 1] : null; };
@@ -10,19 +10,35 @@ const hdc = arg('--hdc');
 const root = path.resolve(arg('--data-dir') || dataRoot());
 if (!hdc || !path.isAbsolute(hdc) || !fs.existsSync(hdc)) throw new Error('内置 hdc 缺失，应用安装不完整');
 const catalog = readCatalog();
-let active, closing = false;
+const service = new HdcService({ executable: hdc, args: ['-l', '2'] }, { log: message => process.stderr.write(message + '\n') });
+let active, closing = false, finishing;
+function finishShutdown() {
+  return finishing ??= service.stop().then(() => process.exit(0), error => {
+    process.stderr.write('hdc 服务退出失败：' + error.message + '\n'); process.exit(1);
+  });
+}
 const output = message => { if (!process.stdout.destroyed) process.stdout.write(JSON.stringify(message) + '\n'); };
 process.stdout.on('error', () => shutdown());
 function shutdown() {
   closing = true;
   if (active) Atomics.store(new Int32Array(active.cancel), 0, 1);
-  else process.exit(0);
+  else void finishShutdown();
 }
-function startWorker(id, method, params) {
+async function startWorker(id, method, params) {
   if (active) throw new Error('设备正在处理任务，请稍后重试');
   const cancel = new SharedArrayBuffer(4);
-  const worker = new Worker(new URL('./desktop-worker.mjs', import.meta.url), { workerData: { method, params, hdc, root, cancel } });
-  active = { worker, cancel, method };
+  active = { cancel, method };
+  let worker;
+  try {
+    const client = await service.start();
+    if (closing) throw new Error('应用正在退出');
+    worker = new Worker(new URL('./desktop-worker.mjs', import.meta.url), { workerData: { method, params, hdc: client, root, cancel } });
+    active.worker = worker;
+  } catch (error) {
+    active = null;
+    if (closing) void finishShutdown();
+    throw error;
+  }
   let replied = false;
   worker.on('message', message => {
     if (message.done) {
@@ -34,11 +50,11 @@ function startWorker(id, method, params) {
     if (!replied) output({ id, error: `执行进程异常退出 (${code})，请检查未完成任务` });
     active = null;
     output({ event: 'idle', recoverable: discoverRuns(root) });
-    if (closing) process.exit(0);
+    if (closing) void finishShutdown();
   });
 }
 const input = readline.createInterface({ input: process.stdin });
-input.on('line', line => {
+input.on('line', async line => {
   let id;
   try {
     if (line.length > 128 * 1024) throw new Error('请求过大');
@@ -48,7 +64,7 @@ input.on('line', line => {
     if (closing) throw new Error('应用正在退出');
     if (method === 'catalog') output({ id, result: publicCatalog(catalog) });
     else if (method === 'plan') output({ id, result: plan(catalog, resolveSelection(catalog, params.selection)).map(p => ({ page: p.key, items: p.operations.map(o => o.id) })) });
-    else if (method === 'devices') startWorker(id, method, {});
+    else if (method === 'devices') await startWorker(id, method, {});
     else if (method === 'runs') output({ id, result: discoverRuns(root) });
     else if (method === 'cancel') {
       if (active) Atomics.store(new Int32Array(active.cancel), 0, 1);
@@ -61,7 +77,7 @@ input.on('line', line => {
         request = found.request; resume = found.directory;
       }
       if (method === 'execute') resolveSelection(catalog, request?.selection);
-      startWorker(id, 'execute', { request, resume, recoveryOnly: method === 'recover' });
+      await startWorker(id, 'execute', { request, resume, recoveryOnly: method === 'recover' });
     } else if (method === 'shutdown') { output({ id, result: true }); shutdown(); }
     else throw new Error('未知接口：' + method);
   } catch (e) { output({ id, error: e.message }); }

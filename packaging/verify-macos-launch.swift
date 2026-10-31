@@ -40,3 +40,21 @@ guard !app.isTerminated, app.terminate(), wait(30, {
     fatalError("Installed app did not close normally")
 }
 print("PASS: installed macOS app launched a native window and closed normally")
+
+// A disappeared GUI PID is insufficient: Dock retains exited applications
+// while their hdc descendants remain in the application's coalition.
+func hasRemainingSubordinates() -> Bool {
+    let command = Process(), output = Pipe()
+    command.executableURL = URL(fileURLWithPath: "/usr/bin/lsappinfo")
+    command.arguments = ["list"]
+    command.standardOutput = output
+    do { try command.run() } catch { fatalError("Cannot inspect application registration: \(error)") }
+    let data = output.fileHandleForReading.readDataToEndOfFile()
+    command.waitUntilExit()
+    guard command.terminationStatus == 0 else { fatalError("Application registration query failed") }
+    let text = String(decoding: data, as: UTF8.self)
+    let blocks = text.components(separatedBy: "\n\n")
+    return blocks.contains { $0.contains("bundle path=\"\(url.path)\"") && $0.contains("exited-with-subordinates") }
+}
+guard wait(10, { !hasRemainingSubordinates() }) else { fatalError("Dock still reports the app running with subordinates") }
+print("PASS: no exited-with-subordinates application registration remains")
