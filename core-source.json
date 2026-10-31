@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "commit": "e0773aab208389aac86ccb451e441d5ab57b964a",
+  "commit": "0895a5632e5aeccd1588779224167a2adf0f81d7",
   "digest": "6cbdef8e5f55e6e20470975b035e5aae5505e523efa9bc92b121860c079bfdef",
   "files": {
     "core/adapters/assistant.mjs": "736747aa60b7d2b0e08ad639310aa7f9d1865e732520b132990b5f92366749b2",
