@@ -105,3 +105,37 @@ test('calendar menu choice runs through the shared page transaction and reenters
  await runPages({pages:[page],device,nav,progress:{items:{},failures:[]},persist(){},evidence(){return{path:'unchanged'};}});
  assert.equal(choiceClicks,1);assert.equal(entries,2);
 });
+
+import net from 'node:net';
+import { HdcService } from '../core/hdc-service.mjs';
+import { Device as HdcDevice } from '../core/device.mjs';
+const fixtureHdc={executable:process.execPath,args:[fileURLToPath(new URL('./fixtures/hdc-service.mjs',import.meta.url))]};
+async function freePort() {
+ const server=net.createServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ const port=server.address().port;await new Promise(resolve=>server.close(resolve));return port;
+}
+test('managed hdc exits with its owner; all device clients disable daemon auto-start',async()=>{
+ const service=new HdcService(fixtureHdc,{port:await freePort()});
+ try {
+  const client=await service.start();assert.deepEqual(discoverDevices(client),[]);
+  const device=new HdcDevice('fixture',()=>{},client);assert.match(device.shell('ignored'),/Empty/);
+  assert.ok(service.child.pid);const child=service.child;
+  await service.stop();assert.ok(child.exitCode!==null||child.signalCode!==null);
+  await service.stop();await assert.rejects(service.start(),/退出/);
+ } finally {await service.stop();}
+});
+test('borrowed hdc stays alive when another client exits',async()=>{
+ const owner=new HdcService(fixtureHdc,{port:await freePort()});
+ try {
+  await owner.start();const borrower=new HdcService(fixtureHdc,{port:owner.port});
+  await borrower.start();assert.equal(borrower.child,undefined);await borrower.stop();
+  assert.equal(owner.child.exitCode,null);assert.deepEqual(discoverDevices(owner.client),[]);
+ } finally {await owner.stop();}
+});
+test('shutdown during hdc startup leaves no process and failed startup cannot auto-spawn',async()=>{
+ const service=new HdcService(fixtureHdc,{port:await freePort()});
+ const pending=service.start();await service.stop();await assert.rejects(pending,/退出|取消/);
+ assert.ok(!service.child || service.child.exitCode!==null || service.child.signalCode!==null);
+ const broken=new HdcService({executable:process.execPath,args:['--not-a-real-node-option']},{port:await freePort(),timeout:1000});
+ await assert.rejects(broken.start(),/未就绪/);await broken.stop();
+});
