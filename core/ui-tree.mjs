@@ -82,6 +82,7 @@ export function titleIs(scope, title) {
   return bars.length > 0 && find(bars.at(-1), { text: title }).length > 0;
 }
 export function control(root, locator) {
+  if (locator.type === 'MenuChoice') return unique(find(root, { id: locator.id, type: 'Row' }));
   if (locator.originalText) {
     return unique(find(root, { type: locator.type }).filter(n => attr(n).originalText === locator.originalText));
   }
@@ -110,6 +111,12 @@ export function state(root, locator) {
   const n = control(root, locator);
   const b = bounds(n), r = bounds(root);
   if (b[0] < r[0] || b[1] < r[1] || b[2] > r[2] || b[3] > r[3]) throw new Error('目标控件不完整位于当前视口');
+  if (locator.type === 'MenuChoice') {
+    const values = find(n, { type: 'Text' }).map(n => attr(n).text).filter(t => t !== locator.anchorText);
+    const value = unique(values, '菜单当前值不唯一');
+    if (!locator.values.includes(value)) throw new Error('菜单当前值未知');
+    return { n, checked: value === locator.originalText, value, enabled: bool(attr(n).enabled) };
+  }
   return { n, checked: bool(attr(n).checked), enabled: bool(attr(n).enabled) };
 }
 

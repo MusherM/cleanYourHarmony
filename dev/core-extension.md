@@ -43,3 +43,9 @@ CLI 可使用 `node scripts/run.mjs --recover --resume <原证据目录> --devic
 ## 验收层级
 
 共享离线测试、GUI 协议/原生测试、打包与安装启动、手机业务验收分别报告。相同设备严禁同时运行 CLI 和 GUI。新内核包不替换正在运行的部署；实机报告只消费当次 progress.json 与现场证据。
+
+## 弹出菜单型选择
+
+choice 除 Radio 外支持 MenuChoice：locator 声明稳定行 id、anchorText、当前目标 originalText 和页面可能显示的 values。公开 control.values 只包含已适配的可执行目标；locator.values 用于识别修改前状态。状态读取仅在该行提取唯一摘要值，未知值拒绝执行。应用适配器提供 changeControl(page, locator, current)，打开菜单并点击当前树中的目标，返回 true；未处理时返回 false。Navigator.changeControl 为普通控件保留单击路径。修改后的等待、取证、一次重进和取消收尾仍由共享执行链处理，适配器不能直接提交成功状态。
+
+日历适配基线：HarmonyOS 7.0.0.109、日历 17.0.9.300。设置入口由 more_menu → menu_preferences 定位；一周开始日只支持执行星期一目标。scripts/fixtures/calendar.json 保留脱敏后的必要结构，不包含日程内容；离线测试覆盖菜单选择、重进和已达标不重复点击，其他系统或应用版本需另行实测。

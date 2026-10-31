@@ -12,7 +12,7 @@
     "do_not_disturb": "先记录原状态；关闭时临时开启并验证，原已开启则保持。结束、失败及可捕获中断时恢复本次修改并验证；强制终止保留待恢复标记。原状态未知不猜测，开启/恢复失败单独记录。不改日程、例外及通知权限，仍检测遮挡。",
     "recovery": "新解析器先离线检查保存的树；状态等待设超时。失败先查看当前树和截图，定位原因后最多一次针对性恢复，仍失败则记录并继续独立项目。命令退出码、业务成功标记、文件新鲜度和预期页面分别检查。",
     "tool_setup": "Agent 先检测并复用可用工具；缺少 hdc、UI Tree/GUI 操作能力或 Node.js 18+ 时从官方来源自动安装适配当前系统与架构的版本并验证。仅将凭据、系统权限、手机授权或无法自行解决的环境阻塞交给用户。",
-    "selection": "CLI 默认执行全部 20 项及清爽化目标；GUI 仅执行用户勾选的项目和明确目标，未选项目保持原状。"
+    "selection": "CLI 默认执行全部 22 项及清爽化目标；GUI 仅执行用户勾选的项目和明确目标，未选项目保持原状。"
   },
   "operations": [
     {
@@ -1193,6 +1193,128 @@
         ]
       },
       "page": "N:系统/用户体验改进计划"
+    },
+    {
+      "page": "calendar-settings",
+      "category": "calendar",
+      "default_selected": true,
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "last_verification": {
+        "at": "2026-10-31",
+        "scope": "modified_and_reentered",
+        "device": "VYG-AL00",
+        "system": "HarmonyOS 7.0.0.109",
+        "app_version": "17.0.9.300",
+        "method": "ui_tree"
+      },
+      "id": "C01",
+      "name": "日历关闭推荐订阅",
+      "display_name": "推荐订阅",
+      "path": "日历 → 右上角更多 → 设置 → 推荐订阅",
+      "target": {
+        "checked": false
+      },
+      "locator": {
+        "type": "Toggle",
+        "anchorText": "推荐订阅"
+      },
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "screenshot": {
+        "group": "G17",
+        "at": "日历 → 设置",
+        "shows": "推荐订阅关闭与一周开始日"
+      }
+    },
+    {
+      "page": "calendar-settings",
+      "category": "calendar",
+      "default_selected": true,
+      "execution": {
+        "method": "ui_tree_first",
+        "before_click": "核对当前页面和应用身份、控件唯一性、checked 和 enabled；已经满足则跳过。禁用或无法验证时记录执行失败及原因，不猜测。",
+        "after_click": "刷新树核对本项状态并立即保存当前页证据；同页修改合并完成后只从最近父页重进一次验证并留证。已满足目标无需重进，失败不自动重放 Toggle；禁止全部操作后从头复查或补拍。",
+        "failure_policy": {
+          "status": "failed",
+          "when": [
+            "页面或控件无法定位",
+            "控件禁用",
+            "修改后或重进页面状态不符合目标"
+          ],
+          "preserve_operation_in_catalog": true
+        }
+      },
+      "last_verification": {
+        "at": "2026-10-31",
+        "scope": "modified_and_reentered",
+        "device": "VYG-AL00",
+        "system": "HarmonyOS 7.0.0.109",
+        "app_version": "17.0.9.300",
+        "method": "ui_tree"
+      },
+      "id": "C02",
+      "name": "日历一周开始日设为星期一",
+      "display_name": "一周开始日",
+      "path": "日历 → 右上角更多 → 设置 → 一周开始日 → 星期一",
+      "target": {
+        "checked": true
+      },
+      "locator": {
+        "type": "MenuChoice",
+        "id": "settings_start_of_week",
+        "anchorText": "一周开始日",
+        "originalText": "星期一",
+        "values": [
+          "区域默认",
+          "星期日",
+          "星期一",
+          "星期二",
+          "星期三",
+          "星期四",
+          "星期五",
+          "星期六"
+        ]
+      },
+      "control": {
+        "type": "choice",
+        "default": "星期一",
+        "values": [
+          {
+            "value": "星期一",
+            "label": "星期一"
+          }
+        ]
+      },
+      "screenshot": {
+        "group": "G17",
+        "at": "日历 → 设置",
+        "shows": "一周开始日为星期一"
+      }
     }
   ],
   "excluded": [
@@ -1241,6 +1363,11 @@
       "id": "system",
       "name": "系统",
       "icon": "gearshape"
+    },
+    {
+      "id": "calendar",
+      "name": "日历",
+      "icon": "calendar"
     }
   ],
   "apps": {
@@ -1261,6 +1388,12 @@
       "ability": "MainAbility",
       "root": "我的",
       "adapter": "assistant"
+    },
+    "C": {
+      "bundle": "com.huawei.hmos.calendar",
+      "ability": "MainAbility",
+      "root": "日历",
+      "adapter": "calendar"
     }
   },
   "pages": {
@@ -1395,6 +1528,13 @@
       "route": [
         "系统",
         "用户体验改进计划"
+      ],
+      "kind": "standard"
+    },
+    "calendar-settings": {
+      "app": "C",
+      "route": [
+        "设置"
       ],
       "kind": "standard"
     }

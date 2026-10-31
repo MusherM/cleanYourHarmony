@@ -122,6 +122,11 @@ export class Navigator {
     }
     return this.current(page);
   }
+  async changeControl(page, locator, current) {
+    if (await this.adapter(page.family).changeControl?.call(this, page, locator, current)) return;
+    if (locator.type === 'MenuChoice') throw new Error('应用没有菜单选择适配器');
+    this.device.click(current.n);
+  }
   async reenter(page) { await this.parent(); return this.go(page); }
   reset() { this.family = null; this.route = []; this.view = null; }
 }

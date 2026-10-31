@@ -22,7 +22,11 @@ export function validateCatalog(catalog, registry = adapters) {
     const c=op.control; require(c && ['toggle','choice'].includes(c.type) && Array.isArray(c.values) && c.values.length,'control ' + op.id);
     const values=c.values.map(v=>v.value);
     require(new Set(values).size===values.length && values.includes(c.default) && values.every(v => c.type==='toggle' ? typeof v==='boolean' : text(v)), '目标 ' + op.id);
-    require(op.locator && op.locator.type === (c.type==='toggle'?'Toggle':'Radio') && (text(op.locator.anchorText) || text(op.locator.originalText) || text(op.locator.id)),'locator ' + op.id);
+    require(op.locator && (c.type === 'toggle' ? op.locator.type === 'Toggle' : ['Radio','MenuChoice'].includes(op.locator.type)) && (text(op.locator.anchorText) || text(op.locator.originalText) || text(op.locator.id)),'locator ' + op.id);
+    if (op.locator.type === 'MenuChoice') {
+      require(text(op.locator.id) && text(op.locator.anchorText) && Array.isArray(op.locator.values) && op.locator.values.every(text) && values.every(v => op.locator.values.includes(v)), '菜单目标 ' + op.id);
+      require(typeof registry[catalog.apps[catalog.pages[op.page].app].adapter].changeControl === 'function', '菜单适配器 ' + op.id);
+    }
     require(text(op.screenshot?.group),'screenshot ' + op.id);
   }
   require(catalog.dnd && Object.hasOwn(catalog.apps,catalog.dnd.app) && route(catalog.dnd.route),'dnd');

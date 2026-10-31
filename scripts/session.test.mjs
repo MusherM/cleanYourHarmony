@@ -15,10 +15,10 @@ const catalog=readCatalog();
 const node=(type,attrs={},children=[])=>({attributes:{type,visible:'true',enabled:'true',bounds:'[0,200][500,600]',...attrs},children});
 const toggle=(label,on)=>node('Row',{},[node('Text',{text:label}),node('Toggle',{checked:String(on),id:label})]);
 
-test('desktop catalog covers 20 settings in four categories with typed defaults',()=>{
-  const data=publicCatalog(catalog);assert.equal(data.operations.length,20);
-  assert.deepEqual(data.categories.map(c=>data.operations.filter(o=>o.category===c.id).length),[3,9,7,1]);
-  assert.equal(resolveSelection(catalog).length,20);
+test('desktop catalog covers 22 settings in five categories with typed defaults',()=>{
+  const data=publicCatalog(catalog);assert.equal(data.operations.length,22);
+  assert.deepEqual(data.categories.map(c=>data.operations.filter(o=>o.category===c.id).length),[3,9,7,1,2]);
+  assert.equal(resolveSelection(catalog).length,22);
 });
 test('selection is strict, excludes unchecked items, supports mixed targets without mutating catalog',()=>{
   const selected=resolveSelection(catalog,[{id:'B02',target:true},{id:'F01',target:false}]);

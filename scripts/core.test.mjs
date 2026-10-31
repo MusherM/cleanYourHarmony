@@ -74,3 +74,34 @@ test('legacy progress never replays operations; recovery checks identity and pre
   const after=fs.readFileSync(file,'utf8');await assert.rejects(executeSession({request,root,resume:directory,DeviceClass:Device,NavigatorClass:Nav}),/旧进度/);assert.equal(fs.readFileSync(file,'utf8'),after);
  } finally {fs.rmSync(root,{recursive:true,force:true});}
 });
+
+import { appScope, state, find, attr } from '../core/ui-tree.mjs';
+const calendarFixtures=JSON.parse(fs.readFileSync(new URL('./fixtures/calendar.json',import.meta.url)));
+test('calendar fixtures verify the anchored subscription and week value, rejecting unknown values',()=>{
+ const [subscription,week]=resolveSelection(catalog,[{id:'C01',target:false},{id:'C02',target:'星期一'}]);
+ const scope=tag=>appScope(calendarFixtures[tag],catalog.apps.C.bundle);
+ assert.equal(state(scope('settings-before'),subscription.locator).checked,true);
+ assert.equal(state(scope('settings-before'),week.locator).checked,false);
+ assert.equal(state(scope('week-after'),week.locator).checked,true);
+ const bad=structuredClone(scope('week-after'));
+ find(bad,{text:'星期一'})[0].attributes.text='unknown';
+ assert.throws(()=>state(bad,week.locator),/未知/);
+});
+test('calendar menu choice runs through the shared page transaction and reenters once',async()=>{
+ const [op]=resolveSelection(catalog,[{id:'C02',target:'星期一'}]);
+ const page=plan(catalog,[op])[0];let screen='root',choiceClicks=0,entries=0;
+ const device={revision:0,tree:()=>calendarFixtures[screen],launch(){screen='root';this.revision++;},back(){screen='root';this.revision++;},click(n){
+  this.revision++;
+  if(attr(n).id==='more_menu')screen='menu';
+  else if(attr(n).id==='menu_preferences'){entries++;screen=choiceClicks?'week-after':'settings-before';}
+  else if(attr(n).id==='settings_start_of_week')screen='week-before';
+  else if(attr(n).text==='星期一'){choiceClicks++;screen='week-after';}
+  else throw Error('unexpected click');
+ }};
+ const nav=new Navigator(device), progress={items:{},failures:[]};let shots=0;
+ const {runPages}=await import('../core/runner.mjs');
+ await runPages({pages:[page],device,nav,progress,persist(){},evidence(){shots++;return{path:'fresh-'+shots};}});
+ assert.equal(progress.items.C02.status,'passed',progress.items.C02.error);assert.equal(choiceClicks,1);assert.equal(entries,2);assert.equal(shots,3);
+ await runPages({pages:[page],device,nav,progress:{items:{},failures:[]},persist(){},evidence(){return{path:'unchanged'};}});
+ assert.equal(choiceClicks,1);assert.equal(entries,2);
+});
