@@ -39,7 +39,7 @@ English: [README_en.md](README_en.md)
 在仓库目录中启动 Agent，发送以下指令即可开始：
 
 ```text
-请先阅读 AGENTS.md、README.md 和 operations.json，
+请先阅读 README.md 和 operations.json，
 对当前连接的鸿蒙手机执行 operations.json 中 default_selected 为 true 的项目；
 默认直接执行全部 20 项，不设可选项，不询问是否纳入。若连接多台设备，先让我选择目标。
 自行检查并复用电脑端工具；缺少 hdc、UI Tree/GUI 操作工具或 Node.js 18+ 时，
