@@ -1,9 +1,11 @@
+import { hdcCommand } from './hdc-service.mjs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { Device } from './device.mjs';
 import { acquireDevice } from './session.mjs';
 export function discoverDevices(hdc = 'hdc', { spawn = spawnSync, DeviceClass = Device } = {}) {
-  const r = spawn(hdc, ['list','targets','-v'], { cwd: path.isAbsolute(hdc) ? path.dirname(hdc) : undefined, encoding:'utf8', timeout:15000, windowsHide:true });
+  const command = hdcCommand(hdc);
+  const r = spawn(command.executable, [...command.args, 'list','targets','-v'], { cwd: path.isAbsolute(command.executable) ? path.dirname(command.executable) : undefined, encoding:'utf8', timeout:15000, windowsHide:true });
   const output=(r.stdout ?? '')+(r.stderr ?? '');
   if (r.error || r.status !== 0 || /\[Fail\]|failed|error/i.test(output)) throw new Error('设备工具连接失败，请检查 hdc 或关闭冲突的开发工具');
   const devices=output.trim().split(/\r?\n/).filter(s=>s.trim() && s.trim()!=='[Empty]').map(line=>{

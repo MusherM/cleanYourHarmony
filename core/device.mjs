@@ -1,3 +1,4 @@
+import { hdcCommand } from './hdc-service.mjs';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -10,7 +11,8 @@ export class Device {
   constructor(id, log, hdc = 'hdc', apps = APPS) { this.apps = apps; this.id = id; this.log = log; this.hdc = hdc; this.revision = 0; this.temporaryFiles = new Set(); }
   run(args, marker) {
     const start = Date.now();
-    const r = spawnSync(this.hdc, ['-t', this.id, ...args], { cwd: path.isAbsolute(this.hdc) ? path.dirname(this.hdc) : undefined, encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024, windowsHide: true });
+    const command = hdcCommand(this.hdc);
+    const r = spawnSync(command.executable, [...command.args, '-t', this.id, ...args], { cwd: path.isAbsolute(command.executable) ? path.dirname(command.executable) : undefined, encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024, windowsHide: true });
     const output = (r.stdout ?? '') + (r.stderr ?? '');
     this.log({ action: args[0] === 'file' ? 'file-transfer' : args[1]?.split(' ').slice(0, 2).join(' '), ms: Date.now() - start, exit: r.status });
     if (r.error || r.status !== 0 || /\[Fail\]|\berror\b(?!\s*[:=]?\s*0)|inaccessible|not found/i.test(output.replace(/No Error/gi, '')) || (marker && !marker.test(output))) {

@@ -49,3 +49,7 @@ CLI 可使用 `node scripts/run.mjs --recover --resume <原证据目录> --devic
 choice 除 Radio 外支持 MenuChoice：locator 声明稳定行 id、anchorText、当前目标 originalText 和页面可能显示的 values。公开 control.values 只包含已适配的可执行目标；locator.values 用于识别修改前状态。状态读取仅在该行提取唯一摘要值，未知值拒绝执行。应用适配器提供 changeControl(page, locator, current)，打开菜单并点击当前树中的目标，返回 true；未处理时返回 false。Navigator.changeControl 为普通控件保留单击路径。修改后的等待、取证、一次重进和取消收尾仍由共享执行链处理，适配器不能直接提交成功状态。
 
 日历适配基线：HarmonyOS 7.0.0.109、日历 17.0.9.300。设置入口由 more_menu → menu_preferences 定位；一周开始日只支持执行星期一目标。scripts/fixtures/calendar.json 保留脱敏后的必要结构，不包含日程内容；离线测试覆盖菜单选择、重进和已达标不重复点击，其他系统或应用版本需另行实测。
+
+## hdc 服务生命周期
+
+桌面宿主可使用共享 HdcService：先检查本地服务，已有服务只借用；没有服务时以 `-m` 前台模式创建并持有 ChildProcess。传给发现和设备访问的命令描述包含 `-p`（禁止自动派生守护进程）与显式本地端口。任务和勿扰收尾结束后 await stop()，仅向自己创建的子进程发退出信号并等待退出，不执行全局 hdc kill，也不按进程名或旧 PID 清理。CLI 的字符串 hdc 参数保持原兼容行为。强制终止整个宿主不保证正常收尾。
