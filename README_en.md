@@ -1,44 +1,78 @@
+<div align="center">
+
 # cleanYourHarmony
+
+**A cleaner HarmonyOS phone · Native GUI & Agent CLI**
+
+Reduce recommendations, feeds, and interruptions. Verify each result and keep evidence locally.
+
+[Download GUI](https://github.com/MusherM/cleanYourHarmony/releases/latest) · [Use CLI](#cli) · [Operation catalog](operations.json) · [Report an issue](https://github.com/MusherM/cleanYourHarmony/issues)
 
 中文：[README.md](README.md)
 
-It's the AI era, my friend—why are you still reading a README? Copy this repository's URL and hand it to an agent. All you may need to do yourself is tap the build number repeatedly to enable developer mode, turn on USB debugging, then connect your phone to your computer and authorize the connection.
+</div>
 
-<details>
-<summary>What will it change?</summary>
+---
 
-[operations.json](operations.json) is the agent's checklist. In plain language, it covers:
+One operation catalog, one execution core, two ways to use it. The current catalog covers **22 settings in 5 categories**. Settings already at their targets are left unchanged; each result includes a status and device evidence.
 
-- **A simpler browser**: switch to the simple homepage and turn off search rankings and trending search terms.
-- **Fewer unsolicited recommendations on the leftmost home screen**: disable the listed Utilities, Services, Cards, and News modules and search recommendations, feature-introduction and activity-reminder notifications, and the Xiaohongshu curated-content subscription.
-- **Fewer app interruptions**: disable system notifications for Browser, Themes, AppGallery, Game Center, Video, Music, and Reading by default, without a selection prompt. Disabling system notifications also affects those apps' ordinary notifications.
-- **Leave the user experience improvement program**: attempt to disable it and report failure if the device does not allow the change.
+| Interface | Best for | Getting started |
+| --- | --- | --- |
+| **Desktop GUI** | Selecting settings and reviewing results visually | Download the macOS / Windows installer; no agent setup required |
+| **CLI + Agent** | Terminal workflows, environment setup, and exception handling | Give the repository URL and prompt below to an agent with computer access |
 
-It does not delete browsing history, cancel services, or change habits such as autoplay. Excluded practical services such as parking, calendars, travel, and deliveries are not targets. Settings already at the requested state are left alone, and each result gets evidence.
+## Desktop GUI
 
-</details>
+Native macOS (SwiftUI) and Windows (WinUI 3) interfaces organize settings into Browser, leftmost home screen, app notifications, System, and Calendar. Select the operations you want, click the execute button, and follow progress and individual results. Unselected settings remain unchanged.
 
-An evidence-backed catalog for reducing ads, feeds, marketing messages, and unsolicited recommendations on HarmonyOS phones while preserving normal information display and useful services.
+![cleanYourHarmony macOS settings screen](docs/images/gui-macos-settings.png)
 
-Two default Calendar operations disable Recommended subscriptions and set the first day of the week to Monday through the top-right More menu → Settings. Both share one settings page and use live controls and menu text.
+![cleanYourHarmony macOS results screen](docs/images/gui-macos.png)
 
-## Current deliverables
+- **Ready to run**: installers bundle Node.js, hdc, and runtime dependencies. Normal execution needs no agent, model, or network.
+- **Inspectable results**: distinguish changed, already satisfied, failed, not found, and incomplete items, with links to device evidence.
+- **Stop and resume**: stopping finishes necessary verification and attempts Do Not Disturb restoration; interrupted tasks resume from progress. Stopping does not undo completed settings.
 
-- `scripts/run.mjs`: a fixed semantic-route executor for page batches, screenshots, progress, and Do Not Disturb restoration; the normal path makes no model calls.
-- `operations.json`: 22 retained operations, UI Tree locator rules, target states, screenshot groups, app notifications, and exclusions.
-- `dev/device-run/`: local execution progress and evidence, excluded from version control.
+### Download and install
 
-The current delivery covers the operation catalog and agent execution/acceptance guidance. Compatibility is limited to the device and versions stated in each report. HarmonyOS 5/6 compatibility requires separate device verification.
+**[Get the GUI from Releases →](https://github.com/MusherM/cleanYourHarmony/releases/latest)** · Current version [v1.4.1](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.4.1)
 
-Device verification recorded on 2026-10-28: HOP-AL10, HarmonyOS 7.0.0.113, expanded display at 2584×1828. All 20 operations passed: 10 changed and verified after re-entry, and 10 confirmed already at target. Do Not Disturb was restored to its original off state. This record covers only that expanded state and version; the folded outer display and folding during execution were not tested.
+| Platform | Installer | Installation |
+| --- | --- | --- |
+| macOS 13.5+ · Apple Silicon | [Download DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-macos-arm64.dmg) | Open and drag into Applications |
+| macOS 13.5+ · Intel | [Download DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-macos-x64.dmg) | Open and drag into Applications |
+| Windows 11 · x64 | [Download Setup](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-windows-x64-Setup.exe) | Run the installer |
 
-A second device run on the same day at 14:15 re-checked the same device and version: all 20 targets were already at their goal state, so every item was recorded as confirmed without modification (0 switch changes), and Do Not Disturb was restored to its original off state. That run's evidence is in dev/device-run/evidence_2026-10-28T14-15-43.259-08-00_77176/.
+macOS packages are ad-hoc signed and not notarized; Windows packages are unsigned. Your operating system may show security prompts. Releases include SHA-256 checksums and matching source. Desktop source and build instructions are on the [desktop-app branch](https://github.com/MusherM/cleanYourHarmony/tree/desktop-app).
 
-## Recommended: run with an agent
+Connect the unlocked phone with a USB data cable, enable USB debugging, and authorize the computer on the phone. Then select settings and execute. See “When no phone is detected” below for connection help.
+
+## What changes
+
+| Category | Default targets |
+| --- | --- |
+| Browser · 3 items | Use the simple homepage; disable search rankings and trending terms |
+| Leftmost home screen · 9 items | Disable listed recommendation modules, search suggestions, marketing notifications, and content subscriptions |
+| App notifications · 7 items | Disable system notifications for Browser, Themes, AppGallery, Game Center, Video, Music, and Reading |
+| System · 1 item | Attempt to leave the user experience improvement program; report failure if the system prevents changes |
+| Calendar · 2 items | Disable recommended subscriptions; start the week on Monday |
+
+See [operations.json](operations.json) for exact targets and exclusions. The tool does not delete browsing history, cancel services, or change autoplay. Excluded practical services such as parking, calendars, travel, and deliveries are not targets. **Disabling system notifications also affects those apps’ ordinary notifications.**
+
+<a id="cli"></a>
+
+## CLI: run with an agent
 
 Give this repository to an agent that can operate your computer and connected phone. The agent checks the computer's tools and installs anything missing. You only need to connect the phone and follow prompts to enable developer options, USB debugging, and trust for the computer. Enter lock-screen credentials and handle device authorization or system permission prompts yourself. A chat-only agent without computer and device access cannot perform the work.
 
-Start the agent in this repository and send:
+Give the agent `https://github.com/MusherM/cleanYourHarmony` and ask it to fetch the `main` branch and work in the repository directory. You can also prepare the repository yourself:
+
+```sh
+git clone --branch main --single-branch https://github.com/MusherM/cleanYourHarmony.git
+cd cleanYourHarmony
+```
+
+Then send this prompt:
 
 ```text
 Read README_en.md and operations.json first.
@@ -57,12 +91,12 @@ Batch operations by actual page; verify, capture screenshots, and persist progre
 Share images across visible items. Re-enter only changed pages once locally; never repeat the entire run for verification or screenshots.
 Record the original Do Not Disturb state, enable it temporarily, and restore it on completion or failure; record the outcome.
 Report successful and failed operations and failure reasons directly in text. List not-found and incomplete operations separately,
-and report Do Not Disturb restoration. Historical records are references, not a substitute for verifying this device.
+and report Do Not Disturb restoration. Accept results from evidence collected on this device; historical records provide reference.
 ```
 
-The agent should run the repository script first and handle unknown pages, overlays, or changed controls as exceptions. Accept results from evidence collected on the current device, not historical records.
+The agent should run the repository script first and handle unknown pages, overlays, or changed controls as exceptions. Accept results from evidence collected on the current device.
 
-### Script entry point (for agents)
+### CLI quick start
 
 Prepare the tools, then use these commands. The default only prints a plan; only --execute operates the phone.
 
@@ -73,13 +107,18 @@ node scripts/run.mjs --execute
 
 All 22 operations run without notification selection prompts. With multiple devices, use --device <current-device-id>; --hdc <executable-path> reuses an installed SDK. The script groups operations into 17 pages, navigates from the nearest parent, captures evidence immediately after changes, and re-enters changed pages once.
 
+<details>
+<summary>Execution and recovery details (agents: read before running)</summary>
+
 Consecutive reads on the same page reuse the current snapshot for up to 500 ms. Clicks, scrolling, app launches, screenshots, or expiry require a fresh tree. Adjacent notification settings reuse the search page while still checking each app name, foreground page, and control state. The normal route runs entirely in the script without per-step model decisions.
 
 When expanded-screen Settings uses two panes, top-level entries are located and scrolled in the left navigation bar. Switching top-level pages reuses that visible sidebar to avoid exiting Settings with system Back. Detail pages are checked against the last title bar, which also supplies notification search. System multitasking handles outside app content are accepted; other windows overlapping content still block actions. Browser startup waits for recognizable content, target controls receive up to 20 seconds to load, and transient overlays receive a bounded wait to disappear. An exact match for the notice about merging pinned notifications into priority notifications is dismissed with one normal Back action. Other persistent permission or onboarding dialogs are handled by the agent.
 
-Results go to dev/device-run/evidence_<current-time>/, including progress.json, screenshots, and command timing. Completion requires evidence for all business items; Do Not Disturb preparation/restoration is recorded separately. A device lease prevents concurrent instances; other agents must not operate that device during the run.
+Results go to dev/device-run/runs/<current-time>_<run-id>/, including progress.json, screenshots, and command timing. Completion requires evidence for all business items; Do Not Disturb preparation/restoration is recorded separately. A device lease prevents concurrent instances; other agents must not operate that device during the run.
 
-On failure, inspect progress and existing evidence, diagnose and fix the cause, then run node scripts/run.mjs --execute --resume <original-evidence-directory>. Completed pages are not replayed. Device, version, or catalog changes reject resume. Resume continues the same task; it is not a fresh acceptance run using old evidence. After forced termination, first verify the process is gone and inspect /tmp/cyh-device-*.lock/owner.json before removing only its stale lease; never remove a live lease.
+On failure, inspect progress and existing evidence, diagnose and fix the cause, then run node scripts/run.mjs --execute --resume <original-evidence-directory>. Completed pages are not replayed. Device, version, or catalog changes reject resume. Resume continues the same task using its saved evidence. After forced termination, first verify the process is gone and inspect /tmp/cyh-device-*.lock/owner.json before removing only its stale lease; never remove a live lease.
+
+New progress uses version 3. Older progress can be used to restore Do Not Disturb after verifying device identity; business execution requires a new task. When restoration is needed, use `node scripts/run.mjs --recover --resume <original-evidence-directory> --device <online-device-id>`.
 
 Notification apps may have been uninstalled. After verifying the search page, query and result container and waiting for results, an absent exact match is recorded as `not_found` with evidence and execution continues. This does not prove uninstallation or disabled notifications. Resume skips items already recorded as missing in this run. Final reports show “Not found” separately; missing items alone yield `completed_with_missing` and exit code 0, while actual business failures still yield 2. Overlays, loading, device-command errors and wrong pages remain execution failures.
 
@@ -100,6 +139,8 @@ The script follows ordinary UI routes and does not bypass disabled controls. Unk
 
 Saving screenshots does not require a vision model. Use visual reasoning only when the tree cannot expose the required target/state and record that fallback. The script executes fixed routes and hands unrecognized pages back to the agent. Results and elapsed time come from the current progress.json and evidence.
 
+</details>
+
 ### When no phone is detected
 
 The agent should first confirm that the device tools work, then inspect the connection result. Automatically install and verify missing tools, and diagnose and repair broken host tooling first. If the device list is empty or authorization is missing, guide the user through these steps, wait for completion, and check again instead of skipping all operations:
@@ -110,13 +151,20 @@ The agent should first confirm that the device tools work, then inspect the conn
 4. Keep the phone unlocked. When a computer authorization prompt such as “Allow USB debugging” appears, verify the computer and tap Allow. Let the user decide whether to select “Always allow this computer”, if offered. If no prompt appears, reconnect the cable and check the phone again.
 5. Enumerate devices again. Confirm that the device is online and a fresh UI Tree can be read before executing operations. If connection still fails, try another data cable, connect directly to a computer USB port, and inspect host tools or drivers. Distinguish an undetected device, missing authorization, and a tool failure.
 
-Menu locations and restart behavior follow Huawei's official [developer options guidance](https://consumer.huawei.com/cn/support/content/zh-cn02842747/) and [USB debugging connection guidance](https://consumer.huawei.com/cn/support/content/zh-cn00698619/). Labels may vary by device. These are connection troubleshooting instructions, not a claim that this project has verified initial authorization on every device.
+Menu locations and restart behavior follow Huawei's official [developer options guidance](https://consumer.huawei.com/cn/support/content/zh-cn02842747/) and [USB debugging connection guidance](https://consumer.huawei.com/cn/support/content/zh-cn00698619/). Labels may vary by device. These steps help troubleshoot the connection; initial authorization varies by device.
 
-## Reports
+### Reviewing results
 
 The agent reads the current `progress.json` and evidence and reports in conversation which operations succeeded (including those requiring no change), which failed and why. List not-found and incomplete operations separately, and report Do Not Disturb restoration. Report only what was actually verified; do not create JSON or HTML reports or replay device actions for reporting. Keep temporary raw dumps and logs in `/tmp`, and retain progress and screenshots in the run's evidence directory for resumption and inspection.
 
-## Shared execution core
+## Compatibility and data
+
+- Current semantic routes target **HarmonyOS 7**. HarmonyOS 5/6 and other device or app versions require separate verification; support for every model is not guaranteed.
+- Historical verification: on 2026-10-28, all 20 operations in the catalog at that time passed on HOP-AL10 / HarmonyOS 7.0.0.113 with the display expanded. The current 22-item catalog, other devices, the folded outer display, and folding during execution require separate verification.
+- Progress and screenshots stay on the computer. The GUI has no telemetry, cloud execution, or automatic updates. Data handling by a CLI agent depends on that agent’s configuration.
+- The tool does not bypass lock-screen credentials or disabled controls, or change lock-screen configuration. Do Not Disturb is enabled temporarily when needed and restoration is attempted and verified after completion or failure. There is no whole-device rollback.
+
+## Development and contributions
 
 main provides the Agent CLI and is the sole source of core/ and operations.json. desktop-app provides the native GUI and consumes the same core through one-way merges from main. CLI and GUI handle input, presentation and cancellation signals; the core owns devices, planning, verification, evidence and do-not-disturb restoration.
 
@@ -127,4 +175,4 @@ node --test scripts/runner.test.mjs scripts/session.test.mjs scripts/core.test.m
 node scripts/run.mjs --plan
 ```
 
-New progress uses version 3. Older versions permit only identity-verified do-not-disturb restoration, not business resume. Use `node scripts/run.mjs --recover --resume <original-evidence-directory> --device <online-device-id>` when needed. Restoration does not imply business success.
+Use [Issues](https://github.com/MusherM/cleanYourHarmony/issues) to report bugs or request compatibility improvements. Include system and app versions, reproduction steps, and sanitized errors; do not upload device identifiers, credentials, or screenshots containing personal information. Submit shared core changes to `main` and desktop interface changes to `desktop-app`.
