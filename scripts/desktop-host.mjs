@@ -10,7 +10,7 @@ const hdc = arg('--hdc');
 const root = path.resolve(arg('--data-dir') || dataRoot());
 if (!hdc || !path.isAbsolute(hdc) || !fs.existsSync(hdc)) throw new Error('内置 hdc 缺失，应用安装不完整');
 const catalog = readCatalog();
-const service = new HdcService({ executable: hdc, args: ['-l', '2'] }, { log: message => process.stderr.write(message + '\n') });
+const service = new HdcService(hdc, { log: message => process.stderr.write(message + '\n') });
 let active, closing = false, finishing;
 function finishShutdown() {
   return finishing ??= service.stop().then(() => process.exit(0), error => {
