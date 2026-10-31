@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 3,
   "purpose": "关闭广告、信息流、营销推广和非必要内容推荐，保留正常信息展示及实用服务。",
   "verification_scope": "last_verification 仅为历史入口及 UI Tree 控件可达性记录，不代表本次执行结果；按 execution_policy 对当前设备的选中项目执行并现场取证。系统/应用版本需逐机核对。",
   "execution_policy": {
@@ -12,7 +12,7 @@
     "do_not_disturb": "先记录原状态；关闭时临时开启并验证，原已开启则保持。结束、失败及可捕获中断时恢复本次修改并验证；强制终止保留待恢复标记。原状态未知不猜测，开启/恢复失败单独记录。不改日程、例外及通知权限，仍检测遮挡。",
     "recovery": "新解析器先离线检查保存的树；状态等待设超时。失败先查看当前树和截图，定位原因后最多一次针对性恢复，仍失败则记录并继续独立项目。命令退出码、业务成功标记、文件新鲜度和预期页面分别检查。",
     "tool_setup": "Agent 先检测并复用可用工具；缺少 hdc、UI Tree/GUI 操作能力或 Node.js 18+ 时从官方来源自动安装适配当前系统与架构的版本并验证。仅将凭据、系统权限、手机授权或无法自行解决的环境阻塞交给用户。",
-    "selection": "默认直接执行全部20项，包括视频、音乐、阅读的系统通知，不设可选项，不询问选择。"
+    "selection": "CLI 默认执行全部 20 项及清爽化目标；GUI 仅执行用户勾选的项目和明确目标，未选项目保持原状。"
   },
   "operations": [
     {
@@ -54,7 +54,24 @@
         "checked": true,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "主页模式",
+      "category": "browser",
+      "control": {
+        "type": "choice",
+        "default": "simple",
+        "values": [
+          {
+            "value": "simple",
+            "label": "简洁主页"
+          },
+          {
+            "value": "default",
+            "label": "默认主页"
+          }
+        ]
+      },
+      "page": "B:设置/主页设置"
     },
     {
       "id": "B02",
@@ -96,7 +113,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "搜索榜单",
+      "category": "browser",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "B:设置/搜索设置/高级设置"
     },
     {
       "id": "B03",
@@ -138,7 +172,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "搜索热词",
+      "category": "browser",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "B:设置/搜索设置/高级设置"
     },
     {
       "id": "F01",
@@ -180,7 +231,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "实用工具",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/设置/实用工具"
     },
     {
       "id": "F02",
@@ -222,7 +290,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "精选服务",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/设置/服务"
     },
     {
       "id": "F03",
@@ -264,7 +349,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "卡片",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/设置"
     },
     {
       "id": "F04",
@@ -306,7 +408,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "资讯",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/设置"
     },
     {
       "id": "F05",
@@ -348,7 +467,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "搜索热词",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/设置/搜索"
     },
     {
       "id": "F06",
@@ -390,7 +526,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "AI 搜索建议",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/设置/搜索"
     },
     {
       "id": "N01",
@@ -432,7 +585,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "浏览器",
+      "category": "notifications",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "N:通知和状态栏/浏览器"
     },
     {
       "id": "N02",
@@ -474,7 +644,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "主题",
+      "category": "notifications",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "N:通知和状态栏/主题"
     },
     {
       "id": "N03",
@@ -516,7 +703,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "应用市场",
+      "category": "notifications",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "N:通知和状态栏/应用市场"
     },
     {
       "id": "N04",
@@ -558,7 +762,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "视频",
+      "category": "notifications",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "N:通知和状态栏/视频"
     },
     {
       "id": "N05",
@@ -600,7 +821,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "音乐",
+      "category": "notifications",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "N:通知和状态栏/音乐"
     },
     {
       "id": "N06",
@@ -642,7 +880,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "游戏中心",
+      "category": "notifications",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "N:通知和状态栏/游戏中心"
     },
     {
       "id": "N07",
@@ -684,7 +939,24 @@
         "checked": false,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "阅读",
+      "category": "notifications",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "N:通知和状态栏/阅读"
     },
     {
       "id": "F07",
@@ -726,7 +998,24 @@
         "checked": true,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "功能介绍通知",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/设置/消息通知"
     },
     {
       "id": "F08",
@@ -768,7 +1057,24 @@
         "checked": true,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "活动提醒通知",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/设置/消息通知"
     },
     {
       "id": "F09",
@@ -810,7 +1116,24 @@
         "checked": true,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "小红书内容精选",
+      "category": "assistant",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "F:更多/动态管理/内容精选"
     },
     {
       "id": "P01",
@@ -852,7 +1175,24 @@
         "checked": true,
         "method": "ui_tree",
         "evidence": "dev/reachability/evidence_2026-10-27_11-00/ui-tree-evidence.txt"
-      }
+      },
+      "display_name": "用户体验改进计划",
+      "category": "system",
+      "control": {
+        "type": "toggle",
+        "default": false,
+        "values": [
+          {
+            "value": false,
+            "label": "关闭"
+          },
+          {
+            "value": true,
+            "label": "开启"
+          }
+        ]
+      },
+      "page": "N:系统/用户体验改进计划"
     }
   ],
   "excluded": [
@@ -879,6 +1219,206 @@
     {
       "name": "仅降低广告相关性的个性化开关",
       "reason": "未证明能减少推荐或广告数量。"
+    }
+  ],
+  "categories": [
+    {
+      "id": "browser",
+      "name": "浏览器",
+      "icon": "globe"
+    },
+    {
+      "id": "assistant",
+      "name": "负一屏",
+      "icon": "rectangle.stack"
+    },
+    {
+      "id": "notifications",
+      "name": "应用通知",
+      "icon": "bell"
+    },
+    {
+      "id": "system",
+      "name": "系统",
+      "icon": "gearshape"
+    }
+  ],
+  "apps": {
+    "B": {
+      "bundle": "com.huawei.hmos.browser",
+      "ability": "MainAbility",
+      "root": "我的",
+      "adapter": "browser"
+    },
+    "N": {
+      "bundle": "com.huawei.hmos.settings",
+      "ability": "com.huawei.hmos.settings.MainAbility",
+      "root": "设置",
+      "adapter": "settings"
+    },
+    "F": {
+      "bundle": "com.huawei.hmsapp.intelligent",
+      "ability": "MainAbility",
+      "root": "我的",
+      "adapter": "assistant"
+    }
+  },
+  "pages": {
+    "B:设置/主页设置": {
+      "app": "B",
+      "route": [
+        "设置",
+        "主页设置"
+      ],
+      "kind": "standard"
+    },
+    "B:设置/搜索设置/高级设置": {
+      "app": "B",
+      "route": [
+        "设置",
+        "搜索设置",
+        "高级设置"
+      ],
+      "kind": "standard"
+    },
+    "F:更多/设置/实用工具": {
+      "app": "F",
+      "route": [
+        "更多",
+        "设置",
+        "实用工具"
+      ],
+      "kind": "standard"
+    },
+    "F:更多/设置/服务": {
+      "app": "F",
+      "route": [
+        "更多",
+        "设置",
+        "服务"
+      ],
+      "kind": "standard"
+    },
+    "F:更多/设置": {
+      "app": "F",
+      "route": [
+        "更多",
+        "设置"
+      ],
+      "kind": "standard"
+    },
+    "F:更多/设置/搜索": {
+      "app": "F",
+      "route": [
+        "更多",
+        "设置",
+        "搜索"
+      ],
+      "kind": "standard"
+    },
+    "N:通知和状态栏/浏览器": {
+      "app": "N",
+      "route": [
+        "通知和状态栏",
+        "浏览器"
+      ],
+      "kind": "notification"
+    },
+    "N:通知和状态栏/主题": {
+      "app": "N",
+      "route": [
+        "通知和状态栏",
+        "主题"
+      ],
+      "kind": "notification"
+    },
+    "N:通知和状态栏/应用市场": {
+      "app": "N",
+      "route": [
+        "通知和状态栏",
+        "应用市场"
+      ],
+      "kind": "notification"
+    },
+    "N:通知和状态栏/视频": {
+      "app": "N",
+      "route": [
+        "通知和状态栏",
+        "视频"
+      ],
+      "kind": "notification"
+    },
+    "N:通知和状态栏/音乐": {
+      "app": "N",
+      "route": [
+        "通知和状态栏",
+        "音乐"
+      ],
+      "kind": "notification"
+    },
+    "N:通知和状态栏/游戏中心": {
+      "app": "N",
+      "route": [
+        "通知和状态栏",
+        "游戏中心"
+      ],
+      "kind": "notification"
+    },
+    "N:通知和状态栏/阅读": {
+      "app": "N",
+      "route": [
+        "通知和状态栏",
+        "阅读"
+      ],
+      "kind": "notification"
+    },
+    "F:更多/设置/消息通知": {
+      "app": "F",
+      "route": [
+        "更多",
+        "设置",
+        "消息通知"
+      ],
+      "kind": "standard"
+    },
+    "F:更多/动态管理/内容精选": {
+      "app": "F",
+      "route": [
+        "更多",
+        "动态管理",
+        "内容精选"
+      ],
+      "kind": "standard"
+    },
+    "N:系统/用户体验改进计划": {
+      "app": "N",
+      "route": [
+        "系统",
+        "用户体验改进计划"
+      ],
+      "kind": "standard"
+    }
+  },
+  "dnd": {
+    "app": "N",
+    "route": [
+      "情景模式"
+    ]
+  },
+  "overviews": [
+    {
+      "id": "G03",
+      "app": "F",
+      "route": [
+        "更多",
+        "设置"
+      ],
+      "operations": [
+        "F01",
+        "F02",
+        "F03",
+        "F04"
+      ]
     }
   ]
 }

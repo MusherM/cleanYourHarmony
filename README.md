@@ -111,3 +111,16 @@ Agent 应先确认设备工具可用，再检查连接结果；工具缺失时�
 ## 报告
 
 Agent 读取本次 `progress.json` 和现场证据，在对话中直接用文字列出成功项目（包括无需修改）、失败项目及原因；单独列出未找到和未完成项目，并说明勿扰恢复结果。只报告实际验证到的结果，不为报告制作 JSON、HTML 或重复操作设备。临时原始树和日志放在 `/tmp`，执行进度及截图留在本次证据目录中，供续跑和核对。
+
+## 共享执行内核
+
+main 提供 Agent CLI，并作为 core/ 与 operations.json 的唯一维护源；desktop-app 提供原生 GUI，通过单向合入 main 使用相同执行内核。CLI 和 GUI 只负责输入、展示与取消信号，设备操作、计划、验证、证据和勿扰恢复由内核统一处理。
+
+新增普通项目配置清单中的页面引用与控件；新增应用或特殊路线通过静态适配模块扩展，不修改会话主流程。见 [内核扩展说明](dev/core-extension.md)。共享测试：
+
+```bash
+node --test scripts/runner.test.mjs scripts/session.test.mjs scripts/core.test.mjs
+node scripts/run.mjs --plan
+```
+
+新进度为版本 3；旧版本仅允许核对身份后的勿扰恢复，不直接续跑业务。需要时使用 `node scripts/run.mjs --recover --resume <原证据目录> --device <在线设备ID>`；恢复不等于业务成功。

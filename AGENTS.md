@@ -32,3 +32,8 @@
 - 准备工具后优先执行 `node scripts/run.mjs --plan` 核对范围，再以 `node scripts/run.mjs --execute` 一次执行全部 20 项。正常路线不逐步交给模型决策；Agent 只处理异常和最终报告。
 - 失败先读本次 progress.json、截图和命令计时，修复明确根因后用 `--resume <原证据目录>` 继续，不能另起全量执行覆盖之前结果。设备变更或新一轮验收另建运行。
 - 与脚本共享设备时严格串行；不要同时启动人工/Agent 点击。强制退出留下锁时，确认原进程结束后才能清理对应过期锁。
+
+# 共享内核维护
+
+- main 是 core/、operations.json、CLI 和共享测试的唯一维护源；desktop-app 单向合入 main，不独立修补共享文件。同步后更新 core-source.json 并运行 scripts/check-core.mjs，打包必须保留内核来源和校验和。
+- 扩展项目使用显式页面引用；新应用或特殊路线使用 core/adapters/ 静态模块，不根据项目 ID 前缀或展示路径推断执行行为。
