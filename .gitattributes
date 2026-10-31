@@ -1,0 +1,2 @@
+# Keep source bytes identical across platforms for provenance and package hashes.
+* text=auto eol=lf
