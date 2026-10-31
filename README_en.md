@@ -39,7 +39,7 @@ Give this repository to an agent that can operate your computer and connected ph
 Start the agent in this repository and send:
 
 ```text
-Read AGENTS.md, README_en.md, and operations.json first.
+Read README_en.md and operations.json first.
 Execute operations with default_selected set to true on the currently connected HarmonyOS phone.
 Run all 20 operations by default; there are no optional items or selection prompts. If multiple devices are connected, ask me to select one.
 Check and reuse host tools. If hdc, UI Tree/GUI tooling, or Node.js 18+ is missing, automatically install
