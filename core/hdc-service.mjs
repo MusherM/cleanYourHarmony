@@ -25,7 +25,7 @@ export class HdcService {
     this.port = Number(port);
     if (!Number.isInteger(this.port) || this.port < 1 || this.port > 65535) throw new Error('hdc 服务端口无效');
     this.endpoint = `127.0.0.1:${this.port}`;
-    this.client = { executable: this.command.executable, args: [...this.command.args, '-p', '-s', this.endpoint] };
+    this.client = { executable: this.command.executable, args: [...this.command.args, '-l', '0', '-p', '-s', this.endpoint] };
     this.log = log; this.timeout = timeout; this.stopped = false;
   }
   start() {
@@ -36,7 +36,7 @@ export class HdcService {
     if (await listening(this.port)) { this.log('复用已有 hdc 服务，退出时不停止外部服务'); return this.client; }
     if (this.stopped) throw new Error('hdc 服务正在退出');
     const { executable, args } = this.command;
-    const child = this.child = spawn(executable, [...args, '-s', this.endpoint, '-m'], {
+    const child = this.child = spawn(executable, [...args, '-l', '2', '-s', this.endpoint, '-m'], {
       cwd: path.isAbsolute(executable) ? path.dirname(executable) : undefined,
       stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true,
     });
