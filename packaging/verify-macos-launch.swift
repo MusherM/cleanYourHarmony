@@ -30,7 +30,13 @@ guard wait(30, {
         return width >= 700 && height >= 400
     }
 }) else { fatalError("Installed app did not show its native window") }
-guard !app.isTerminated, app.terminate(), wait(30, { app.isTerminated }) else {
+let pid = app.processIdentifier
+guard !app.isTerminated, app.terminate(), wait(30, {
+    // A command-line RunLoop can retain stale NSRunningApplication state after
+    // terminateLater completes. Verify process disappearance independently.
+    if app.isTerminated { return true }
+    return kill(pid, 0) == -1 && errno == ESRCH
+}) else {
     fatalError("Installed app did not close normally")
 }
 print("PASS: installed macOS app launched a native window and closed normally")
