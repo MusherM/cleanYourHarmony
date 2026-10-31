@@ -18,7 +18,7 @@ try {
     $env:CYH_GUI_SMOKE_APP = Join-Path $smoke 'published/CleanYourHarmony.exe'
     & dotnet test desktop/windows.tests/Desktop.Tests.csproj --filter FullyQualifiedName~DesktopEnvironmentTests --logger 'trx;LogFileName=desktop.trx' --results-directory $Results 2>&1 | Tee-Object (Join-Path $Results 'desktop.log')
     Check-Exit 'Native GUI environment preflight'
-    & node --test scripts/runner.test.mjs scripts/desktop.test.mjs 2>&1 | Tee-Object (Join-Path $Results 'engine.log')
+    & node --test scripts/runner.test.mjs scripts/session.test.mjs scripts/core.test.mjs scripts/desktop.test.mjs 2>&1 | Tee-Object (Join-Path $Results 'engine.log')
     Check-Exit 'Engine tests'
     & dotnet publish desktop/windows/CleanYourHarmony.csproj -c Release -r win-x64 -p:Platform=x64 --self-contained true -o (Join-Path $work 'app') 2>&1 | Tee-Object (Join-Path $Results 'build.log')
     Check-Exit 'Native app build'
@@ -31,6 +31,7 @@ try {
     Copy-Item (Get-Command node).Source (Join-Path $runtime 'hdc.exe')
     Copy-Item scripts/*.mjs (Join-Path $engine 'scripts')
     Copy-Item operations.json $engine
+    Copy-Item -Recurse core (Join-Path $engine 'core')
     $env:CYH_PROTOCOL_APP = $app
     & dotnet test desktop/windows.tests/Desktop.Tests.csproj --filter FullyQualifiedName~ProtocolTests --logger 'trx;LogFileName=protocol.trx' --results-directory $Results 2>&1 | Tee-Object (Join-Path $Results 'protocol.log')
     Check-Exit 'Real host protocol tests'

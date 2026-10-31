@@ -6,6 +6,16 @@ on:
 permissions:
   contents: read
 jobs:
+  shared-core-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+      - run: node scripts/check-core.mjs
   macos-native:
     runs-on: macos-latest
     timeout-minutes: 20

@@ -5,8 +5,15 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawn, spawnSync} from 'node:child_process';
 import readline from 'node:readline';
+import { coreFiles, contentDigest } from '../core/integrity.mjs';
 
 const root = path.resolve(process.argv[2]);
+const engine = path.join(root,'engine');
+const source = JSON.parse(fs.readFileSync(path.join(engine,'core-source.json')));
+assert.match(source.commit,/^[a-f0-9]{40}$/);
+assert.deepEqual(coreFiles(engine),source.files);
+assert.equal(contentDigest(source.files),source.digest);
+console.log('PASS: packaged core source ' + source.commit + ' ' + source.digest);
 const runtime = path.join(root, 'runtime');
 const manifest = JSON.parse(fs.readFileSync(path.join(runtime, 'manifest.json')));
 assert.equal(manifest.redistributionReviewed, true);

@@ -1,0 +1,22 @@
+name: Shared core
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  core:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+      - run: node --test scripts/runner.test.mjs scripts/session.test.mjs scripts/core.test.mjs
+      - run: node scripts/run.mjs --plan
+      - name: Verify desktop core source
+        if: hashFiles('core-source.json') != ''
+        run: node scripts/check-core.mjs

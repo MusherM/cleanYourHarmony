@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [desktop-app, main]
-    paths: ['packaging/**', 'desktop/**', 'scripts/**', 'operations.json', '.github/workflows/desktop-packages.yml']
+    paths: ['core/**', 'core-source.json', 'packaging/**', 'desktop/**', 'scripts/**', 'operations.json', '.github/workflows/desktop-packages.yml']
 permissions:
   contents: read
 jobs:
@@ -25,6 +25,8 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 24.22.2

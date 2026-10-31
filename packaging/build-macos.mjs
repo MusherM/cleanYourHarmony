@@ -3,6 +3,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { copyEngine } from './engine.mjs';
 import { createMacOSDiskImage } from './create-macos-dmg.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const args = process.argv.slice(2), arg = key => args[args.indexOf(key) + 1];
@@ -21,8 +22,7 @@ fs.mkdirSync(path.join(contents, 'MacOS'), { recursive: true });
 fs.mkdirSync(path.join(resources, 'engine'), { recursive: true });
 function run(command, args) { const r = spawnSync(command, args, { stdio:'inherit', timeout:300000 }); if (r.error || r.status !== 0) throw new Error(`${command} 失败：${r.error?.message ?? r.status}`); }
 fs.cpSync(runtime, path.join(resources, 'runtime'), { recursive: true });
-fs.cpSync(path.join(root, 'scripts'), path.join(resources, 'engine', 'scripts'), { recursive: true, filter: s => !s.endsWith('.test.mjs') && !s.includes('/fixtures') });
-fs.copyFileSync(path.join(root, 'operations.json'), path.join(resources, 'engine', 'operations.json'));
+copyEngine(root, path.join(resources, 'engine'));
 fs.writeFileSync(path.join(contents, 'Info.plist'), `<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleExecutable</key><string>cleanYourHarmony</string><key>CFBundleIdentifier</key><string>app.cleanyourharmony.desktop</string><key>CFBundleName</key><string>cleanYourHarmony</string><key>CFBundleVersion</key><string>3</string><key>CFBundleShortVersionString</key><string>1.2.0</string><key>CFBundlePackageType</key><string>APPL</string><key>LSMinimumSystemVersion</key><string>13.5</string><key>NSHighResolutionCapable</key><true/></dict></plist>`);
 run('swiftc', ['-swift-version','5','-parse-as-library','-O','-target',`${arch === 'x64' ? 'x86_64' : 'arm64'}-apple-macosx13.5`,'-module-cache-path',path.join(root,'build','swift-cache'),path.join(root,'desktop','macos','App.swift'),'-o',path.join(contents,'MacOS','cleanYourHarmony')]);
 const identity = release ? process.env.CYH_SIGN_IDENTITY : '-';

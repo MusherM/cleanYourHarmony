@@ -2,9 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
 import { Worker } from 'node:worker_threads';
-import { readCatalog, publicCatalog, resolveSelection } from './catalog.mjs';
-import { plan } from './routes.mjs';
-import { dataRoot, discoverRuns } from './session.mjs';
+import { readCatalog, publicCatalog, resolveSelection, plan, dataRoot, discoverRuns } from '../core/index.mjs';
 
 const args = process.argv.slice(2);
 const arg = key => { const i = args.indexOf(key); return i >= 0 ? args[i + 1] : null; };
@@ -62,7 +60,7 @@ input.on('line', line => {
         if (!found || found.deviceId !== params.deviceId) throw new Error('没有匹配当前设备的未完成任务');
         request = found.request; resume = found.directory;
       }
-      resolveSelection(catalog, request?.selection);
+      if (method === 'execute') resolveSelection(catalog, request?.selection);
       startWorker(id, 'execute', { request, resume, recoveryOnly: method === 'recover' });
     } else if (method === 'shutdown') { output({ id, result: true }); shutdown(); }
     else throw new Error('未知接口：' + method);

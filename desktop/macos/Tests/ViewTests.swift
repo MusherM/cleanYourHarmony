@@ -63,6 +63,7 @@ import Testing
         try fm.createDirectory(at: runtime, withIntermediateDirectories: true)
         try fm.createDirectory(at: engine, withIntermediateDirectories: true)
         try fm.copyItem(at: root.appendingPathComponent("scripts"), to: engine.appendingPathComponent("scripts"))
+        try fm.copyItem(at: root.appendingPathComponent("core"), to: engine.appendingPathComponent("core"))
         try fm.copyItem(at: root.appendingPathComponent("operations.json"), to: engine.appendingPathComponent("operations.json"))
         try fm.removeItem(at: engine.appendingPathComponent("scripts/desktop-host.mjs"))
         try fm.copyItem(at: root.appendingPathComponent("desktop/tests/ui-host-fixture.mjs"), to: engine.appendingPathComponent("scripts/desktop-host.mjs"))

@@ -17,9 +17,8 @@ if (Test-Path $app) { Remove-Item -Recurse -Force $app }
 if ($LASTEXITCODE -ne 0) { throw 'Windows application build failed.' }
 Copy-Item -Recurse $runtime (Join-Path $app 'runtime')
 $engine = Join-Path $app 'engine'
-New-Item -ItemType Directory -Force (Join-Path $engine 'scripts') | Out-Null
-Get-ChildItem (Join-Path $root 'scripts/*.mjs') | Where-Object { $_.Name -notlike '*.test.mjs' } | Copy-Item -Destination (Join-Path $engine 'scripts')
-Copy-Item (Join-Path $root 'operations.json') $engine
+& node (Join-Path $PSScriptRoot 'engine.mjs') $engine
+if ($LASTEXITCODE -ne 0) { throw 'Shared engine packaging failed.' }
 if ($DriverDirectory) {
     $driverManifest = Get-Content (Join-Path $DriverDirectory 'manifest.json') -Raw | ConvertFrom-Json
     if (!$driverManifest.redistributionReviewed -or !$driverManifest.hardwareIds -or !$driverManifest.inf) { throw 'Driver manifest requires redistribution review, hardware IDs and INF name.' }

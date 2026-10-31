@@ -198,3 +198,16 @@ Menu locations and restart behavior follow Huawei's official [developer options 
 ## Reports
 
 The agent reads the current `progress.json` and evidence and reports in conversation which operations succeeded (including those requiring no change), which failed and why. List not-found and incomplete operations separately, and report Do Not Disturb restoration. Report only what was actually verified; do not create JSON or HTML reports or replay device actions for reporting. Keep temporary raw dumps and logs in `/tmp`, and retain progress and screenshots in the run's evidence directory for resumption and inspection.
+
+## Shared execution core
+
+main provides the Agent CLI and is the sole source of core/ and operations.json. desktop-app provides the native GUI and consumes the same core through one-way merges from main. CLI and GUI handle input, presentation and cancellation signals; the core owns devices, planning, verification, evidence and do-not-disturb restoration.
+
+Add ordinary operations through catalog page references and controls. Add applications or special routes through static adapters without changing session orchestration. See the [core extension guide](dev/core-extension.en.md). Shared tests:
+
+```bash
+node --test scripts/runner.test.mjs scripts/session.test.mjs scripts/core.test.mjs
+node scripts/run.mjs --plan
+```
+
+New progress uses version 3. Older versions permit only identity-verified do-not-disturb restoration, not business resume. Use `node scripts/run.mjs --recover --resume <original-evidence-directory> --device <online-device-id>` when needed. Restoration does not imply business success.

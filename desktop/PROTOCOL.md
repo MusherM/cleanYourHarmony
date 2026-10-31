@@ -35,3 +35,9 @@ UTF-8 JSON Lines，stdout 只输出协议，stderr 为诊断日志。不开放�
 取消时不启动下一项目；已发生的修改先完成当前页核验和证据保存，再恢复勿扰。设备断开导致无法恢复时保留 restorePending，后续连接同一设备后优先处理。不承诺崩溃时撤销已完成的业务修改。
 
 GUI 使用系统用户数据目录；CLI 可用 `--request <JSON>` 提交相同 request、`--output <目录>` 更换运行根目录，或 `--resume <结果目录>` 继续 schemaVersion 2 任务。旧版进度不能直接迁移；有遗留勿扰义务应先用原版本恢复。
+
+## 共享内核
+
+主机和 worker 调用 core/index.mjs，设备发现及执行不在桌面适配层重复实现。JSON Lines 协议保持 v1；进度 schemaVersion 为 3。新增 diagnostic 事件包含 level/message，可供日志展示；未知事件可忽略。progress 保持先持久化后通知。
+
+版本 1/2 进度不能执行业务续跑；待恢复勿扰须先核对设备身份，备份原进度后仅恢复勿扰，保留原 schemaVersion。recover 不依赖旧选择仍存在于当前清单。业务成功、命令退出及勿扰恢复分别判断。桌面包携带 core-source.json，锁定 main 提交及内核内容摘要。

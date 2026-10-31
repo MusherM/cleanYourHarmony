@@ -38,6 +38,7 @@ test('multiline setting label binds its compact Row switch',()=>{const root=n('C
 test('off-screen controls cannot count as verified screenshot evidence',()=>{const root=n('Column',{bounds:'[0,0][500,500]'},[n('Row',{bounds:'[0,600][500,800]'},[n('Text',{text:'甲',bounds:'[0,620][300,680]'}),n('Toggle',{checked:'false',enabled:'true',bounds:'[350,620][450,680]'})])]);assert.throws(()=>state(root,loc('甲')),/视口/);});
 test('disabled non-target control is a recorded business failure with no click',async()=>{const r=rig({甲:true});const view=()=>({scope:n('Column',{},[n('Row',{},[n('Text',{text:'甲'}),n('Toggle',{checked:'true',enabled:'false'})])])});r.options.nav.current=async()=>view();await runPages(r.options);assert.equal(r.options.progress.items.B00.failureKind,'disabled');assert.equal(r.options.progress.items.B00.status,'failed');assert.equal(r.counts().clicks,0);assert.equal(r.counts().reentries,0);});
 import { Navigator } from './navigator.mjs';
+import { notification } from '../core/adapters/notification.mjs';
 test('consecutive reads reuse one current snapshot until a device action or screenshot',async()=>{let calls=0;const tree=n('',{bounds:'[0,0][500,1000]'},[n('root',{bundleName:'com.huawei.hmos.browser'},[row('甲',false)])]);const device={revision:0,tree:()=>{calls++;return tree;}};const nav=new Navigator(device);await nav.wait('B',()=>true);await nav.wait('B',()=>true);assert.equal(calls,1);device.revision++;await nav.wait('B',()=>true);assert.equal(calls,2);nav.reset();await nav.wait('B',()=>true);assert.equal(calls,3);});
 test('expired snapshot forces a fresh tree even without an action',async()=>{let calls=0;const tree=n('',{bounds:'[0,0][500,1000]'},[n('root',{bundleName:'com.huawei.hmos.browser'},[])]);const nav=new Navigator({revision:0,tree:()=>{calls++;return tree;}});await nav.wait('B',()=>true);nav.view.at-=501;await nav.wait('B',()=>true);assert.equal(calls,2);});
 test('notification sibling keeps search open and validates the destination',async()=>{
@@ -45,7 +46,7 @@ test('notification sibling keeps search open and validates the destination',asyn
   nav.family='N';nav.route=['通知和状态栏','视频'];
   const scope=n('Column',{},[n('SearchField')]);
   nav.wait=async(_,p)=>{assert.ok(p(scope));return{scope};};
-  nav.notification=async(app,open)=>actions.push([app,open]);
+  nav.registry={...nav.registry,settings:{...nav.registry.settings,notification:async(app,open)=>actions.push([app,open])}};
   nav.current=async page=>{actions.push(['verify',page.route[1]]);return{scope};};
   await nav.go({family:'N',route:['通知和状态栏','音乐']});
   assert.deepEqual(actions,['back',['音乐',true],['verify','音乐']]);
@@ -56,7 +57,7 @@ test('notification sibling tolerates a real return to list without assuming sear
   nav.family='N';nav.route=['通知和状态栏','视频'];
   const scope=n('Column',{},[n('HdsTitleBar',{},[n('Text',{text:'通知和状态栏'})])]);
   nav.wait=async(_,p)=>{assert.ok(p(scope));return{scope};};
-  nav.notification=async(app,open)=>actions.push([app,open]);
+  nav.registry={...nav.registry,settings:{...nav.registry.settings,notification:async(app,open)=>actions.push([app,open])}};
   nav.current=async()=>({scope});
   await nav.go({family:'N',route:['通知和状态栏','音乐']});
   assert.deepEqual(actions,['back',['音乐',false]]);
@@ -157,7 +158,7 @@ test('notification search with no IME never backs out and waits for the requeste
     ...(typed?[n('List',{id:'searchResultListComponent'},reads>2?[n('Text',{text:'浏览器'})]:[])]:[])
   ])]);
   const device={revision:0,tree:()=>{reads++;return tree();},ui:()=>{typed=true;device.revision++;},back:()=>assert.fail('unexpected Back'),click:node=>{assert.equal(node.attributes.text,'浏览器');clicked=true;}};
-  await new Navigator(device).notification('浏览器',true);assert.equal(clicked,true);assert.ok(reads>=3);
+  const nav=new Navigator(device);nav.family='N';await notification.call(nav,'浏览器',true);assert.equal(clicked,true);assert.ok(reads>=3);
 });
 
 import { NotificationNotFound } from './navigator.mjs';
@@ -179,5 +180,5 @@ for(const scenario of ['missing','empty','wrong-query','loading','overlay','comm
   const scope=n('Column',{},[n('SearchField',{text:scenario==='wrong-query'?'旧词':'视频'}),n('List',{id:'searchResultListComponent'},scenario==='empty'?[]:[n('Text',{text:'其他应用'})]),...(scenario==='loading'?[n('LoadingProgress')]:[])]);
   const nav=new Navigator({ui:()=>{},click:()=>{}});
   nav.wait=async()=>{calls++;if(calls===1)return{scope:n('Column',{},[n('SearchField',{text:''})])};if(calls===2)throw Error(scenario==='overlay'?'前台存在其他应用窗口或遮挡':scenario==='command'?'设备命令失败':'页面未达到预期');return{scope};};
-  await assert.rejects(nav.notification('视频',true),e=>['missing','empty'].includes(scenario)?e instanceof NotificationNotFound:!(e instanceof NotificationNotFound));
+  await assert.rejects(notification.call(nav,'视频',true),e=>['missing','empty'].includes(scenario)?e instanceof NotificationNotFound:!(e instanceof NotificationNotFound));
 });
