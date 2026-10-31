@@ -1,0 +1,1076 @@
+{
+  "root": {
+    "attributes": {
+      "bounds": "[0,0][1280,2832]",
+      "checked": "",
+      "enabled": "",
+      "id": "",
+      "originalText": "",
+      "scrollable": "",
+      "text": "",
+      "type": "",
+      "zIndex": ""
+    },
+    "children": [
+      {
+        "attributes": {
+          "type": "Column",
+          "bundleName": "com.huawei.hmos.calendar",
+          "bounds": "[0,140][1280,2832]",
+          "visible": "true"
+        },
+        "children": [
+          {
+            "attributes": {
+              "bounds": "[0,140][1280,2832]",
+              "bundleName": "com.huawei.hmos.calendar",
+              "checked": "false",
+              "enabled": "true",
+              "id": "",
+              "originalText": "",
+              "scrollable": "false",
+              "text": "",
+              "type": "root",
+              "visible": "true",
+              "zIndex": "0"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "bounds": "[1084,161][1224,301]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "more_menu",
+                  "originalText": "",
+                  "scrollable": "false",
+                  "text": "",
+                  "type": "Button",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[1112,189][1197,273]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "SymbolGlyph",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "attributes": {
+                  "bounds": "[355,371][640,483]",
+                  "checked": "true",
+                  "enabled": "true",
+                  "id": "tabs_month",
+                  "originalText": "月",
+                  "scrollable": "false",
+                  "text": "月",
+                  "type": "Text",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "menu": {
+    "attributes": {
+      "bounds": "[0,0][1280,2832]",
+      "checked": "",
+      "enabled": "",
+      "id": "",
+      "originalText": "",
+      "scrollable": "",
+      "text": "",
+      "type": "",
+      "zIndex": ""
+    },
+    "children": [
+      {
+        "attributes": {
+          "type": "Column",
+          "bundleName": "com.huawei.hmos.calendar",
+          "bounds": "[0,137][1280,2832]",
+          "visible": "true"
+        },
+        "children": [
+          {
+            "attributes": {
+              "bounds": "[0,137][1280,2832]",
+              "checked": "false",
+              "enabled": "true",
+              "id": "",
+              "originalText": "",
+              "scrollable": "false",
+              "text": "",
+              "type": "MenuWrapper",
+              "visible": "true",
+              "zIndex": "0"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "bounds": "[454,1201][1210,1369]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "menu_preferences",
+                  "originalText": "设置",
+                  "scrollable": "false",
+                  "text": "设置",
+                  "type": "MenuItem",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[496,1229][1141,1341]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Row",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[496,1229][1141,1341]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "设置",
+                          "scrollable": "false",
+                          "text": "设置",
+                          "type": "Text",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[1168,1285][1169,1286]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Row",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "settings-before": {
+    "attributes": {
+      "bounds": "[0,0][1280,2832]",
+      "checked": "",
+      "enabled": "",
+      "id": "",
+      "originalText": "",
+      "scrollable": "",
+      "text": "",
+      "type": "",
+      "zIndex": ""
+    },
+    "children": [
+      {
+        "attributes": {
+          "type": "Column",
+          "bundleName": "com.huawei.hmos.calendar",
+          "bounds": "[0,137][1280,2832]",
+          "visible": "true"
+        },
+        "children": [
+          {
+            "attributes": {
+              "bounds": "[0,137][1280,2832]",
+              "checked": "false",
+              "enabled": "true",
+              "id": "",
+              "originalText": "",
+              "scrollable": "false",
+              "text": "",
+              "type": "SheetWrapper",
+              "visible": "true",
+              "zIndex": "0"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "bounds": "[0,164][1280,388]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "HdsTitleBar",
+                  "originalText": "",
+                  "scrollable": "false",
+                  "text": "",
+                  "type": "HdsTitleBar",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[0,164][1280,500]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "MaskBlur",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[0,164][1280,500]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Mask",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[0,164][1280,360]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "StackCustomNode",
+                      "visible": "true",
+                      "zIndex": "2"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[0,192][1280,388]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "",
+                          "scrollable": "false",
+                          "text": "",
+                          "type": "__Common__",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "bounds": "[0,192][1280,388]",
+                              "checked": "false",
+                              "enabled": "true",
+                              "id": "",
+                              "originalText": "",
+                              "scrollable": "false",
+                              "text": "",
+                              "type": "Row",
+                              "visible": "true",
+                              "zIndex": "0"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "bounds": "[56,249][1056,331]",
+                                  "checked": "false",
+                                  "enabled": "true",
+                                  "id": "",
+                                  "originalText": "设置",
+                                  "scrollable": "false",
+                                  "text": "设置",
+                                  "type": "Text",
+                                  "visible": "true",
+                                  "zIndex": "0"
+                                },
+                                "children": []
+                              },
+                              {
+                                "attributes": {
+                                  "bounds": "[1084,220][1224,360]",
+                                  "checked": "false",
+                                  "enabled": "true",
+                                  "id": "backMain",
+                                  "originalText": "",
+                                  "scrollable": "false",
+                                  "text": "",
+                                  "type": "Button",
+                                  "visible": "true",
+                                  "zIndex": "0"
+                                },
+                                "children": [
+                                  {
+                                    "attributes": {
+                                      "bounds": "[1123,259][1186,322]",
+                                      "checked": "false",
+                                      "enabled": "true",
+                                      "id": "",
+                                      "originalText": "",
+                                      "scrollable": "false",
+                                      "text": "",
+                                      "type": "SymbolGlyph",
+                                      "visible": "true",
+                                      "zIndex": "0"
+                                    },
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "attributes": {
+                  "bounds": "[70,1376][1210,1544]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "settings_recommended_subscription",
+                  "originalText": "",
+                  "scrollable": "false",
+                  "text": "推荐订阅",
+                  "type": "Row",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[98,1424][350,1497]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Column",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[98,1431][322,1497]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "推荐订阅",
+                          "scrollable": "false",
+                          "text": "推荐订阅",
+                          "type": "Text",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[1056,1425][1182,1495]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Row",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[1056,1425][1182,1495]",
+                          "checked": "true",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "",
+                          "scrollable": "false",
+                          "text": "",
+                          "type": "Toggle",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "attributes": {
+                  "bounds": "[70,2108][1210,2276]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "settings_start_of_week",
+                  "originalText": "",
+                  "scrollable": "false",
+                  "text": "",
+                  "type": "Row",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[98,2159][640,2225]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Column",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[98,2159][378,2225]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "一周开始日",
+                          "scrollable": "false",
+                          "text": "一周开始日",
+                          "type": "Text",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[640,2150][1182,2234]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Row",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[640,2164][1125,2221]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "区域默认",
+                          "scrollable": "false",
+                          "text": "区域默认",
+                          "type": "Text",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      },
+                      {
+                        "attributes": {
+                          "bounds": "[1125,2150][1182,2234]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "",
+                          "scrollable": "false",
+                          "text": "",
+                          "type": "Row",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "bounds": "[1139,2161][1182,2224]",
+                              "checked": "false",
+                              "enabled": "true",
+                              "id": "",
+                              "originalText": "",
+                              "scrollable": "false",
+                              "text": "",
+                              "type": "SymbolGlyph",
+                              "visible": "true",
+                              "zIndex": "0"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "week-before": {
+    "attributes": {
+      "bounds": "[0,0][1280,2832]",
+      "checked": "",
+      "enabled": "",
+      "id": "",
+      "originalText": "",
+      "scrollable": "",
+      "text": "",
+      "type": "",
+      "zIndex": ""
+    },
+    "children": [
+      {
+        "attributes": {
+          "type": "Column",
+          "bundleName": "com.huawei.hmos.calendar",
+          "bounds": "[0,137][1280,2832]",
+          "visible": "true"
+        },
+        "children": [
+          {
+            "attributes": {
+              "bounds": "[0,137][1280,2832]",
+              "checked": "false",
+              "enabled": "true",
+              "id": "",
+              "originalText": "",
+              "scrollable": "false",
+              "text": "",
+              "type": "MenuWrapper",
+              "visible": "true",
+              "zIndex": "0"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "bounds": "[398,1002][1210,2080]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "",
+                  "originalText": "",
+                  "scrollable": "false",
+                  "text": "",
+                  "type": "Menu",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[440,1067][664,1133]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "区域默认",
+                      "scrollable": "false",
+                      "text": "区域默认",
+                      "type": "Text",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[440,1236][608,1302]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "星期日",
+                      "scrollable": "false",
+                      "text": "星期日",
+                      "type": "Text",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[440,1405][608,1471]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "星期一",
+                      "scrollable": "false",
+                      "text": "星期一",
+                      "type": "Text",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[440,1574][608,1640]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "星期二",
+                      "scrollable": "false",
+                      "text": "星期二",
+                      "type": "Text",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[440,1743][608,1809]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "星期三",
+                      "scrollable": "false",
+                      "text": "星期三",
+                      "type": "Text",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[440,1912][608,1978]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "星期四",
+                      "scrollable": "false",
+                      "text": "星期四",
+                      "type": "Text",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "week-after": {
+    "attributes": {
+      "bounds": "[0,0][1280,2832]",
+      "checked": "",
+      "enabled": "",
+      "id": "",
+      "originalText": "",
+      "scrollable": "",
+      "text": "",
+      "type": "",
+      "zIndex": ""
+    },
+    "children": [
+      {
+        "attributes": {
+          "type": "Column",
+          "bundleName": "com.huawei.hmos.calendar",
+          "bounds": "[0,137][1280,2832]",
+          "visible": "true"
+        },
+        "children": [
+          {
+            "attributes": {
+              "bounds": "[0,137][1280,2832]",
+              "checked": "false",
+              "enabled": "true",
+              "id": "",
+              "originalText": "",
+              "scrollable": "false",
+              "text": "",
+              "type": "SheetWrapper",
+              "visible": "true",
+              "zIndex": "0"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "bounds": "[0,164][1280,388]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "HdsTitleBar",
+                  "originalText": "",
+                  "scrollable": "false",
+                  "text": "",
+                  "type": "HdsTitleBar",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[0,164][1280,500]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "MaskBlur",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[0,164][1280,500]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Mask",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[0,164][1280,360]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "StackCustomNode",
+                      "visible": "true",
+                      "zIndex": "2"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[0,192][1280,388]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "",
+                          "scrollable": "false",
+                          "text": "",
+                          "type": "__Common__",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "bounds": "[0,192][1280,388]",
+                              "checked": "false",
+                              "enabled": "true",
+                              "id": "",
+                              "originalText": "",
+                              "scrollable": "false",
+                              "text": "",
+                              "type": "Row",
+                              "visible": "true",
+                              "zIndex": "0"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "bounds": "[56,249][1056,331]",
+                                  "checked": "false",
+                                  "enabled": "true",
+                                  "id": "",
+                                  "originalText": "设置",
+                                  "scrollable": "false",
+                                  "text": "设置",
+                                  "type": "Text",
+                                  "visible": "true",
+                                  "zIndex": "0"
+                                },
+                                "children": []
+                              },
+                              {
+                                "attributes": {
+                                  "bounds": "[1084,220][1224,360]",
+                                  "checked": "false",
+                                  "enabled": "true",
+                                  "id": "backMain",
+                                  "originalText": "",
+                                  "scrollable": "false",
+                                  "text": "",
+                                  "type": "Button",
+                                  "visible": "true",
+                                  "zIndex": "0"
+                                },
+                                "children": [
+                                  {
+                                    "attributes": {
+                                      "bounds": "[1123,259][1186,322]",
+                                      "checked": "false",
+                                      "enabled": "true",
+                                      "id": "",
+                                      "originalText": "",
+                                      "scrollable": "false",
+                                      "text": "",
+                                      "type": "SymbolGlyph",
+                                      "visible": "true",
+                                      "zIndex": "0"
+                                    },
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "attributes": {
+                  "bounds": "[70,1376][1210,1544]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "settings_recommended_subscription",
+                  "originalText": "",
+                  "scrollable": "false",
+                  "text": "推荐订阅",
+                  "type": "Row",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[98,1424][350,1497]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Column",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[98,1431][322,1497]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "推荐订阅",
+                          "scrollable": "false",
+                          "text": "推荐订阅",
+                          "type": "Text",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[1056,1425][1182,1495]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Row",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[1056,1425][1182,1495]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "",
+                          "scrollable": "false",
+                          "text": "",
+                          "type": "Toggle",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "attributes": {
+                  "bounds": "[70,2108][1210,2276]",
+                  "checked": "false",
+                  "enabled": "true",
+                  "id": "settings_start_of_week",
+                  "originalText": "",
+                  "scrollable": "false",
+                  "text": "",
+                  "type": "Row",
+                  "visible": "true",
+                  "zIndex": "0"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "bounds": "[98,2159][640,2225]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Column",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[98,2159][378,2225]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "一周开始日",
+                          "scrollable": "false",
+                          "text": "一周开始日",
+                          "type": "Text",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "bounds": "[640,2150][1182,2234]",
+                      "checked": "false",
+                      "enabled": "true",
+                      "id": "",
+                      "originalText": "",
+                      "scrollable": "false",
+                      "text": "",
+                      "type": "Row",
+                      "visible": "true",
+                      "zIndex": "0"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "bounds": "[640,2164][1125,2221]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "星期一",
+                          "scrollable": "false",
+                          "text": "星期一",
+                          "type": "Text",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": []
+                      },
+                      {
+                        "attributes": {
+                          "bounds": "[1125,2150][1182,2234]",
+                          "checked": "false",
+                          "enabled": "true",
+                          "id": "",
+                          "originalText": "",
+                          "scrollable": "false",
+                          "text": "",
+                          "type": "Row",
+                          "visible": "true",
+                          "zIndex": "0"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "bounds": "[1139,2161][1182,2224]",
+                              "checked": "false",
+                              "enabled": "true",
+                              "id": "",
+                              "originalText": "",
+                              "scrollable": "false",
+                              "text": "",
+                              "type": "SymbolGlyph",
+                              "visible": "true",
+                              "zIndex": "0"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

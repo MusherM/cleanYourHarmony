@@ -49,7 +49,8 @@ export async function runPages({ pages, device, nav, progress, persist, evidence
           if (!current.enabled) { rec.status = 'failed'; rec.failureKind = 'disabled'; rec.after = current.checked; rec.error = '目标控件禁用'; rec.evidence = [evidence(`${op.id}-disabled`)]; persist(); continue; }
           // Persist intent first: after a crash, never blindly replay the toggle.
           rec.mutationPending = true; persist();
-          device.click(current.n);
+          if (nav.changeControl) await nav.changeControl(page, op.locator, current);
+          else device.click(current.n);
           const { scope: afterScope } = await nav.wait(page.family, s => {
             if (!nav.isPage(s, page.family, page.route)) return false;
             return state(s, op.locator).checked === op.target.checked;

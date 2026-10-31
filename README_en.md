@@ -103,10 +103,12 @@ It does not delete browsing history, cancel services, or change habits such as a
 
 An evidence-backed catalog for reducing ads, feeds, marketing messages, and unsolicited recommendations on HarmonyOS phones while preserving normal information display and useful services.
 
+Two default Calendar operations disable Recommended subscriptions and set the first day of the week to Monday through the top-right More menu → Settings. Both share one settings page and use live controls and menu text.
+
 ## Current deliverables
 
 - `scripts/run.mjs`: a fixed semantic-route executor for page batches, screenshots, progress, and Do Not Disturb restoration; the normal path makes no model calls.
-- `operations.json`: 20 retained operations, UI Tree locator rules, target states, screenshot groups, app notifications, and exclusions.
+- `operations.json`: 22 retained operations, UI Tree locator rules, target states, screenshot groups, app notifications, and exclusions.
 - `dev/device-run/`: local execution progress and evidence, excluded from version control.
 
 The new delivery includes native desktop source, the shared executor, and packaging entry points; platform acceptance is described above. Compatibility is limited to the device and versions stated in each report. HarmonyOS 5/6 compatibility requires separate device verification.
@@ -126,7 +128,7 @@ Start the agent in this repository and send:
 ```text
 Read README_en.md and operations.json first.
 Execute operations with default_selected set to true on the currently connected HarmonyOS phone.
-Run all 20 operations by default; there are no optional items or selection prompts. If multiple devices are connected, ask me to select one.
+Run all 22 operations by default; there are no optional items or selection prompts. If multiple devices are connected, ask me to select one.
 Check and reuse host tools. If hdc, UI Tree/GUI tooling, or Node.js 18+ is missing, automatically install
 a suitable version from official sources and verify it; do not hand the installation task back to me.
 Ask for help only with credentials, system permission prompts, phone authorization, or a specific environment restriction that blocks installation.
@@ -154,7 +156,7 @@ node scripts/run.mjs --plan
 node scripts/run.mjs --execute
 ```
 
-All 20 operations run without notification selection prompts. With multiple devices, use --device <current-device-id>; --hdc <executable-path> reuses an installed SDK. The script groups operations into 16 pages, navigates from the nearest parent, captures evidence immediately after changes, and re-enters changed pages once.
+All 22 operations run without notification selection prompts. With multiple devices, use --device <current-device-id>; --hdc <executable-path> reuses an installed SDK. The script groups operations into 17 pages, navigates from the nearest parent, captures evidence immediately after changes, and re-enters changed pages once.
 
 Consecutive reads on the same page reuse the current snapshot for up to 500 ms. Clicks, scrolling, app launches, screenshots, or expiry require a fresh tree. Adjacent notification settings reuse the search page while still checking each app name, foreground page, and control state. The normal route runs entirely in the script without per-step model decisions.
 
@@ -170,7 +172,7 @@ The script follows ordinary UI routes and does not bypass disabled controls. Unk
 
 ### Execution rules
 
-1. Check and reuse verified tooling first. If hdc, UI Tree/GUI capabilities, or Node.js 18+ is missing, the agent installs suitable versions for the host OS and architecture from official sources, then verifies that the tools run and can actually operate the device. Do not ask the user to find downloads or installation commands, or reinstall working tools. Explain specific credential, permission, or environment blockers when intervention is needed. Then discover the current device and check system/application versions; operate serially. Plan only selected operations, batch by app and actual page, and reuse the nearest common parent. Do not navigate from the home screen for every item. Run all 20 operations without notification selection prompts.
+1. Check and reuse verified tooling first. If hdc, UI Tree/GUI capabilities, or Node.js 18+ is missing, the agent installs suitable versions for the host OS and architecture from official sources, then verifies that the tools run and can actually operate the device. Do not ask the user to find downloads or installation commands, or reinstall working tools. Explain specific credential, permission, or environment blockers when intervention is needed. Then discover the current device and check system/application versions; operate serially. Plan only selected operations, batch by app and actual page, and reuse the nearest common parent. Do not navigate from the home screen for every item. Run all 22 operations without notification selection prompts.
 2. Use `path` and `locator` in `operations.json` as preset semantic routes. Cache reusable entries, selectors, page identifiers, and applicable versions, not old trees, node indices, or absolute coordinates. Refresh after initial arrival, navigation, scrolling, state-changing clicks, or overlays. A visible title does not mean its controls have loaded; wait until the target state can be read. Reuse the current tree while the page is unchanged and extract needed fields together instead of repeatedly launching commands against the same dump.
 3. Verified navigation may run serially inside one tool call: fetch tree, match the current page and unique target, click, and check the next page. Return compact results and stop the route on failure. Reduce model round trips while retaining app, foreground panel, uniqueness, and state checks. Derive coordinates from current bounds. A matching search field is not a result row; a background sheet title is not the active page; launching an app does not establish its root page.
 4. Read the target control's `checked` and `enabled` values and parse booleans explicitly (the string `"false"` is not true). If already satisfied, record no change and capture evidence immediately without mandatory re-entry. Capture evidence and report failure for disabled or ambiguous controls. Modify only selected items and refresh state after each change; never blindly replay a failed toggle.
