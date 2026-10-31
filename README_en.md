@@ -13,7 +13,7 @@ All 20 operations are initially selected with the existing cleanup defaults. Sel
 The list and executor share the same page-plan order. After cleanup, the app opens a completion page with a green success animation whenever at least one item is changed or unchanged. Only all-failed runs show a failure page; other runs with no successful items show a neutral end state. Its report includes counts and per-item outcomes for changed, unchanged, failed, missing, and incomplete items, along with reasons, evidence links, and DND restoration status. Return to Settings opens the operation list again.
 
 - Target platforms: macOS 13.5+ (arm64/x64), Windows 11 x64.
-- [Download 1.2](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.2): macOS Apple Silicon / Intel DMGs and Windows x64 Setup, including runtime dependencies. Mac packages are ad-hoc signed and not notarized; Windows packages are unsigned.
+- [Download 1.3](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.3): macOS Apple Silicon / Intel DMGs and Windows x64 Setup, including runtime dependencies. Mac packages are ad-hoc signed and not notarized; Windows packages are unsigned.
 - Bundled runtime: Node.js 24.22.2 (official macOS binaries require 13.5), hdc, USB libraries, and executor scripts. Windows uses self-contained .NET / Windows App SDK deployment.
 - Enable USB debugging and authorize the computer on the phone. Users enter lock-screen credentials; the app does not change lock-screen configuration.
 - Progress and screenshots: ~/Library/Application Support/cleanYourHarmony/runs on macOS; %LOCALAPPDATA%/cleanYourHarmony/runs on Windows. Evidence stays local.
@@ -21,11 +21,11 @@ The list and executor share the same page-plan order. After cleanup, the app ope
 
 ### Download and install
 
-- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.2/cleanYourHarmony-1.2-macos-arm64.dmg)
-- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.2/cleanYourHarmony-1.2-macos-x64.dmg)
-- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.2/cleanYourHarmony-1.2-windows-x64-Setup.exe)
+- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-macos-arm64.dmg)
+- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-macos-x64.dmg)
+- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-windows-x64-Setup.exe)
 
-On Mac, open the DMG and drag the app onto the Applications folder in the same window; on Windows, run Setup. The OS may block first launch because these packages are unnotarized/unsigned. The Release includes SHA-256 checksums and corresponding build sources. Use the explicitly named `cleanYourHarmony-1.2-source.tar.gz` to reproduce the installers; the automatic source archives, v1.2 tag, and installers reference the same commit.
+On Mac, open the DMG and drag the app onto the Applications folder in the same window; on Windows, run Setup. The OS may block first launch because these packages are unnotarized/unsigned. The Release includes SHA-256 checksums and corresponding build sources. Use the explicitly named `cleanYourHarmony-1.3-source.tar.gz` to reproduce the installers; the automatic source archives, v1.3 tag, and installers reference the same commit.
 
 ### Build and package
 
@@ -124,7 +124,7 @@ Give this repository to an agent that can operate your computer and connected ph
 Start the agent in this repository and send:
 
 ```text
-Read AGENTS.md, README_en.md, and operations.json first.
+Read README_en.md and operations.json first.
 Execute operations with default_selected set to true on the currently connected HarmonyOS phone.
 Run all 20 operations by default; there are no optional items or selection prompts. If multiple devices are connected, ask me to select one.
 Check and reuse host tools. If hdc, UI Tree/GUI tooling, or Node.js 18+ is missing, automatically install

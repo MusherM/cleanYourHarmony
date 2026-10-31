@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { coreFiles, contentDigest } from '../core/integrity.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
-const shared=['core','operations.json','scripts/run.mjs','scripts/catalog.mjs','scripts/session.mjs','scripts/routes.mjs','scripts/runner.mjs','scripts/device.mjs','scripts/navigator.mjs','scripts/ui-tree.mjs','scripts/runner.test.mjs','scripts/session.test.mjs','scripts/core.test.mjs','scripts/fixtures','scripts/check-core.mjs','dev/core-extension.md','dev/core-extension.en.md','.github/workflows/core-checks.yml'];
+const shared=['AGENTS.md','CLAUDE.md','core','operations.json','scripts/run.mjs','scripts/catalog.mjs','scripts/session.mjs','scripts/routes.mjs','scripts/runner.mjs','scripts/device.mjs','scripts/navigator.mjs','scripts/ui-tree.mjs','scripts/runner.test.mjs','scripts/session.test.mjs','scripts/core.test.mjs','scripts/fixtures','scripts/check-core.mjs','dev/core-extension.md','dev/core-extension.en.md','.github/workflows/core-checks.yml'];
 const git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim();
 const args=process.argv.slice(2), pin=args[0]==='--pin' ? args[1] : null;
 if (args.length && (!pin || args.length!==2)) throw new Error('用法：node scripts/check-core.mjs [--pin <main commit>]');

@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { readCatalog, resolveSelection, plan, validateCatalog, executeSession, discoverDevices } from '../core/index.mjs';
 import { Navigator } from '../core/navigator.mjs';
 import { adapters } from '../core/adapters/index.mjs';
@@ -52,7 +53,7 @@ test('device discovery distinguishes empty, unauthorized and tool failures',()=>
  assert.throws(()=>read('[Fail] connection error'),/连接失败/);assert.throws(()=>read('garbage'),/无法识别/);
 });
 test('CLI plan matches the shared planner without device access',()=>{
- const r=spawnSync(process.execPath,[new URL('./run.mjs',import.meta.url).pathname,'--plan'],{encoding:'utf8'});
+ const r=spawnSync(process.execPath,[fileURLToPath(new URL('./run.mjs',import.meta.url)),'--plan'],{encoding:'utf8'});
  assert.equal(r.status,0,r.stderr);const out=JSON.parse(r.stdout);
  assert.deepEqual(out.pages,plan(catalog,resolveSelection(catalog)).map(p=>({page:p.key,operations:p.operations.map(o=>o.id)})));assert.equal(out.deviceActions,false);
 });

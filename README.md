@@ -13,7 +13,7 @@ English: [README_en.md](README_en.md)
 列表与执行采用相同的页面计划顺序。执行收尾后自动进入完成页，只要有一项已修改或无需修改就显示绿色成功动画，全部项目失败才显示失败页，其余无成功项的情况显示中性的执行结束页，并列出已修改、无需修改、失败、未找到、未完成的数量及逐项结果、原因、现场证据入口和勿扰恢复状态。点击“返回设置”可回到项目列表。
 
 - 目标平台：macOS 13.5+（arm64/x64），Windows 11 x64。
-- [1.2 下载](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.2)：macOS Apple Silicon / Intel DMG 和 Windows x64 Setup；均内置运行依赖。macOS 为 ad-hoc 签名、未公证，Windows 未签名。
+- [1.3 下载](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.3)：macOS Apple Silicon / Intel DMG 和 Windows x64 Setup；均内置运行依赖。macOS 为 ad-hoc 签名、未公证，Windows 未签名。
 - 运行时内置 Node.js 24.22.2（官方 macOS 二进制最低要求 13.5）、hdc、USB 动态库和执行脚本；Windows 发布使用自包含 .NET / Windows App SDK。
 - 手机仍需开启 USB 调试并授权电脑。锁屏凭据由用户输入；应用不修改锁屏配置。
 - 进度与截图：macOS 为 ~/Library/Application Support/cleanYourHarmony/runs；Windows 为 %LOCALAPPDATA%/cleanYourHarmony/runs。证据仅保存在本机。
@@ -21,11 +21,11 @@ English: [README_en.md](README_en.md)
 
 ### 下载与安装
 
-- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.2/cleanYourHarmony-1.2-macos-arm64.dmg)
-- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.2/cleanYourHarmony-1.2-macos-x64.dmg)
-- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.2/cleanYourHarmony-1.2-windows-x64-Setup.exe)
+- [macOS Apple Silicon](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-macos-arm64.dmg)
+- [macOS Intel](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-macos-x64.dmg)
+- [Windows 11 x64](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.3/cleanYourHarmony-1.3-windows-x64-Setup.exe)
 
-Mac 打开 DMG，将 app 拖到同一窗口中的 Applications（应用程序）文件夹；Windows 运行 Setup。系统可能因未公证／未签名阻止首次打开。Release 附有 SHA-256 校验和及对应构建源码；复现安装包请使用明确命名的 `cleanYourHarmony-1.2-source.tar.gz`，GitHub 自动源码、v1.2 tag 与本版安装包使用同一提交。
+Mac 打开 DMG，将 app 拖到同一窗口中的 Applications（应用程序）文件夹；Windows 运行 Setup。系统可能因未公证／未签名阻止首次打开。Release 附有 SHA-256 校验和及对应构建源码；复现安装包请使用明确命名的 `cleanYourHarmony-1.3-source.tar.gz`，GitHub 自动源码、v1.3 tag 与本版安装包使用同一提交。
 
 ### 构建与打包
 
@@ -124,7 +124,7 @@ powershell -File desktop/tests/windows.ps1
 在仓库目录中启动 Agent，发送以下指令即可开始：
 
 ```text
-请先阅读 AGENTS.md、README.md 和 operations.json，
+请先阅读 README.md 和 operations.json，
 对当前连接的鸿蒙手机执行 operations.json 中 default_selected 为 true 的项目；
 默认直接执行全部 20 项，不设可选项，不询问是否纳入。若连接多台设备，先让我选择目标。
 自行检查并复用电脑端工具；缺少 hdc、UI Tree/GUI 操作工具或 Node.js 18+ 时，
