@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "commit": "c623f36b7c9727ac4c2ff4c6ed7b4e774bd43dff",
-  "digest": "c49b72626c5e44783138d300284f8f8de1cda1109f3c07c2d2528762599ad670",
+  "commit": "767e7d8755a90b9917cd663fad5952c6a98b3f81",
+  "digest": "5dabdc5600c77b50671a1132103c2b679bebeabf0cb0e5275f0b862521c01bb5",
   "files": {
     "core/adapters/assistant.mjs": "736747aa60b7d2b0e08ad639310aa7f9d1865e732520b132990b5f92366749b2",
     "core/adapters/browser.mjs": "50b4ba564d8dbb31c82e90d9595fb9d714875b4dae4b32e7e1e279c4bf25fca2",
@@ -11,7 +11,7 @@
     "core/adapters/settings.mjs": "321a55e746ca4029305e551efb7064d4efcc689fbe2097f61b024a6dff791f16",
     "core/catalog.mjs": "b226d0adad47d607e7a74338d3a8b71514d3d8807af04a6b9992b877362f6c5e",
     "core/device.mjs": "c74f9dec7b98e0ccdadb3512c6abd40e3d85b8fe81964d055a8b67602de8dcd0",
-    "core/devices.mjs": "c521ac50afd9d4c6bc24a84bb923a541060d61beb9101ec6d38c7178c3ba9148",
+    "core/devices.mjs": "a798eae58c2025b94065736ed5a78c0f7872538b04dc89a669ed8e02581b7b74",
     "core/errors.mjs": "c51606f416c7e15e619f62c8eb219db9a7e48f4e2c639b821b56df864789012b",
     "core/hdc-service.mjs": "48ab5910e62b0b0ac113248c424fa8be2367cf85b0a4b254a9f2399e520eeefa",
     "core/index.mjs": "715376838d4222ad8ef4c152121601c4c72f2a29b18941ae8f25bdc69c0726d1",
