@@ -49,6 +49,7 @@ test('invalid references and controls reject before any device interaction',asyn
 });
 test('device discovery distinguishes empty, unauthorized and tool failures',()=>{
  const read=stdout=>discoverDevices('hdc',{spawn:()=>({status:0,stdout})});
+ assert.throws(()=>read(''),/缺少明确结果/);assert.throws(()=>read('[W] path warning\n[Empty]'),/无法识别/);
  assert.deepEqual(read('[Empty]\n'),[]);assert.equal(read('test USB Unauthorized\n')[0].status,'Unauthorized');
  assert.throws(()=>read('[Fail] connection error'),/连接失败/);assert.throws(()=>read('garbage'),/无法识别/);
 });

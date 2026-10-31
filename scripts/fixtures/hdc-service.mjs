@@ -8,6 +8,7 @@ if (args.includes('-m')) {
   server.listen(Number(endpoint.split(':').at(-1)), '127.0.0.1');
   if (process.env.CYH_FAKE_PID) fs.writeFileSync(process.env.CYH_FAKE_PID, String(process.pid));
 } else {
+  if (args[args.indexOf('-l') + 1] !== '0') throw Error('client diagnostics must not mix with results');
   if (!args.includes('-p')) throw Error('clients must not auto-start a server');
   console.log('[Empty]');
 }
