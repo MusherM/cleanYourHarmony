@@ -14,7 +14,7 @@ Reduce recommendations, feeds, and interruptions. Verify each result and keep ev
 
 ---
 
-One operation catalog, one execution core, two ways to use it. The current catalog covers **22 settings in 5 categories**. Settings already at their targets are left unchanged; each result includes a status and device evidence.
+One operation catalog, one execution core, two ways to use it. The current catalog covers **24 settings in 5 categories**. Settings already at their targets are left unchanged; each result includes a status and device evidence.
 
 | Interface | Best for | Getting started |
 | --- | --- | --- |
@@ -35,13 +35,13 @@ Native macOS (SwiftUI) and Windows (WinUI 3) interfaces organize settings into B
 
 ### Download and install
 
-**[Get the GUI from Releases →](https://github.com/MusherM/cleanYourHarmony/releases/latest)** · Current version [v1.4.1](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.4.1)
+**[Get the GUI from Releases →](https://github.com/MusherM/cleanYourHarmony/releases/latest)** · Current version [v1.5](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.5)
 
 | Platform | Installer | Installation |
 | --- | --- | --- |
-| macOS 13.5+ · Apple Silicon | [Download DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-macos-arm64.dmg) | Open and drag into Applications |
-| macOS 13.5+ · Intel | [Download DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-macos-x64.dmg) | Open and drag into Applications |
-| Windows 11 · x64 | [Download Setup](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-windows-x64-Setup.exe) | Run the installer |
+| macOS 13.5+ · Apple Silicon | [Download DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.5/cleanYourHarmony-1.5-macos-arm64.dmg) | Open and drag into Applications |
+| macOS 13.5+ · Intel | [Download DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.5/cleanYourHarmony-1.5-macos-x64.dmg) | Open and drag into Applications |
+| Windows 11 · x64 | [Download Setup](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.5/cleanYourHarmony-1.5-windows-x64-Setup.exe) | Run the installer |
 
 macOS packages are ad-hoc signed and not notarized; Windows packages are unsigned. Your operating system may show security prompts. Releases include SHA-256 checksums and matching source. Desktop source and build instructions are on the [desktop-app branch](https://github.com/MusherM/cleanYourHarmony/tree/desktop-app).
 
@@ -54,7 +54,7 @@ Connect the unlocked phone with a USB data cable, enable USB debugging, and auth
 | Browser · 3 items | Use the simple homepage; disable search rankings and trending terms |
 | Leftmost home screen · 9 items | Disable listed recommendation modules, search suggestions, marketing notifications, and content subscriptions |
 | App notifications · 7 items | Disable system notifications for Browser, Themes, AppGallery, Game Center, Video, Music, and Reading |
-| System · 1 item | Attempt to leave the user experience improvement program; report failure if the system prevents changes |
+| System · 3 items | Disable Xiaoyi Search trending searches and agents; attempt to leave the user experience improvement program |
 | Calendar · 2 items | Disable recommended subscriptions; start the week on Monday |
 
 See [operations.json](operations.json) for exact targets and exclusions. The tool does not delete browsing history, cancel services, or change autoplay. Excluded practical services such as parking, calendars, travel, and deliveries are not targets. **Disabling system notifications also affects those apps’ ordinary notifications.**
@@ -77,7 +77,7 @@ Then send this prompt:
 ```text
 Read README_en.md and operations.json first.
 Execute operations with default_selected set to true on the currently connected HarmonyOS phone.
-Run all 22 operations by default; there are no optional items or selection prompts. If multiple devices are connected, ask me to select one.
+Run all 24 operations by default; there are no optional items or selection prompts. If multiple devices are connected, ask me to select one.
 Check and reuse host tools. If hdc, UI Tree/GUI tooling, or Node.js 18+ is missing, automatically install
 a suitable version from official sources and verify it; do not hand the installation task back to me.
 Ask for help only with credentials, system permission prompts, phone authorization, or a specific environment restriction that blocks installation.
@@ -105,7 +105,7 @@ node scripts/run.mjs --plan
 node scripts/run.mjs --execute
 ```
 
-All 22 operations run without notification selection prompts. With multiple devices, use --device <current-device-id>; --hdc <executable-path> reuses an installed SDK. The script groups operations into 17 pages, navigates from the nearest parent, captures evidence immediately after changes, and re-enters changed pages once.
+All 24 operations run without notification selection prompts. With multiple devices, use --device <current-device-id>; --hdc <executable-path> reuses an installed SDK. The script groups operations into 18 pages, navigates from the nearest parent, captures evidence immediately after changes, and re-enters changed pages once.
 
 <details>
 <summary>Execution and recovery details (agents: read before running)</summary>
@@ -126,7 +126,7 @@ The script follows ordinary UI routes and does not bypass disabled controls. Unk
 
 ### Execution rules
 
-1. Check and reuse verified tooling first. If hdc, UI Tree/GUI capabilities, or Node.js 18+ is missing, the agent installs suitable versions for the host OS and architecture from official sources, then verifies that the tools run and can actually operate the device. Do not ask the user to find downloads or installation commands, or reinstall working tools. Explain specific credential, permission, or environment blockers when intervention is needed. Then discover the current device and check system/application versions; operate serially. Plan only selected operations, batch by app and actual page, and reuse the nearest common parent. Do not navigate from the home screen for every item. Run all 22 operations without notification selection prompts.
+1. Check and reuse verified tooling first. If hdc, UI Tree/GUI capabilities, or Node.js 18+ is missing, the agent installs suitable versions for the host OS and architecture from official sources, then verifies that the tools run and can actually operate the device. Do not ask the user to find downloads or installation commands, or reinstall working tools. Explain specific credential, permission, or environment blockers when intervention is needed. Then discover the current device and check system/application versions; operate serially. Plan only selected operations, batch by app and actual page, and reuse the nearest common parent. Do not navigate from the home screen for every item. Run all 24 operations without notification selection prompts.
 2. Use `path` and `locator` in `operations.json` as preset semantic routes. Cache reusable entries, selectors, page identifiers, and applicable versions, not old trees, node indices, or absolute coordinates. Refresh after initial arrival, navigation, scrolling, state-changing clicks, or overlays. A visible title does not mean its controls have loaded; wait until the target state can be read. Reuse the current tree while the page is unchanged and extract needed fields together instead of repeatedly launching commands against the same dump.
 3. Verified navigation may run serially inside one tool call: fetch tree, match the current page and unique target, click, and check the next page. Return compact results and stop the route on failure. Reduce model round trips while retaining app, foreground panel, uniqueness, and state checks. Derive coordinates from current bounds. A matching search field is not a result row; a background sheet title is not the active page; launching an app does not establish its root page.
 4. Read the target control's `checked` and `enabled` values and parse booleans explicitly (the string `"false"` is not true). If already satisfied, record no change and capture evidence immediately without mandatory re-entry. Capture evidence and report failure for disabled or ambiguous controls. Modify only selected items and refresh state after each change; never blindly replay a failed toggle.
@@ -160,7 +160,7 @@ The agent reads the current `progress.json` and evidence and reports in conversa
 ## Compatibility and data
 
 - Current semantic routes target **HarmonyOS 7**. HarmonyOS 5/6 and other device or app versions require separate verification; support for every model is not guaranteed.
-- Historical verification: on 2026-10-28, all 20 operations in the catalog at that time passed on HOP-AL10 / HarmonyOS 7.0.0.113 with the display expanded. The current 22-item catalog, other devices, the folded outer display, and folding during execution require separate verification.
+- Historical verification: on 2026-10-28, all 20 operations in the catalog at that time passed on HOP-AL10 / HarmonyOS 7.0.0.113 with the display expanded. The current 24-item catalog, other devices, the folded outer display, and folding during execution require separate verification.
 - Progress and screenshots stay on the computer. The GUI has no telemetry, cloud execution, or automatic updates. Data handling by a CLI agent depends on that agent’s configuration.
 - The tool does not bypass lock-screen credentials or disabled controls, or change lock-screen configuration. Do Not Disturb is enabled temporarily when needed and restoration is attempted and verified after completion or failure. There is no whole-device rollback.
 

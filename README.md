@@ -14,7 +14,7 @@ English: [README_en.md](README_en.md)
 
 ---
 
-同一份操作清单，同一个执行内核，两种使用方式。当前包含 **22 项设置、5 个分类**；已符合目标的项目无需修改，每项执行结果都有状态与现场证据。
+同一份操作清单，同一个执行内核，两种使用方式。当前包含 **24 项设置、5 个分类**；已符合目标的项目无需修改，每项执行结果都有状态与现场证据。
 
 | 使用方式 | 适合谁 | 如何开始 |
 | --- | --- | --- |
@@ -35,13 +35,13 @@ English: [README_en.md](README_en.md)
 
 ### 下载与安装
 
-**[前往 GUI Releases →](https://github.com/MusherM/cleanYourHarmony/releases/latest)** · 当前版本 [v1.4.1](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.4.1)
+**[前往 GUI Releases →](https://github.com/MusherM/cleanYourHarmony/releases/latest)** · 当前版本 [v1.5](https://github.com/MusherM/cleanYourHarmony/releases/tag/v1.5)
 
 | 平台 | 安装包 | 安装方式 |
 | --- | --- | --- |
-| macOS 13.5+ · Apple Silicon | [下载 DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-macos-arm64.dmg) | 打开后拖入 Applications |
-| macOS 13.5+ · Intel | [下载 DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-macos-x64.dmg) | 打开后拖入 Applications |
-| Windows 11 · x64 | [下载 Setup](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.4.1/cleanYourHarmony-1.4.1-windows-x64-Setup.exe) | 运行安装程序 |
+| macOS 13.5+ · Apple Silicon | [下载 DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.5/cleanYourHarmony-1.5-macos-arm64.dmg) | 打开后拖入 Applications |
+| macOS 13.5+ · Intel | [下载 DMG](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.5/cleanYourHarmony-1.5-macos-x64.dmg) | 打开后拖入 Applications |
+| Windows 11 · x64 | [下载 Setup](https://github.com/MusherM/cleanYourHarmony/releases/download/v1.5/cleanYourHarmony-1.5-windows-x64-Setup.exe) | 运行安装程序 |
 
 macOS 安装包采用 ad-hoc 签名、未公证，Windows 安装包未签名，系统可能提示安全检查。Release 提供 SHA-256 校验和及对应源码。桌面源码与构建说明见 [desktop-app 分支](https://github.com/MusherM/cleanYourHarmony/tree/desktop-app)。
 
@@ -54,7 +54,7 @@ macOS 安装包采用 ad-hoc 签名、未公证，Windows 安装包未签名，�
 | 浏览器 · 3 项 | 使用简洁主页，关闭搜索榜单和搜索热词 |
 | 负一屏 · 9 项 | 关闭清单内的推荐模块、搜索推荐、营销通知与内容订阅 |
 | 应用通知 · 7 项 | 关闭浏览器、主题、应用市场、游戏中心、视频、音乐、阅读的系统通知 |
-| 系统 · 1 项 | 尝试退出用户体验改进计划；系统禁止修改时如实报告失败 |
+| 系统 · 3 项 | 关闭小艺搜索热搜榜和智能体；尝试退出用户体验改进计划 |
 | 日历 · 2 项 | 关闭推荐订阅，将一周开始日设为星期一 |
 
 完整目标与排除项以 [operations.json](operations.json) 为准。不删除浏览记录、不注销服务、不调整自动播放；停车、日程、出行、快递等清单排除的实用服务不作为关闭目标。**关闭系统通知也会影响这些应用的正常通知。**
@@ -77,7 +77,7 @@ cd cleanYourHarmony
 ```text
 请先阅读 README.md 和 operations.json，
 对当前连接的鸿蒙手机执行 operations.json 中 default_selected 为 true 的项目；
-默认直接执行全部 22 项，不设可选项，不询问是否纳入。若连接多台设备，先让我选择目标。
+默认直接执行全部 24 项，不设可选项，不询问是否纳入。若连接多台设备，先让我选择目标。
 自行检查并复用电脑端工具；缺少 hdc、UI Tree/GUI 操作工具或 Node.js 18+ 时，
 从官方来源自动安装适合当前系统的版本并验证，不要把安装任务交回给我。
 仅在需要我输入密码、确认系统权限、操作手机授权或环境限制确实阻止安装时告知具体阻塞。
@@ -103,7 +103,7 @@ node scripts/run.mjs --plan
 node scripts/run.mjs --execute
 ```
 
-默认全部 22 项，不弹出通知选择题。多设备时使用 `--device <本次设备ID>`；`--hdc <可执行文件路径>` 可复用已有 SDK。脚本按 17 个实际页面分组，沿最近父页导航，每次修改后即时截图，修改页只重进一次。
+默认全部 24 项，不弹出通知选择题。多设备时使用 `--device <本次设备ID>`；`--hdc <可执行文件路径>` 可复用已有 SDK。脚本按 18 个实际页面分组，沿最近父页导航，每次修改后即时截图，修改页只重进一次。
 
 <details>
 <summary>执行与恢复细节（Agent 执行前请阅读）</summary>
@@ -124,7 +124,7 @@ node scripts/run.mjs --execute
 
 ### 执行规则
 
-1. 先检查并复用已验证的工具链；缺少 hdc、UI Tree/GUI 操作能力或 Node.js 18+ 时，由 Agent 从官方来源自动安装适配当前操作系统与架构的版本，再验证工具可运行及实际设备操作能力。不要要求用户手动找下载地址或安装命令，不重复安装已有可用工具；遇到凭据、系统授权或环境限制时说明具体阻塞。随后枚举当前设备、核对系统和应用版本，单设备串行执行。先按选中项目生成执行计划，按应用及实际页面合并，复用相邻页的共同父路径；不要机械地逐条从首页重新导航。默认全部 22 项，不为通知项目询问选择。
+1. 先检查并复用已验证的工具链；缺少 hdc、UI Tree/GUI 操作能力或 Node.js 18+ 时，由 Agent 从官方来源自动安装适配当前操作系统与架构的版本，再验证工具可运行及实际设备操作能力。不要要求用户手动找下载地址或安装命令，不重复安装已有可用工具；遇到凭据、系统授权或环境限制时说明具体阻塞。随后枚举当前设备、核对系统和应用版本，单设备串行执行。先按选中项目生成执行计划，按应用及实际页面合并，复用相邻页的共同父路径；不要机械地逐条从首页重新导航。默认全部 24 项，不为通知项目询问选择。
 2. 使用 `operations.json` 的 `path` 和 `locator` 作为预设语义路线。缓存可复用的入口、选择器、页面标识与适用版本，不缓存整棵旧 UI Tree、节点序号或绝对坐标作为下一次点击依据。首次到达、导航或滚动、点击引发状态变化、出现遮挡后刷新树；页面标题出现不等于控件加载完成，应等目标状态可读取后再操作。页面未变时复用本次树，一次提取所有所需信息，避免反复启动命令分析同一个文件。
 3. 已验证的导航可在一次工具调用内串行完成“取树—匹配当前页及唯一目标—点击—检查下一页”，只返回精简结果；有失败立即停止该路线。减少模型往返，不省略当前页面、应用、前台弹层、目标唯一性及状态检查。坐标由当次 bounds 计算。文本相同的搜索框不等于搜索结果，后台弹层里的标题不等于当前页面；应用启动也不等于返回根页。
 4. 读取目标控件的 `checked`、`enabled`，显式解析布尔值（字符串 `"false"` 不是真值）。已经满足则记录无需修改、当场截图，不强制重进；禁用或有歧义时保存证据并报告失败。仅修改用户选定项目，每次修改后刷新状态；失败不得直接重放 Toggle。
@@ -158,7 +158,7 @@ Agent 读取本次 `progress.json` 和现场证据，在对话中直接用文字
 ## 兼容性与数据
 
 - 当前语义路线以 **HarmonyOS 7** 为适配基线。HarmonyOS 5/6、不同设备及应用版本需要另行验证；不承诺所有机型均可执行。
-- 历史实测：2026-10-28，HOP-AL10 / HarmonyOS 7.0.0.113 展开屏，当时清单的 20 项全部通过。当前 22 项、其他设备、折叠外屏及执行中折叠切换需要分别验证。
+- 历史实测：2026-10-28，HOP-AL10 / HarmonyOS 7.0.0.113 展开屏，当时清单的 20 项全部通过。当前 24 项、其他设备、折叠外屏及执行中折叠切换需要分别验证。
 - 进度和截图仅保存在本机；GUI 不提供遥测、云端执行或自动更新。CLI 使用的 Agent 如何处理数据，取决于其自身配置。
 - 不绕过锁屏凭据或禁用控件，也不修改锁屏配置。勿扰仅在执行期间按需临时开启，结束或异常时尝试恢复并核验；没有整机回滚功能。
 

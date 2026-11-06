@@ -142,3 +142,27 @@ test('shutdown during hdc startup leaves no process and failed startup cannot au
  const broken=new HdcService({executable:process.execPath,args:['--not-a-real-node-option']},{port:await freePort(),timeout:1000});
  await assert.rejects(broken.start(),/未就绪/);await broken.stop();
 });
+
+function searchFixture(initial, staleQuery='', collapsed=false) {
+ let screen='root',query=staleQuery,entries=0,inputs=0;
+ const values={'热搜榜':initial,'智能体':initial,'小艺建议':true,'搜索历史':true}, clicks=[];
+ const header=title=>n('HdsTitleBar',{},[n('Text',{text:title})]);
+ const scope=()=>n('Column',{bundleName:catalog.apps.N.bundle,bounds:'[0,0][500,1200]'},screen==='root'?[header('设置'),collapsed?n('Button',{id:'searchMenuButton'}):n('Search',{id:'homPageSearchInput'})]:screen==='search'?[n('Search',{id:'searchComponent'}),n('SearchField',{text:query}),n('Button',{id:'__CancelButton__'}),n('Text',{id:'searchResultItem',text:'小艺搜索'}),n('Text',{id:'searchResultItem',text:'热搜榜'})]:[header('小艺搜索'),...Object.entries(values).map(([label,on],i)=>n('Row',{bounds:`[0,${250+i*170}][500,${400+i*170}]`},[n('Text',{text:label,bounds:`[0,${260+i*170}][300,${310+i*170}]`}),n('Toggle',{id:label,checked:String(on),bounds:`[350,${260+i*170}][450,${310+i*170}]`})]))]);
+ const device={revision:0,tree:()=>n('Root',{bounds:'[0,0][500,1200]'},[scope()]),launch(){screen='root';this.revision++;},back(){screen=screen==='detail'?'search':'root';this.revision++;},ui(command,x,y,text){assert.equal(command,'inputText');query=text;inputs++;this.revision++;},click(node){this.revision++;const a=attr(node);if(['homPageSearchInput','searchMenuButton'].includes(a.id))screen='search';else if(a.id==='__CancelButton__')query='';else if(a.id==='searchResultItem'){assert.equal(a.text,'小艺搜索');screen='detail';entries++;}else {assert.equal(a.type,'Toggle');clicks.push(a.id);values[a.id]=!values[a.id];}}};
+ return {device,values,clicks,counts:()=>({entries,inputs})};
+}
+test('settings search changes only selected switches and reenters the shared page once',async()=>{
+ const r=searchFixture(true,'旧搜索',true),nav=new Navigator(r.device),progress={items:{},failures:[]};let shots=0;
+ const pages=plan(catalog,resolveSelection(catalog,[{id:'S01',target:false},{id:'S02',target:false}]));
+ assert.equal(pages.length,1);
+ const {runPages}=await import('../core/runner.mjs');
+ await runPages({pages,device:r.device,nav,progress,persist(){},evidence(){return{path:`shot-${++shots}`};}});
+ assert.equal(progress.items.S01.status,'passed',progress.items.S01.error);assert.equal(progress.items.S02.status,'passed',progress.items.S02.error);
+ assert.deepEqual(r.values,{'热搜榜':false,'智能体':false,'小艺建议':true,'搜索历史':true});assert.deepEqual(r.clicks,['热搜榜','智能体']);assert.deepEqual(r.counts(),{entries:2,inputs:1});assert.equal(shots,4);
+});
+test('satisfied Xiaoyi Search switches are captured without toggling or reentry',async()=>{
+ const r=searchFixture(false),nav=new Navigator(r.device),progress={items:{},failures:[]};let shots=0;
+ const {runPages}=await import('../core/runner.mjs');
+ await runPages({pages:plan(catalog,resolveSelection(catalog,[{id:'S01',target:false},{id:'S02',target:false}])),device:r.device,nav,progress,persist(){},evidence(){return{path:`shot-${++shots}`};}});
+ assert.equal(progress.items.S01.status,'unchanged');assert.equal(progress.items.S02.status,'unchanged');assert.deepEqual(r.clicks,[]);assert.deepEqual(r.counts(),{entries:1,inputs:1});assert.equal(shots,1);
+});
