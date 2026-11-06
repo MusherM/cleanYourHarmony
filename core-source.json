@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "commit": "767e7d8755a90b9917cd663fad5952c6a98b3f81",
-  "digest": "5dabdc5600c77b50671a1132103c2b679bebeabf0cb0e5275f0b862521c01bb5",
+  "commit": "043c4b5d54d7e74542c45040e5c476221422f392",
+  "digest": "a9844678aa8bb1f7538d4d62af60894f2fbcd1a8918081f305b5491f55d623d5",
   "files": {
     "core/adapters/assistant.mjs": "736747aa60b7d2b0e08ad639310aa7f9d1865e732520b132990b5f92366749b2",
     "core/adapters/browser.mjs": "50b4ba564d8dbb31c82e90d9595fb9d714875b4dae4b32e7e1e279c4bf25fca2",
     "core/adapters/calendar.mjs": "b561edc4b2a73ecd0a27ea969f0edf0ea1696ae8014f75fb7454fa66d05c3248",
     "core/adapters/index.mjs": "b91730634cf96519b280a1a397aeed7b580072ef19ba204812da8fe86f584284",
     "core/adapters/notification.mjs": "d7100fd7bd289be45bb57f7068b3795c487f0b5c981e4aaf8104385cd7426f57",
-    "core/adapters/settings.mjs": "321a55e746ca4029305e551efb7064d4efcc689fbe2097f61b024a6dff791f16",
+    "core/adapters/settings.mjs": "06e874c8f3673464eb707f0ee7467e81110d68eba655d92ae9d4167fe8aca2b5",
     "core/catalog.mjs": "b226d0adad47d607e7a74338d3a8b71514d3d8807af04a6b9992b877362f6c5e",
     "core/device.mjs": "c74f9dec7b98e0ccdadb3512c6abd40e3d85b8fe81964d055a8b67602de8dcd0",
     "core/devices.mjs": "a798eae58c2025b94065736ed5a78c0f7872538b04dc89a669ed8e02581b7b74",
@@ -22,7 +22,7 @@
     "core/session.mjs": "bbfb48e26a04bd82296544d25fbb858ad6002e25374f6bf6ee46ac275f425fe6",
     "core/ui-tree.mjs": "984825a2b402d2127fba470a37d4825a24d3d0e25874d5e4876a7cbd82dec2c2",
     "core/validation.mjs": "d0ad57df623d82069479ef99ae624f31995ee963951ac615ff370b7c0377b986",
-    "operations.json": "c57c518950bea4a4080fd73c0d9d35e13897ece8362a2d696fd95964e37cecc3",
+    "operations.json": "40faa5338088bf7da0df3cfee880f810c31bdbd3e2ffcbbdecaf595a95d65e2d",
     "scripts/run.mjs": "2a156dd304b301eed7c3ff9b9fda8b2f243a1ecd102de752a7b87e1f1be73734"
   }
 }
